@@ -1,0 +1,29 @@
+define(['lib/underscore', 'util', 'tiles', 'tilesets'],
+   function(_, Util, Tiles, Tilesets)
+{
+   var tilesheetTerrain = new Tilesets.TileSheet({
+      url: './res/terrain.gif',
+      tileWidth: 32,
+      tileHeight: 32,
+      map: Tiles.compile({
+         forest: {ix: 9, iy: 4},
+         grass: {ix: 6, iy: 4},
+         dirt: {ix: 11, iy: 1}
+      })
+   });
+
+   var tilesheetActors = new Tilesets.TileSheet({
+      url: './res/actors.gif',
+      tileWidth: 32,
+      tileHeight: 32,
+      map: Tiles.compile({
+         hunter: {ix: 0, iy: 0}
+      })
+   });
+
+   var tilesheet = new Tilesets.TileSheetCollection({
+      members: [tilesheetTerrain, tilesheetActors]
+   });
+
+   return tilesheet;
+});
