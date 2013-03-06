@@ -109,6 +109,8 @@ define(['lib/underscore', 'util', 'tiles'],
          _.each(me._members, function(tilesheet) {
             tilesheet.setWidth(width);
          });
+
+         return me;
       },
 
       setHeight: function(height) {
@@ -118,6 +120,8 @@ define(['lib/underscore', 'util', 'tiles'],
          _.each(me._members, function(tilesheet) {
             tilesheet.setHeight(height);
          });
+
+         return me;
       },
 
       drawTileTo: function(context, x, y, tile) {

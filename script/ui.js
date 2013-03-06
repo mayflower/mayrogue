@@ -4,86 +4,60 @@ define(['lib/underscore', 'util'],
    var ui = {};
 
    ui.MapView = Util.extend(Util.Base, {
-      _map: null,
-      _origin: null,
-      _extend: null,
-      _tiles: null,
-      _actors: null,
-      _player: null,
-      _playerPosition: null,
+      properties: [
+         {field: '_world', getter: true},
+         {field: '_tiles', getter: true},
+         {field: '_canvas', getter: true},
+      ],
 
-      _trackPlayer: true,
+      _context: null,
 
       create: function(config) {
          var me = this;
 
          me.getConfig(config,
-            ['map', 'origin', 'tiles', 'actors', 'player',
-               'trackPlayer', 'playerPosition', 'extend']);
+            ['world', 'tiles', 'canvas']);
 
-         if (config.origin) {
-            me._origin = config.origin;
-         } else {
-            me._origin = {x:0, y:0};
-         }
+         me._world.attachListeners({visibleChange: me.redraw}, me);
 
-         _.defaults(me, {
-            _actors: [],
-            _playerPosition: {
-               x: Math.floor(me._extend.width / 2),
-               y: Math.floor(me._extend.height / 2)
-            }
-         });
+         me._canvas.width = me._tiles.width * me._world.getViewport().getWidth();
+         me._canvas.height = me._tiles.height * me._world.getViewport().getHeight();
+         me._context = me._canvas.getContext('2d');
+
+         me.redraw();
       },
 
-      setOrigin: function(x, y) {
-         this._origin.x = x;
-         this._origin.y = y;
-      },
-
-      setExtend: function(width, height) {
-         this._extend.width = width;
-         this._extend.height = height;
-      },
-
-      getExtend: function() {
-         return _.clone(this._extend);
-      },
-
-      _calculateOrigin: function() {
+      destroy: function() {
          var me = this;
-         if (!me._player) return;
 
-         var x = Util.boundValue(me._player.getX() - me._playerPosition.x, 
-            0, me._map.getWidth() - me._extend.width);
-         var y = Util.boundValue(me._player.getY() - me._playerPosition.y,
-            0, me._map.getHeight() - me._extend.height);
-
-         me.setOrigin(x, y);
+         me._world.detachListeners({visibleChange: me.redraw}, me);
+         me.parent.destroy.call(me);
       },
 
-      drawTo: function(context) {
+      redraw: function(context) {
          var me = this;
          var x, y;
-         var mapData = me._map.getData();
+         var mapData = me._world.getMapData();
+         var viewport = me._world.getViewport();
+         var x0 = viewport.getX(), y0 = viewport.getY();
 
-         if (me._trackPlayer) me._calculateOrigin();
+         for (x = x0; x < x0 + viewport.getWidth(); x++)
+            for (y = y0; y < y0 + viewport.getHeight(); y++)
 
-         for (x = me._origin.x; x < me._origin.x + me._extend.width; x++)
-            for (y = me._origin.y; y < me._origin.y + me._extend.height; y++)
                me._tiles.drawTileTo(
-                  context,
-                  me._tiles.width * (x - me._origin.x),
-                  me._tiles.height * (y - me._origin.y),
+                  me._context,
+                  me._tiles.width * (x - x0),
+                  me._tiles.height * (y - y0),
                   mapData[x][y]
                );
 
-         _.each(me._actors, function(actor) {
+         _.each(me._world.getEntities(), function(entity) {
+
             me._tiles.drawTileTo(
-               context,
-               me._tiles.width * (actor.getX() - me._origin.x),
-               me._tiles.height * (actor.getY() - me._origin.y),
-               actor.getShape()
+               me._context,
+               me._tiles.width * (entity.getX() - x0),
+               me._tiles.height * (entity.getY() - y0),
+               entity.getShape()
             );
          });
       }

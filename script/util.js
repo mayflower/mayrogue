@@ -1,17 +1,17 @@
 define(['lib/underscore'],
    function(_)
 {
-   _processClassDefinition = function(def) {
+   _processClassDefinition = function(def, ctor) {
       var proto = _.omit(def, 'properties', 'mixins');
 
-      proto.mixins = [];
-      proto = _processClassProperties(def, proto); 
-      proto = _processClassMixins(def, proto);
+      proto = _processClassProperties(def, proto, ctor); 
+      proto = _processClassMixins(def, proto, ctor);
 
       return proto;
    }
 
-   _processClassMixins = function(def, proto) {
+   _processClassMixins = function(def, proto, ctor) {
+      ctor.mixins = [];
       if (!_.isArray(def.mixins)) return proto;
 
       _.each(def.mixins, function(mixin) {
@@ -20,18 +20,18 @@ define(['lib/underscore'],
          if (_.isObject(mixin.prototype)) {
 
             _.defaults(proto, _.omit(mixin.prototype, 'create'));
-            proto.mixins.push(mixin.prototype);
+            ctor.mixins.push(mixin.prototype);
          } else {
 
             _.defaults(proto, _.omit(mixin, 'create'));
-            proto.mixins.push(mixin);
+            ctor.mixins.push(mixin);
          }
       });
 
       return proto;
    }
 
-   _processClassProperties = function(def, proto) {
+   _processClassProperties = function(def, proto, ctor) {
       if (!_.isArray(def.properties)) return proto;
 
       var properties = {};
@@ -70,6 +70,17 @@ define(['lib/underscore'],
       return proto;
    };
 
+   _ctor = function() {
+      var me = this;
+
+      if (me.create) me.create.apply(me, arguments);
+      _.each(me.constructor.mixins, function(mixin) {
+         if (mixin.create) mixin.create.apply(me, arguments);
+      });
+
+      return me;
+   }
+
    var Util = {};
    
    Util.ucFirst = function(val) {
@@ -92,26 +103,20 @@ define(['lib/underscore'],
 
    Util.define = function(def) {
       var ctor = function() {
-         if (this.create) this.create.apply(this, arguments);
-         _.each(this.mixins, function(mixin) {
-            if (mixin.create) mixin.create.apply(this, arguments);
-         });
-         return this;
+         return _ctor.apply(this, arguments);
       }
-      _.extend(ctor.prototype, _processClassDefinition(def));
+
+      _.extend(ctor.prototype, _processClassDefinition(def, ctor));
       return ctor;
    };
 
    Util.extend = function(base, def) {
       var ctor = function() {
-         if (this.create) this.create.apply(this, arguments);
-         _.each(this.mixins, function(mixin) {
-            if (mixin.create) mixin.create.apply(this, arguments);
-         });
-         return this;
+         return _ctor.apply(this, arguments);
       }
+
       ctor.prototype = _.extend(Util.objectCreate(base.prototype),
-         _processClassDefinition(def),
+         _processClassDefinition(def, ctor),
          {
             constructor: ctor,
             parent: base.prototype
@@ -140,7 +145,9 @@ define(['lib/underscore'],
          });
 
          return me;
-      }
+      },
+
+      destroy: function() {}
    });
 
    Util.Promise = Util.define({

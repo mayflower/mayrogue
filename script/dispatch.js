@@ -12,47 +12,40 @@ define(['lib/underscore', 'lib/mousetrap', 'tiles',
       x: 6,
       y: 6,
       shape: Tiles['hunter'],
-      map: map
-   });
-
-   var mapview = new Ui.MapView({
       map: map,
-      tiles: Tileset,
-      extend: {width: 20, height: 15},
-      actors: [hunter],
-      player: hunter
+      id: 0
    });
 
-   var canvas = document.getElementById('stage');
-   var context = canvas.getContext('2d');
-
-   canvas.width = Tileset.width * mapview.getExtend().width;
-   canvas.height = Tileset.height * mapview.getExtend().height;
-
-   function redraw() {
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      mapview.drawTo(context);
-   }
+   var world = new World.World({
+      map: map,
+      player: hunter,
+      entities: [hunter],
+      viewportWidth: 20,
+      viewportHeight: 15
+   });
 
    Tileset.ready.then(function() {
-      mapview.drawTo(context);
+
+      var canvas = document.getElementById('stage');
+
+      var mapview = new Ui.MapView({
+         world: world,
+         tiles: Tileset,
+         canvas: canvas
+      });
 
       _.each({
          left: function() {
             hunter.setX(hunter.getX() - 1);
-            redraw();
          },
          right: function() {
             hunter.setX(hunter.getX() + 1);
-            redraw();
          },
          up: function() {
             hunter.setY(hunter.getY() - 1);
-            redraw();
          },
          down: function() {
             hunter.setY(hunter.getY() + 1);
-            redraw();
          }
       }, function(handler, key) {
          Mousetrap.bind(key, handler);
