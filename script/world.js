@@ -4,27 +4,28 @@ define(['lib/underscore', 'util', 'tiles'],
    var World = {};
 
    World.Entity = Util.extend(Util.Base, {
-      x: 0,
-      y: 0,
-      shape: 0,
+      properties: ['x', 'y', 'shape'],
+
+      _x: 0,
+      _y: 0,
+      _shape: 0,
 
       _map: null,
 
       create: function(config) {
          var me = this;
 
-         me.getConfig(config, ['map']);
-         _.extend(me, _.pick(config, 'x', 'y', 'shape'));
+         me.getConfig(config, ['map', 'x', 'y', 'shape']);
       },
 
       setX: function(x) {
          var me = this;
-         me.x = Util.boundValue(x, 0, me._map.getWidth() - 1);
+         me._x = Util.boundValue(x, 0, me._map.getWidth() - 1);
       },
 
       setY: function(y) {
          var me = this;
-         me.y = Util.boundValue(y, 0, me._map.getHeight() - 1);
+         me._y = Util.boundValue(y, 0, me._map.getHeight() - 1);
       }
    });
 

@@ -5,7 +5,7 @@ define(['lib/underscore', 'util', 'tiles', 'tilesets'],
       url: './res/terrain.gif',
       tileWidth: 32,
       tileHeight: 32,
-      map: Tiles.compile({
+      mapping: Tiles.compile({
          forest: {ix: 9, iy: 4},
          grass: {ix: 6, iy: 4},
          dirt: {ix: 11, iy: 1}
@@ -16,7 +16,7 @@ define(['lib/underscore', 'util', 'tiles', 'tilesets'],
       url: './res/actors.gif',
       tileWidth: 32,
       tileHeight: 32,
-      map: Tiles.compile({
+      mapping: Tiles.compile({
          hunter: {ix: 0, iy: 0}
       })
    });

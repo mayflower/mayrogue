@@ -4,25 +4,29 @@ define(['lib/underscore', 'util', 'tiles'],
 
    var Tilesets = {};
 
-   Tilesets.TileSheet = Util.extend(Util.Base, {
-      _map: null,
+   Tilesets.TileSet = Util.extend(Util.Base, {
+      properties: [
+         {field: 'height', setter: true},
+         {field: 'width', setter: true},
+         {field: '_tileWidth', getter: true},
+         {field: '_tileHeight', getter: true}
+      ],
+
+      ready: null
+   });
+
+   Tilesets.TileSheet = Util.extend(Tilesets.TileSet, {
+      _mapping: null,
       _url: null,
       _image: null,
 
-      _tileWidth: 0,
-      _tileHeight: 0,
       _origin: {x:0, y:0},
-
-      width: null,
-      height: null,
-
-      ready: null,
 
       create: function(config) {
          var me = this;
 
          me.getConfig(config,
-            ['url', 'tileWidth', 'tileHeight', 'map']);
+            ['url', 'tileWidth', 'tileHeight', 'mapping']);
          _.defaults(me, {
             width: me._tileWidth,
             height: me._tileHeight
@@ -50,19 +54,11 @@ define(['lib/underscore', 'util', 'tiles'],
          );
       },
 
-      setWidth: function(width) {
-         this.width = width;
-      },
-      
-      setHeight: function(height) {
-         this.height = height;
-      },
-
       drawTileTo: function(context, x, y, tile) {
          var me = this;
 
-         if (me._map[tile]) {
-            me.drawTo(context, x, y, me._map[tile].ix, me._map[tile].iy);
+         if (me._mapping[tile]) {
+            me.drawTo(context, x, y, me._mapping[tile].ix, me._mapping[tile].iy);
             return true;
          } else {
             return false;
@@ -70,13 +66,9 @@ define(['lib/underscore', 'util', 'tiles'],
       }
    });
 
-   Tilesets.TileSheetCollection = Util.extend(Util.Base, {
+   Tilesets.TileSheetCollection = Util.extend(Tilesets.TileSet, {
       _members: null,
       
-      height: null,
-      width: null,
-      
-      ready: null,
       _semaphore: null,
 
       create: function(config) {
@@ -132,6 +124,20 @@ define(['lib/underscore', 'util', 'tiles'],
          return _.some(this._members, function(tilesheet) {
             return tilesheet.drawTileTo(context, x, y, tile);
          });
+      },
+
+      getTileWidth: function() {
+         var me = this;
+
+         if (me._members.length > 0) return me._members[0].getTileWidth();
+         return null;
+      },
+
+      getTileHeight: function() {
+         var me = this;
+
+         if (me._members.length > 0) return me._members[0].getTileHeight;
+         return null;
       }
    });
 

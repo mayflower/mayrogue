@@ -9,8 +9,4 @@ require.config({
    }
 });
 
-require(['dispatch', 'lib/domReady'],
-   function(dispatch)
-{
-   dispatch();
-});
+require(['dispatch']);

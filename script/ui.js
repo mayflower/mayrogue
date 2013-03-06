@@ -54,9 +54,9 @@ define(['lib/underscore', 'util'],
          var me = this;
          if (!me._player) return;
 
-         var x = Util.boundValue(me._player.x - me._playerPosition.x, 
+         var x = Util.boundValue(me._player.getX() - me._playerPosition.x, 
             0, me._map.getWidth() - me._extend.width);
-         var y = Util.boundValue(me._player.y - me._playerPosition.y,
+         var y = Util.boundValue(me._player.getY() - me._playerPosition.y,
             0, me._map.getHeight() - me._extend.height);
 
          me.setOrigin(x, y);
@@ -81,9 +81,9 @@ define(['lib/underscore', 'util'],
          _.each(me._actors, function(actor) {
             me._tiles.drawTileTo(
                context,
-               me._tiles.width * (actor.x - me._origin.x),
-               me._tiles.height * (actor.y - me._origin.y),
-               actor.shape
+               me._tiles.width * (actor.getX() - me._origin.x),
+               me._tiles.height * (actor.getY() - me._origin.y),
+               actor.getShape()
             );
          });
       }
