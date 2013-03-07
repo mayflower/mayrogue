@@ -66,6 +66,31 @@ define(['lib/underscore', 'util', 'tiles'],
       }
    });
 
+   Tilesets.TileSheetLarge = Util.extend(Tilesets.TileSheet, {
+
+      drawTo: null,
+
+      drawTileTo: function(context, x, y, tile) {
+         var me = this;
+
+         var upperLeft = me._mapping[tile]
+         if (!upperLeft) return false;
+
+         context.drawImage(me._image,
+            upperLeft.ix * me._tileWidth,
+            upperLeft.iy * me._tileHeight,
+            me._tileWidth * Tiles.properties[tile].width,
+            me._tileHeight * Tiles.properties[tile].height,
+            x,
+            y,
+            me.width * Tiles.properties[tile].width,
+            me.height * Tiles.properties[tile].height
+         );
+
+         return true;
+      }
+   });
+
    Tilesets.TileSheetCollection = Util.extend(Tilesets.TileSet, {
       _members: null,
       

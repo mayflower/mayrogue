@@ -4,60 +4,78 @@ define(['lib/underscore', 'util', 'geometry', 'tiles'],
    var World = {};
 
    World.Entity = Util.extend(Util.Base, {
-      properties: ['x', 'y', 'shape', 'world',
-         {value: '_id', getter: true}
+      properties: ['shape', 'world',
+         {field: '_id', getter: true},
+         {field: '_boundingBox', getter: true}
       ],
       mixins: [Util.Observable],
 
-      _x: 0,
-      _y: 0,
       _shape: 0,
 
       create: function(config) {
          var me = this;
 
-         me.getConfig(config, ['map', 'x', 'y', 'shape', 'id']);
+         me.getConfig(config, ['map', 'shape', 'id']);
+
+         me._boundingBox = new Geometry.Rectangle({
+            x: config.x,
+            y: config.y,
+            width: Tiles.properties[me._shape].width,
+            height: Tiles.properties[me._shape].height
+         });
+      },
+
+      _changePosition: function(x, y) {
+         var me = this;
+
+         var boundingBoxNew = new Geometry.Rectangle({
+            x: x,
+            y: y,
+            height: me._boundingBox.getHeight(),
+            width: me._boundingBox.getWidth()
+         });
+         var boundingBoxOld = me._boundingBox;
+
+         if (!me._world
+               || me._world.rectAccessible(boundingBoxNew, me))
+         {
+            me._boundingBox = boundingBoxNew;
+            me.fireEvent('change', me, boundingBoxOld, boundingBoxNew);
+         }
+      },
+
+      getX: function() {
+         var me = this;
+
+         return me._boundingBox.getX();
+      },
+
+      getY: function() {
+         var me = this;
+
+         return me._boundingBox.getY();
       },
 
       setX: function(x) {
          var me = this;
-         var oldx = me._x;
-         me._x = x;
-
-         if (me._world && !me._world.fieldAccessible(x, me._y, me)) {
-            me._x = oldx;
-         } else {
-            me.fireEvent('change', me, oldx, me._y);
-         }
+         
+         me._changePosition(x, me._boundingBox.getY());
 
          return me;
       },
 
       setY: function(y) {
          var me = this;
-         var oldy = me._y;
-         me._y = y
 
-         if (me._world && !me._world.fieldAccessible(me._x, y, me)) {
-            me._y = oldy
-         } else {
-            me.fireEvent('change', me, me._x, oldy);
-         }
+         me._changePosition(me._boundingBox.getX(), y);
 
          return me;
       },
 
       setXY: function(x, y) {
          var me = this;
-         var oldx = me._x, oldy = me._y;
-         me._x = x, me._y = y;
 
-         if (me._world && !me._world.fieldAccessible(x, y, me)) {
-            me._x = oldx;
-            me._y = oldy;
-         } else {
-            me.fireEvent('change', me, oldx, oldy);
-         }
+         me._changePosition(x, y);
 
          return me;
       }
@@ -82,7 +100,23 @@ define(['lib/underscore', 'util', 'geometry', 'tiles'],
          var me = this;
 
          return (x >= 0) && (x < me._width) && (y >= 0) && (y < me._height)
-            && Tiles.groundProperties[me._data[x][y]].walkable;
+            && Tiles.properties[me._data[x][y]].walkable;
+      },
+
+      rectAccessible: function(rect) {
+         var me = this;
+
+         var x0 = rect.getX(), y0 = rect.getY(),
+            width = rect.getWidth(), height = rect.getHeight();
+
+         if (x0 < 0 || y0 < 0 || x0 > me._width - width
+               || y0 > me._height - height) return false;
+         
+         for (var x = x0; x < x0 + width; x++)
+            for (var y = y0; y < y0 + height; y++)
+               if (!Tiles.properties[me._data[x][y]].walkable) return false;
+
+         return true;
       }
    });
 
@@ -196,15 +230,15 @@ define(['lib/underscore', 'util', 'geometry', 'tiles'],
          entity.detachListeners({change: me._onEntityChange}, me);
       },
 
-      _onEntityChange: function(entity, oldx, oldy) {
+      _onEntityChange: function(entity, bbOld, bbNew) {
          var me = this;
 
          if (entity === me._player) {
             me._trackPlayer();
          }
-         if (me._viewport.isInside(oldx, oldy) ||
-               me._viewport.isInside(entity.getX(), entity.getY()))
-         {
+
+         if (me._viewport.intersect(bbOld) || me._viewport.intersect(bbNew)) {
+
             if (me._batchInProgress) {
                me._dirty = true;
             } else {
@@ -253,6 +287,18 @@ define(['lib/underscore', 'util', 'geometry', 'tiles'],
          me.parent.destroy.call(me);
       },
 
+      rectAccessible: function(rect, entity) {
+         var me = this;
+
+         if (!me._map.rectAccessible(rect)) return false;
+
+         if (!entity) return true;
+         return !_.some(me._entities, function(e) {
+            return (e !== entity
+               && e.getBoundingBox().intersect(rect));
+         });
+      },
+
       fieldAccessible: function(x, y, entity) {
          var me = this;
 
@@ -260,8 +306,8 @@ define(['lib/underscore', 'util', 'geometry', 'tiles'],
 
          if (!entity) return true;
          return !_.some(me._entities, function(e) {
-            return (e !== entity && e.getX() == entity.getX()
-               && e.getY() == entity.getY());
+            return (e !== entity
+               && e.getBoundingBox().intersect(entity.getBoundingBox()));
          });
       },
 

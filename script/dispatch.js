@@ -19,11 +19,14 @@ define(['lib/underscore', 'lib/mousetrap', 'tiles',
 
    _.times(20, function(index) {
       var shape;
+      var x = Math.random();
 
-      if (Math.random() > 0.5) {
+      if (x < 0.3) {
          shape = Tiles.LICHKING;
-      } else {
+      } else if (x < 0.6) {
          shape = Tiles.OGRE;
+      } else {
+         shape = Tiles.CTHULHU_GUY;
       }
 
       entities.push(new World.Entity({
@@ -83,6 +86,7 @@ define(['lib/underscore', 'lib/mousetrap', 'tiles',
          });
 
          world.endBatchUpdate();
+
       }, 200);
    });
 });

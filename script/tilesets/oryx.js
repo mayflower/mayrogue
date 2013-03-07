@@ -25,8 +25,17 @@ define(['lib/underscore', 'util', 'tiles', 'tilesets'],
       })
    });
 
+   var tilesheetLargeActors = new Tilesets.TileSheetLarge({
+      url: './res/actors.gif',
+      tileWidth: 32,
+      tileHeight: 32,
+      mapping: Tiles.compile({
+         cthulhu_guy: {ix: 14, iy: 11}
+      })
+   });
+
    var tilesheet = new Tilesets.TileSheetCollection({
-      members: [tilesheetTerrain, tilesheetActors]
+      members: [tilesheetTerrain, tilesheetActors, tilesheetLargeActors]
    });
 
    return tilesheet;
