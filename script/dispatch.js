@@ -15,10 +15,29 @@ define(['lib/underscore', 'lib/mousetrap', 'tiles',
       id: 0
    });
 
+   var entities = [hunter];
+
+   _.times(20, function(index) {
+      var shape;
+
+      if (Math.random() > 0.5) {
+         shape = Tiles.LICHKING;
+      } else {
+         shape = Tiles.OGRE;
+      }
+
+      entities.push(new World.Entity({
+         x: _.random(34),
+         y: _.random(49),
+         shape: shape,
+         id: index + 1
+      }));
+   });
+
    var world = new World.World({
       map: map,
       player: hunter,
-      entities: [hunter],
+      entities: entities,
       viewportWidth: 20,
       viewportHeight: 15
    });
@@ -49,5 +68,21 @@ define(['lib/underscore', 'lib/mousetrap', 'tiles',
       }, function(handler, key) {
          Mousetrap.bind(key, handler);
       });
+
+      setInterval(function() {
+         var i;
+
+         world.startBatchUpdate();
+
+         _.each(entities, function(entity, index) {
+            if (index == 0 || Math.random() > 0.3) return;
+
+            var dx = _.random(2) - 1;
+            var dy = _.random(2) - 1;
+            entity.setXY(entity.getX() + dx, entity.getY() + dy);
+         });
+
+         world.endBatchUpdate();
+      }, 200);
    });
 });

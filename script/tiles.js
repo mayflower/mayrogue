@@ -8,6 +8,8 @@ define(['lib/underscore', 'util'],
       STONE: 3,
 
       HUNTER: 400,
+      LICHKING: 401,
+      OGRE: 402,
 
       MIN_GROUND: 0,
       MAX_GROUND: 3,

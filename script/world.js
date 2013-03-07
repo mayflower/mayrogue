@@ -140,17 +140,21 @@ define(['lib/underscore', 'util', 'geometry', 'tiles'],
    });
 
    World.World = Util.extend(Util.Base, {
-      properties: [
+      properties: ['dirty',
          {field: '_map', getter: true},
          {field: '_player', getter: true},
          {field: '_entities', getter: true},
          {field: '_viewport', getter: true},
+         {field: '_batchInProgress', getter: 'batchInProgress'}
       ],
       mixins: [Util.Observable],
 
       _viewportWidth: null,
       _viewportHeight: null,
       _playerPosition: null,
+
+      _dirty: false,
+      _batchInProgress: false,
 
       create: function(config) {
          var me = this;
@@ -200,7 +204,13 @@ define(['lib/underscore', 'util', 'geometry', 'tiles'],
          }
          if (me._viewport.isInside(oldx, oldy) ||
                me._viewport.isInside(entity.getX(), entity.getY()))
-            me.fireEvent('visibleChange');
+         {
+            if (me._batchInProgress) {
+               me._dirty = true;
+            } else {
+               me.fireEvent('visibleChange');
+            }
+         }
 
          me.fireEvent('change');
       },
@@ -250,8 +260,24 @@ define(['lib/underscore', 'util', 'geometry', 'tiles'],
 
          if (!entity) return true;
          return !_.some(me._entities, function(e) {
-            return (e !== entity && e.x == entity.x && e.y == entity.y);
+            return (e !== entity && e.getX() == entity.getX()
+               && e.getY() == entity.getY());
          });
+      },
+
+      startBatchUpdate: function() {
+         var me = this;
+
+         me._batchInProgress = true;
+         me._dirty = false;
+      },
+
+      endBatchUpdate: function() {
+         var me = this;
+
+         me._batchInProgress = false;
+         if (me._dirty) me.fireEvent('visibleChange');
+         me._dirty = false;
       }
    });
 
