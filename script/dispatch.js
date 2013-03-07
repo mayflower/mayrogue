@@ -11,8 +11,7 @@ define(['lib/underscore', 'lib/mousetrap', 'tiles',
    var hunter = new World.Entity({
       x: 6,
       y: 6,
-      shape: Tiles['hunter'],
-      map: map,
+      shape: Tiles.HUNTER,
       id: 0
    });
 

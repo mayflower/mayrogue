@@ -8,7 +8,8 @@ define(['lib/underscore', 'util', 'tiles', 'tilesets'],
       mapping: Tiles.compile({
          forest: {ix: 9, iy: 4},
          grass: {ix: 6, iy: 4},
-         dirt: {ix: 11, iy: 1}
+         dirt: {ix: 11, iy: 1},
+         stone: {ix: 3, iy: 0}
       })
    });
 

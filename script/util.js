@@ -251,10 +251,10 @@ define(['lib/underscore'],
       attachListeners: function(listeners, scope) {
          var me = this;
 
-         _.each(listeners, function(handler, event) {
-            if (!me._listeners[event]) me._listeners[event] = [];
+         _.each(listeners, function(handler, evt) {
+            if (!me._listeners[evt]) me._listeners[evt] = [];
 
-            me._listeners[event].push({
+            me._listeners[evt].push({
                callback: handler,
                scope: scope
             });
@@ -264,10 +264,10 @@ define(['lib/underscore'],
       detachListeners: function(listeners, scope) {
          var me = this;
 
-         _.each(listeners, function(handler, event) {
-            if (!me._listeners[event]) return;
+         _.each(listeners, function(handler, evt) {
+            if (!me._listeners[evt]) return;
 
-            me._listeners[event] = _.reject(me._listeners[event],
+            me._listeners[evt] = _.reject(me._listeners[evt],
                function(listener) {
                   return listener.callback === handler && listener.scope === scope;
                }
@@ -278,8 +278,8 @@ define(['lib/underscore'],
       detachAllListeners: function(scope) {
          var me = this;
 
-         _.each(me._listeners, function(listeners, event) {
-            me._listeners[event] = _.reject(me._listeners[event],
+         _.each(me._listeners, function(listeners, evt) {
+            me._listeners[evt] = _.reject(me._listeners[evt],
                function(listener) {
                   return listener.scope === scope;
                }
@@ -290,10 +290,10 @@ define(['lib/underscore'],
       fireEvent: function() {
          var me = this;
          var args = _.values(arguments);
-         var event = args.shift();
+         var evt = args.shift();
 
-         if (!me._listeners[event]) return;
-         _.each(me._listeners[event], function(handler) {
+         if (!me._listeners[evt]) return;
+         _.each(me._listeners[evt], function(handler) {
             handler.callback.apply(handler.scope, args);
          });
       }
