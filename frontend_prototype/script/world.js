@@ -307,7 +307,7 @@ define(['lib/underscore', 'util', 'geometry', 'tiles'],
          if (!entity) return true;
          return !_.some(me._entities, function(e) {
             return (e !== entity
-               && e.getBoundingBox().intersect(entity.getBoundingBox()));
+               && e.getBoundingBox().isInside(x, y));
          });
       },
 
