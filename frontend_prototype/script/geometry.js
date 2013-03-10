@@ -1,7 +1,9 @@
 define(['lib/underscore', 'util'],
    function(_, Util)
 {
-   Geometry = {};
+   "use strict";
+
+   var Geometry = {};
 
    Geometry.Rectangle = Util.extend(Util.Base, {
       properties: ['x', 'y', 'width', 'height'],

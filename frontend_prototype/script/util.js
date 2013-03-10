@@ -1,16 +1,18 @@
 define(['lib/underscore'],
    function(_)
 {
-   _processClassDefinition = function(def, ctor) {
+   "use strict";
+
+   var _processClassDefinition = function(def, ctor) {
       var proto = _.omit(def, 'properties', 'mixins');
 
       proto = _processClassProperties(def, proto, ctor); 
       proto = _processClassMixins(def, proto, ctor);
 
       return proto;
-   }
+   };
 
-   _processClassMixins = function(def, proto, ctor) {
+   var _processClassMixins = function(def, proto, ctor) {
       ctor.mixins = [];
       if (!_.isArray(def.mixins)) return proto;
 
@@ -29,9 +31,9 @@ define(['lib/underscore'],
       });
 
       return proto;
-   }
+   };
 
-   _processClassProperties = function(def, proto, ctor) {
+   var _processClassProperties = function(def, proto) {
       if (!_.isArray(def.properties)) return proto;
 
       var properties = {};
@@ -41,12 +43,12 @@ define(['lib/underscore'],
             properties['_' + val] = {
                getter: 'get' + Util.ucFirst(val),
                setter: 'set' + Util.ucFirst(val)
-            }
-         } else if (_.isObject(val) && 'field' in val) {
+            };
+         } else if (_.isObject(val) && val.field !== undefined) {
 
-            if ('getter' in val && !_.isString(val.getter) && val.getter)
+            if (val.getter !== undefined && !_.isString(val.getter) && val.getter)
                val.getter = 'get' + Util.ucFirst(val.field.replace(/^_/, ''));
-            if ('setter' in val && !_.isString(val.setter) && val.setter)
+            if (val.setter !== undefined && !_.isString(val.setter) && val.setter)
                val.setter = 'set' + Util.ucFirst(val.field.replace(/^_/, ''));
 
             properties[val.field] = _.pick(val, 'getter', 'setter');
@@ -54,23 +56,23 @@ define(['lib/underscore'],
       });
 
       _.each(properties, function(config, field) {
-         if (!(field in proto)) proto[field] = null;
+         if (proto[field] === undefined) proto[field] = null;
 
-         if ('getter' in config && !proto[config.getter])
+         if (config.getter !== undefined && !proto[config.getter])
             proto[config.getter] = function() {
                return this[field];
-            }
-         if ('setter' in config && !proto[config.setter])
+            };
+         if (config.setter !== undefined && !proto[config.setter])
             proto[config.setter] = function(val) {
                this[field] = val;
                return this;
-            }
+            };
       });
 
       return proto;
    };
 
-   _ctor = function() {
+   var _ctor = function() {
       var me = this;
 
       if (me.create) me.create.apply(me, arguments);
@@ -79,7 +81,7 @@ define(['lib/underscore'],
       });
 
       return me;
-   }
+   };
 
    var Util = {};
    
@@ -95,16 +97,16 @@ define(['lib/underscore'],
       if (Object.create) {
          return Object.create(proto);
       } else {
-         var ctor = function() {return this};
-         ctor.prototype = proto;
-         return new ctor();
+         var Ctor = function() {return this;};
+         Ctor.prototype = proto;
+         return new Ctor();
       }
    };
 
    Util.define = function(def) {
       var ctor = function() {
          return _ctor.apply(this, arguments);
-      }
+      };
 
       _.extend(ctor.prototype, _processClassDefinition(def, ctor));
       return ctor;
@@ -113,7 +115,7 @@ define(['lib/underscore'],
    Util.extend = function(base, def) {
       var ctor = function() {
          return _ctor.apply(this, arguments);
-      }
+      };
 
       ctor.prototype = _.extend(Util.objectCreate(base.prototype),
          _processClassDefinition(def, ctor),
@@ -140,7 +142,7 @@ define(['lib/underscore'],
          var me = this;
 
          _.each(properties, function(property) {
-            if (property in config)
+            if (config[property] !== undefined)
                me['_' + property] = config[property];
          });
 
@@ -221,7 +223,7 @@ define(['lib/underscore'],
          var me = this;
 
          if (!me._trippoints[me._value]) return;
-         _.each(me._trippoints[me._value], function(handler) {handler()});
+         _.each(me._trippoints[me._value], function(handler) {handler();});
       },
 
       raise: function() {

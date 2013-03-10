@@ -1,6 +1,8 @@
 define(['lib/underscore', 'util', 'geometry', 'tiles'],
    function(_, Util, Geometry, Tiles)
 {
+   "use strict";
+
    var World = {};
 
    World.Entity = Util.extend(Util.Base, {
@@ -36,8 +38,8 @@ define(['lib/underscore', 'util', 'geometry', 'tiles'],
          });
          var boundingBoxOld = me._boundingBox;
 
-         if (!me._world
-               || me._world.rectAccessible(boundingBoxNew, me))
+         if (!me._world ||
+               me._world.rectAccessible(boundingBoxNew, me))
          {
             me._boundingBox = boundingBoxNew;
             me.fireEvent('change', me, boundingBoxOld, boundingBoxNew);
@@ -85,7 +87,7 @@ define(['lib/underscore', 'util', 'geometry', 'tiles'],
       properties: [
          {field: '_data', getter: true},
          {field: '_height', getter: true},
-         {field: '_width', getter: true},
+         {field: '_width', getter: true}
       ],
 
       create: function(config) {
@@ -93,14 +95,14 @@ define(['lib/underscore', 'util', 'geometry', 'tiles'],
 
          me.getConfig(config, ['data', 'height', 'width']);
          if (!me._width) me._width = _.max(me._data);
-         if (!me._height) me._height = _.max(me._data[0])
+         if (!me._height) me._height = _.max(me._data[0]);
       },
 
       fieldAccessible: function(x, y) {
          var me = this;
 
-         return (x >= 0) && (x < me._width) && (y >= 0) && (y < me._height)
-            && Tiles.properties[me._data[x][y]].walkable;
+         return (x >= 0) && (x < me._width) && (y >= 0) && (y < me._height) &&
+            Tiles.properties[me._data[x][y]].walkable;
       },
 
       rectAccessible: function(rect) {
@@ -109,8 +111,8 @@ define(['lib/underscore', 'util', 'geometry', 'tiles'],
          var x0 = rect.getX(), y0 = rect.getY(),
             width = rect.getWidth(), height = rect.getHeight();
 
-         if (x0 < 0 || y0 < 0 || x0 > me._width - width
-               || y0 > me._height - height) return false;
+         if (x0 < 0 || y0 < 0 || x0 > me._width - width ||
+               y0 > me._height - height) return false;
          
          for (var x = x0; x < x0 + width; x++)
             for (var y = y0; y < y0 + height; y++)
@@ -151,7 +153,7 @@ define(['lib/underscore', 'util', 'geometry', 'tiles'],
       _normalizeWeights: function() {
          var me = this;
 
-         var norm = _.reduce(me._weights, function(x, y) {return  x + y}, 0);
+         var norm = _.reduce(me._weights, function(x, y) {return  x + y;}, 0);
          _.each(me._weights, function(weight, tile) {
             me._weights[tile] /= norm;
          });
@@ -162,11 +164,11 @@ define(['lib/underscore', 'util', 'geometry', 'tiles'],
          var me = this;
          var w = Math.random();
          
-         for (i = Tiles.MIN_GROUND; i <= Tiles.MAX_GROUND; i++)
+         for (var i = Tiles.MIN_GROUND; i <= Tiles.MAX_GROUND; i++)
             if (w < me._weights[i]) {
-               return i
+               return i;
             } else {
-               w -= me._weights[i]
+               w -= me._weights[i];
             }
 
          return null;
@@ -294,8 +296,8 @@ define(['lib/underscore', 'util', 'geometry', 'tiles'],
 
          if (!entity) return true;
          return !_.some(me._entities, function(e) {
-            return (e !== entity
-               && e.getBoundingBox().intersect(rect));
+            return (e !== entity &&
+               e.getBoundingBox().intersect(rect));
          });
       },
 
@@ -306,8 +308,8 @@ define(['lib/underscore', 'util', 'geometry', 'tiles'],
 
          if (!entity) return true;
          return !_.some(me._entities, function(e) {
-            return (e !== entity
-               && e.getBoundingBox().isInside(x, y));
+            return (e !== entity &&
+               e.getBoundingBox().isInside(x, y));
          });
       },
 

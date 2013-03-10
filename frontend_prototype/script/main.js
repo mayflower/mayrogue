@@ -1,3 +1,5 @@
+/* global require: true */
+
 require.config({
    shim: {
       'lib/underscore': {

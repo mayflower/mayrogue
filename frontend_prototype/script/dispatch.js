@@ -3,6 +3,8 @@ define(['lib/underscore', 'lib/mousetrap', 'tiles',
 ],
    function(_, Mousetrap, Tiles, Tileset, World, Ui)
 {
+   "use strict";
+
    var map = new World.RandomMap({
       width: 35,
       height: 50
@@ -73,12 +75,10 @@ define(['lib/underscore', 'lib/mousetrap', 'tiles',
       });
 
       setInterval(function() {
-         var i;
-
          world.startBatchUpdate();
 
          _.each(entities, function(entity, index) {
-            if (index == 0 || Math.random() > 0.3) return;
+            if (index === 0 || Math.random() > 0.3) return;
 
             var dx = _.random(2) - 1;
             var dy = _.random(2) - 1;
@@ -88,5 +88,8 @@ define(['lib/underscore', 'lib/mousetrap', 'tiles',
          world.endBatchUpdate();
 
       }, 200);
+
+      // pacify jshint
+      return mapview;
    });
 });

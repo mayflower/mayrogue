@@ -1,6 +1,8 @@
-define(['lib/underscore', 'util'],
-   function(_, Util)
+define(['lib/underscore'],
+   function(_)
 {
+   "use strict";
+
    var Tiles = {
       FOREST: 0,
       GRASS: 1,
@@ -16,7 +18,7 @@ define(['lib/underscore', 'util'],
       MAX_GROUND: 3,
 
       MIN_ENTITIES: 400,
-      MAX_ENTITIES: 403,
+      MAX_ENTITIES: 403
    };
 
    var tileProperties = {
@@ -50,11 +52,11 @@ define(['lib/underscore', 'util'],
       var compiled = {}; 
       _.each(collection, function(value, key) {
          key = key.toUpperCase();
-         if (key in me) compiled[me[key]] = value;
-      })
+         if (me[key] !== undefined) compiled[me[key]] = value;
+      });
 
       return compiled;
-   }
+   };
 
    Tiles.properties = Tiles.compile(tileProperties);
 
@@ -66,7 +68,7 @@ define(['lib/underscore', 'util'],
 
          _.defaults(Tiles.properties[tile], defaults);
       }
-   }
+   };
 
    setDefaultProperties(Tiles.MIN_ENTITIES, Tiles.MAX_ENTITIES,
       entityDefaultProperties);

@@ -1,13 +1,15 @@
 define(['lib/underscore', 'util'],
    function(_, Util)
 {
+   "use strict";
+
    var ui = {};
 
    ui.MapView = Util.extend(Util.Base, {
       properties: [
          {field: '_world', getter: true},
          {field: '_tiles', getter: true},
-         {field: '_canvas', getter: true},
+         {field: '_canvas', getter: true}
       ],
 
       _context: null,
@@ -34,7 +36,7 @@ define(['lib/underscore', 'util'],
          me.parent.destroy.call(me);
       },
 
-      redraw: function(context) {
+      redraw: function() {
          var me = this;
          var x, y;
          var mapData = me._world.getMapData();

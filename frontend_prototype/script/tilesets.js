@@ -1,6 +1,7 @@
 define(['lib/underscore', 'util', 'tiles'],
    function(_, Util, Tiles)
 {
+   "use strict";
 
    var Tilesets = {};
 
@@ -73,7 +74,7 @@ define(['lib/underscore', 'util', 'tiles'],
       drawTileTo: function(context, x, y, tile) {
          var me = this;
 
-         var upperLeft = me._mapping[tile]
+         var upperLeft = me._mapping[tile];
          if (!upperLeft) return false;
 
          context.drawImage(me._image,

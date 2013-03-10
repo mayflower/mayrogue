@@ -1,6 +1,8 @@
 define(['lib/underscore', 'util', 'tiles', 'tilesets'],
    function(_, Util, Tiles, Tilesets)
 {
+   "use strict";
+
    var tilesheetTerrain = new Tilesets.TileSheet({
       url: './res/terrain.gif',
       tileWidth: 32,
