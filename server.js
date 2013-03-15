@@ -15,7 +15,7 @@ var Tiles = requirejs('tiles');
 app.use(express.static(__dirname + '/frontend/'));
 app.use('/scripts/', express.static(__dirname + '/scripts/'));
 
-app._configure(function() {
+app.configure(function() {
     io.set("transports", ["xhr-polling"]);
     io.set("polling duration", 10);
 });
