@@ -6,7 +6,8 @@ require.config({
       'socket.io': '../socket.io/socket.io',
       'underscore': '../underscore',
       'mousetrap': '../mousetrap',
-      'domReady': '../domReady'
+      'domReady': '../domReady',
+      'fastclick': '../fastclick'
    },
    shim: {
       'underscore': {

@@ -1,7 +1,7 @@
 define(['underscore', 'util', 'mousetrap', 'tiles',
-   '/tilesets/oryx.js', 'world', 'ui', 'socket.io', 'domReady'
+   '/tilesets/oryx.js', 'world', 'ui', 'socket.io', 'fastclick', 'domReady'
 ],
-   function(_, Util, Mousetrap, Tiles, Tileset, World, Ui, Io)
+   function(_, Util, Mousetrap, Tiles, Tileset, World, Ui, Io, FastClick)
 {
    "use strict";
 
@@ -74,7 +74,12 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
          }
       }, function(handler, key) {
          Mousetrap.bind(key, handler);
-         document.getElementById('control-' + key).onclick = handler;
+
+         var el = document.getElementById('control-' + key);
+         if (el) {
+            el.onclick = handler;
+            new FastClick(el);
+         }
       });
 
       socket.on('update', function(payload) {
