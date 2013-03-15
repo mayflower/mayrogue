@@ -22,11 +22,13 @@ app.configure('production', function() {
 
 });
 
+var map = new World.RandomMap({
+    width: 35,
+    height: 40
+});
+
 io.sockets.on('connection', function (socket) {
-    socket.emit('news', { hello: 'world' });
-    socket.on('my other event', function (data) {
-        console.log(data);
-    });
+    socket.emit('map', map.getData());
 });
 
 server.listen(3000);
