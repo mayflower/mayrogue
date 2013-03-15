@@ -1,0 +1,22 @@
+{
+  "name": "mayrogue",
+  "version": "0.0.1",
+  "description": "a Rogue-like MMORPG",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Mayflower/mayrogue.git"
+  },
+  "keywords": [
+    "mmorpg"
+  ],
+  "author": "Mayflower",
+  "license": "MIT",
+  "gitHead": "c77c652c49dce2e9bd12faf80a3b4275011a8ae9",
+  "dependencies": {
+    "jshint": "~1.1.0"
+  }
+}
