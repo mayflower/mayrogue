@@ -1,6 +1,6 @@
 exports = module.exports = (grunt) ->
   grunt.initConfig
-    pkg: grunt.file.readJSON 'package.json'
+    pkg: grunt.file.readJSON "package.json"
     jshintrc:
       bitwise: true
       immed: true
@@ -21,6 +21,6 @@ exports = module.exports = (grunt) ->
         "scripts/**/*.js"
       ]
 
-  grunt.registerTask('default', ['jshint']);
+  grunt.registerTask "default", ["jshint"]
 
-  grunt.loadNpmTasks 'grunt-contrib-jshint'
+  grunt.loadNpmTasks "grunt-contrib-jshint"
