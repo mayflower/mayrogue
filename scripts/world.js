@@ -294,7 +294,8 @@ define(['underscore', 'util', 'geometry', 'tiles'],
       properties: [
          {field: '_map', getter: true},
          {field: '_entities', getter: true},
-         {field: '_batchInProgress', getter: 'batchInProgress'}
+         {field: '_batchInProgress', getter: 'batchInProgress'},
+         {field: '_changeset', getter: true}
       ],
       mixins: [Util.Observable],
 
@@ -304,6 +305,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
          var me = this;
 
          me.getConfig(config, ['map']);
+         me._changeset = [];
 
          me._entities = [];
          if (config.entities) _.each(config.entities, function(entity) {
@@ -465,6 +467,60 @@ define(['underscore', 'util', 'geometry', 'tiles'],
          me._dirty = false;
       }
    });
+
+    World.create = function(width, height) {
+        var size = width * height,
+            monsterCount = parseInt(size / 75);
+
+        var map = new World.RandomMap({
+            width: width,
+            height: height
+        });
+
+        var entities = [];
+        _.times(monsterCount, function(index) {
+           var shape;
+           var x = Math.random();
+
+           if (x < 0.3) {
+              shape = Tiles.LICHKING;
+           } else if (x < 0.6) {
+              shape = Tiles.OGRE;
+           } else {
+              shape = Tiles.CTHULHU_GUY;
+           }
+
+           entities.push(new World.Entity({
+              x: _.random(width),
+              y: _.random(height),
+              shape: shape,
+              id: index + 1
+           }));
+        });
+
+        var world = new World.WorldBase({
+           map: map,
+           player: null,
+           entities: entities,
+           viewportWidth: 20,
+           viewportHeight: 15,
+           changeset: []
+        });
+
+        _.each(entities, function(entity) {
+           entity.attachListeners({
+              change: function() {
+                 world.getChangeset().push({
+                    id: entity.getId(),
+                    x: entity.getX(),
+                    y: entity.getY()
+                 });
+              }
+           }, null);
+        });
+
+        return world;
+    };
 
    return World;
 });

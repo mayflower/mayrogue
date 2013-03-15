@@ -29,67 +29,19 @@ app.configure('production', function() {
 
 });
 
-var changeset = [];
 
-var entities = [];
-_.times(20, function(index) {
-   var shape;
-   var x = Math.random();
-
-   if (x < 0.3) {
-      shape = Tiles.LICHKING;
-   } else if (x < 0.6) {
-      shape = Tiles.OGRE;
-   } else {
-      shape = Tiles.CTHULHU_GUY;
-   }
-
-   entities.push(new World.Entity({
-      x: _.random(34),
-      y: _.random(49),
-      shape: shape,
-      id: index + 1
-   }));
-});
-
-_.each(entities, function(entity) {
-   entity.attachListeners({
-      change: function() {
-         changeset.push({
-            id: entity.getId(),
-            x: entity.getX(),
-            y: entity.getY()
-         });
-      },
-   }, null);
-});
-
-var map = new World.RandomMap({
-    width: 35,
-    height: 40
-});
-
-var world = new World.WorldBase({
-   map: map,
-   player: null,
-   entities: entities,
-   viewportWidth: 20,
-   viewportHeight: 15
-});
+var world = World.create(35, 40);
 
 io.sockets.on('connection', function (socket) {
-    socket.emit('map', map.serialize());
-    socket.emit('entities', _.map(entities, function(entity) {
+    socket.emit('map', world.getMap().serialize());
+    socket.emit('entities', _.map(world.getEntities(), function(entity) {
        return entity.serialize();
     }));
 });
 
 setInterval(function() {
-   var entities = world.getEntities();
 
-   changeset = [];
-
-   _.each(entities, function(entity, index) {
+   _.each(world.getEntities(), function(entity, index) {
       if (index === 0 || Math.random() > 0.3) return;
 
       var dx = _.random(2) - 1;
@@ -97,10 +49,9 @@ setInterval(function() {
       entity.setXY(entity.getX() + dx, entity.getY() + dy);
    });
 
-   if (changeset.length > 0) {
-      io.sockets.volatile.emit('update', changeset);
+   if (world.getChangeset().length > 0) {
+      io.sockets.volatile.emit('update', world.getChangeset());
    }
-
 }, 200);
 
 
