@@ -59,8 +59,17 @@ define(['underscore', 'util', 'tiles'],
          var me = this;
 
          if (me._mapping[tile]) {
+            var overGreen = [
+                Tiles.FOREST,
+                Tiles.FOREST1,
+                Tiles.FOREST2,
+                Tiles.FOREST3,
+                Tiles.FLOWER_RED,
+                Tiles.FLOWER_WHITE
+            ];
+
             // DRAW SOME grass under trees
-            if (tile == Tiles.FOREST || tile == Tiles.FLOWER_WHITE || tile == Tiles.FLOWER_RED) {
+            if (_.contains(overGreen, tile)) {
                 me.drawTo(context, x, y, me._mapping[Tiles.GRASS].ix, me._mapping[Tiles.GRASS].iy);
             }
 

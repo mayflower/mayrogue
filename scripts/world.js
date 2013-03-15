@@ -124,7 +124,10 @@ define(['underscore', 'util', 'geometry', 'tiles'],
 
    World.RandomMap = Util.extend(World.Map, {
       _weights: {
-         forest: 0.4,
+         forest: 0.1,
+         forest1: 0.1,
+         forest2: 0.1,
+         forest3: 0.1,
          flower_white: 0.1,
          flower_red: 0.1,
          stone: 0.5,

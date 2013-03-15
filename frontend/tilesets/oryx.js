@@ -10,6 +10,9 @@ define(['underscore', 'util', 'tiles', 'tilesets'],
 
       mapping: Tiles.compile({
          forest: {ix: 9, iy: 4},
+         forest1: {ix: 14, iy: 4},
+         forest2: {ix: 15, iy: 4},
+         forest3: {ix: 16, iy: 4},
          flower_white: {ix: 14, iy: 6 },
          flower_red: {ix: 15, iy: 6 },
          grass: {ix: 6, iy: 4},

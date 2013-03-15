@@ -5,11 +5,14 @@ define(['underscore'],
    
    var Tiles = {
       FOREST: 0,
-      GRASS: 1,
-      DIRT: 2,
-      STONE: 3,
-      FLOWER_WHITE: 4,
-      FLOWER_RED: 5,
+      FOREST1: 1,
+      FOREST2: 2,
+      FOREST3: 3,
+      GRASS: 4,
+      DIRT: 5,
+      STONE: 6,
+      FLOWER_WHITE: 7,
+      FLOWER_RED: 8,
 
       HUNTER: 400,
       LICHKING: 401,
@@ -17,7 +20,7 @@ define(['underscore'],
       CTHULHU_GUY: 403,
 
       MIN_GROUND: 0,
-      MAX_GROUND: 5,
+      MAX_GROUND: 8,
 
       MIN_ENTITIES: 400,
       MAX_ENTITIES: 403
@@ -53,7 +56,7 @@ define(['underscore'],
 
       var compiled = {}; 
       _.each(collection, function(value, key) {
-         key = key.toUpperCase();
+        key = key.toUpperCase();
          if (me[key] !== undefined) compiled[me[key]] = value;
       });
 
