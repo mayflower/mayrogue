@@ -74,6 +74,7 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
          }
       }, function(handler, key) {
          Mousetrap.bind(key, handler);
+         document.getElementById('control-' + key).onclick = handler;
       });
 
       socket.on('update', function(payload) {
