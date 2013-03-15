@@ -99,4 +99,7 @@ setInterval(function() {
 }, 200);
 
 
-server.listen(3000);
+// Start on heroku
+var port = process.env.PORT || 3000;
+console.log("Server start on port " + port);
+server.listen(port);
