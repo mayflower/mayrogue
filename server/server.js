@@ -1,7 +1,9 @@
-var express = require('express');
+var express = require('express'),
+    app = express(),
+    server = require('http').createServer(app),
+    io = require('socket.io').listen(server);
 
-var app = express()
-  .use(express.static(__dirname + '/../frontend_prototype'));
+app.use(express.static(__dirname + '/../frontend_prototype'));
 
 // setup environments
 app.configure('development', function() {
@@ -16,4 +18,11 @@ app.get('/foo', function(req, res) {
     res.send('foobar\n');
 });
 
-app.listen(3000);
+io.sockets.on('connection', function (socket) {
+    socket.emit('news', { hello: 'world' });
+    socket.on('my other event', function (data) {
+        console.log(data);
+    });
+});
+
+server.listen(3000);
