@@ -47,6 +47,12 @@ define(['lib/underscore', 'lib/mousetrap', 'tiles',
       viewportHeight: 15
    });
 
+   var socket = io.connect();
+   socket.on('news', function(data) {
+      console.log('awesome data: ', data);
+   });
+   socket.emit('my other event', {foo: 'bar'});
+
    Tileset.ready.then(function() {
 
       var canvas = document.getElementById('stage');
