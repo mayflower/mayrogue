@@ -119,8 +119,26 @@ define(['underscore', 'util', 'geometry', 'tiles'],
                if (!Tiles.properties[me._data[x][y]].walkable) return false;
 
          return true;
+      },
+
+      serialize: function() {
+         var me = this;
+
+         return {
+            width: me._width,
+            height: me._height,
+            data: me._data
+         };
       }
    });
+
+   World.Map.unserialize = function(blob) {
+      return new World.Map({
+         width: blob.width,
+         height: blob.height,
+         data: blob.data
+      });
+   };
 
    World.RandomMap = Util.extend(World.Map, {
       _weights: {

@@ -28,7 +28,7 @@ var map = new World.RandomMap({
 });
 
 io.sockets.on('connection', function (socket) {
-    socket.emit('map', map.getData());
+    socket.emit('map', map.serialize());
 });
 
 server.listen(3000);
