@@ -2,7 +2,7 @@ define(['lib/underscore'],
    function(_)
 {
    "use strict";
-
+   
    var Tiles = {
       FOREST: 0,
       GRASS: 1,

@@ -1,5 +1,5 @@
 define(['lib/underscore', 'lib/mousetrap', 'tiles',
-   'tilesets/oryx', 'world', 'ui', 'lib/domReady'
+   'tilesets/oryx', 'world', 'ui', 'socket.io', 'lib/domReady'
 ],
    function(_, Mousetrap, Tiles, Tileset, World, Ui)
 {
