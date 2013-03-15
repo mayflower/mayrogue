@@ -479,16 +479,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
 
         var entities = [];
         _.times(monsterCount, function(index) {
-           var shape;
-           var x = Math.random();
-
-           if (x < 0.3) {
-              shape = Tiles.LICHKING;
-           } else if (x < 0.6) {
-              shape = Tiles.OGRE;
-           } else {
-              shape = Tiles.CTHULHU_GUY;
-           }
+           var shape = _.random(Tiles.LICHKING, Tiles.CTHULHU_GUY);
 
            entities.push(new World.Entity({
               x: _.random(width),
