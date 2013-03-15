@@ -1,13 +1,13 @@
+var requirejs = require('requirejs');
+requirejs.config({
+   baseUrl: 'scripts'
+});
+
 var express = require('express'),
     app = express(),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server),
-    requirejs = require('requirejs'),
     _ = require('underscore');
-
-requirejs.config({
-   baseUrl: 'scripts'
-});
 
 var World = requirejs('world');
 var Tiles = requirejs('tiles');
