@@ -46,7 +46,7 @@ define(['underscore', 'util'],
          for (x = x0; x < x0 + viewport.getWidth(); x++)
             for (y = y0; y < y0 + viewport.getHeight(); y++)
 
-               me._tiles.drawTileTo(
+               me._tiles.drawTo(
                   me._context,
                   me._tiles.width * (x - x0),
                   me._tiles.height * (y - y0),
@@ -55,7 +55,7 @@ define(['underscore', 'util'],
 
          _.each(me._world.getEntities(), function(entity) {
 
-            me._tiles.drawTileTo(
+            me._tiles.drawTo(
                me._context,
                me._tiles.width * (entity.getX() - x0),
                me._tiles.height * (entity.getY() - y0),
