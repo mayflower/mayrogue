@@ -41,7 +41,7 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
 
    semaphore.when(3, function() {
 
-      var world = new World.World({
+      var world = new World.WorldVisible({
          map: map,
          player: entities[0],
          entities: entities,
@@ -76,22 +76,19 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
          Mousetrap.bind(key, handler);
       });
 
-      setInterval(function() {
-         world.startBatchUpdate();
+      socket.on('update', function(payload) {
+         _.each(payload, function(changeset) {
+            world.startBatchUpdate();
 
-         var entities = world.getEntities();
+            var entity = world.getEntityById(changeset.id);
 
-         _.each(entities, function(entity, index) {
-            if (index === 0 || Math.random() > 0.3) return;
+            if (entity) {
+               entity.setXY(changeset.x, changeset.y);
+            }
 
-            var dx = _.random(2) - 1;
-            var dy = _.random(2) - 1;
-            entity.setXY(entity.getX() + dx, entity.getY() + dy);
+            world.endBatchUpdate();
          });
-
-         world.endBatchUpdate();
-
-      }, 200);
+      });
 
       // pacify jshint
       return mapview;

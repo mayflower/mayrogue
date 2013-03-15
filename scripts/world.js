@@ -290,45 +290,25 @@ define(['underscore', 'util', 'geometry', 'tiles'],
       }
    });
 
-   World.World = Util.extend(Util.Base, {
-      properties: ['dirty',
+   World.WorldBase = Util.extend(Util.Base, {
+      properties: [
          {field: '_map', getter: true},
-         {field: '_player', getter: true},
          {field: '_entities', getter: true},
-         {field: '_viewport', getter: true},
          {field: '_batchInProgress', getter: 'batchInProgress'}
       ],
       mixins: [Util.Observable],
 
-      _viewportWidth: null,
-      _viewportHeight: null,
-      _playerPosition: null,
-
       _dirty: false,
-      _batchInProgress: false,
 
       create: function(config) {
          var me = this;
 
-         me.getConfig(config,
-            ['map', 'player', 'viewportWidth', 'viewportHeight']);
-
-         me._viewport = new Geometry.Rectangle({
-            x: 0,
-            y: 0,
-            width: me._viewportWidth,
-            height: me._viewportHeight
-         });
+         me.getConfig(config, ['map']);
 
          me._entities = [];
          if (config.entities) _.each(config.entities, function(entity) {
             me.addEntity(entity);
          });
-
-         me._playerPosition = {
-            x: Math.floor(me._viewport.getWidth() / 2),
-            y: Math.floor(me._viewport.getHeight() / 2)
-         };
       },
 
       addEntity: function(entity) {
@@ -350,32 +330,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
       _onEntityChange: function(entity, bbOld, bbNew) {
          var me = this;
 
-         if (entity === me._player) {
-            me._trackPlayer();
-         }
-
-         if (me._viewport.intersect(bbOld) || me._viewport.intersect(bbNew)) {
-
-            if (me._batchInProgress) {
-               me._dirty = true;
-            } else {
-               me.fireEvent('visibleChange');
-            }
-         }
-
          me.fireEvent('change');
-      },
-
-      _trackPlayer: function() {
-         var me = this;
-
-         var x = Util.boundValue(me._player.getX() - me._playerPosition.x, 
-            0, me._map.getWidth() - me._viewport.getWidth());
-         var y = Util.boundValue(me._player.getY() - me._playerPosition.y,
-            0, me._map.getHeight() - me._viewport.getHeight());
-
-         me._viewport.setX(x);
-         me._viewport.setY(y);
       },
 
       getEntityById: function(id) {
@@ -426,6 +381,73 @@ define(['underscore', 'util', 'geometry', 'tiles'],
             return (e !== entity &&
                e.getBoundingBox().isInside(x, y));
          });
+      }
+   });
+
+   World.WorldVisible = Util.extend(World.WorldBase, {
+      properties: ['dirty',
+         {field: '_player', getter: true},
+         {field: '_viewport', getter: true},
+      ],
+      mixins: [Util.Observable],
+
+      _dirty: false,
+      _batchInProgress: false,
+
+      _viewportWidth: null,
+      _viewportHeight: null,
+      _playerPosition: null,
+
+      create: function(config) {
+         var me = this;
+
+         me.parent.create.call(me, config);
+
+         me.getConfig(config,
+            ['player', 'viewportWidth', 'viewportHeight']);
+
+         me._viewport = new Geometry.Rectangle({
+            x: 0,
+            y: 0,
+            width: me._viewportWidth,
+            height: me._viewportHeight
+         });
+
+         me._playerPosition = {
+            x: Math.floor(me._viewport.getWidth() / 2),
+            y: Math.floor(me._viewport.getHeight() / 2)
+         };
+      },
+
+      _onEntityChange: function(entity, bbOld, bbNew) {
+         var me = this;
+
+         me.parent._onEntityChange.apply(me, arguments);
+
+         if (entity === me._player) {
+            me._trackPlayer();
+         }
+
+         if (me._viewport.intersect(bbOld) || me._viewport.intersect(bbNew)) {
+
+            if (me._batchInProgress) {
+               me._dirty = true;
+            } else {
+               me.fireEvent('visibleChange');
+            }
+         }
+      },
+
+      _trackPlayer: function() {
+         var me = this;
+
+         var x = Util.boundValue(me._player.getX() - me._playerPosition.x, 
+            0, me._map.getWidth() - me._viewport.getWidth());
+         var y = Util.boundValue(me._player.getY() - me._playerPosition.y,
+            0, me._map.getHeight() - me._viewport.getHeight());
+
+         me._viewport.setX(x);
+         me._viewport.setY(y);
       },
 
       startBatchUpdate: function() {

@@ -24,6 +24,8 @@ app.configure('production', function() {
 
 });
 
+var changeset = [];
+
 var entities = [];
 _.times(20, function(index) {
    var shape;
@@ -45,9 +47,29 @@ _.times(20, function(index) {
    }));
 });
 
+_.each(entities, function(entity) {
+   entity.attachListeners({
+      change: function() {
+         changeset.push({
+            id: entity.getId(),
+            x: entity.getX(),
+            y: entity.getY()
+         });
+      },
+   }, null);
+});
+
 var map = new World.RandomMap({
     width: 35,
     height: 40
+});
+
+var world = new World.WorldBase({
+   map: map,
+   player: null,
+   entities: entities,
+   viewportWidth: 20,
+   viewportHeight: 15
 });
 
 io.sockets.on('connection', function (socket) {
@@ -56,5 +78,25 @@ io.sockets.on('connection', function (socket) {
        return entity.serialize();
     }));
 });
+
+setInterval(function() {
+   var entities = world.getEntities();
+
+   changeset = [];
+
+   _.each(entities, function(entity, index) {
+      if (index === 0 || Math.random() > 0.3) return;
+
+      var dx = _.random(2) - 1;
+      var dy = _.random(2) - 1;
+      entity.setXY(entity.getX() + dx, entity.getY() + dy);
+   });
+
+   if (changeset.length > 0) {
+      io.sockets.volatile.emit('update', changeset);
+   }
+
+}, 200);
+
 
 server.listen(3000);
