@@ -164,24 +164,35 @@ define(['underscore', 'util', 'geometry', 'tiles'],
       _smooth: function() {
            var me = this,
                x,
-               y,
-               stoneTileCount;
+               y;
 
            for (x = 0; x < me._width; x++) {
                for (y = 0; y < me._height; y++) {
-                   stoneTileCount = me._countStoneTilesWithinOneStep(x, y)
-
-                   console.log('count for ' + x + ',' + y + ' ' + stoneTileCount);
-
-                   if (stoneTileCount >= 5) {
+                   if (me._isBorder(x, y) || me._countStoneTilesWithinOneStep(x, y) >= 5) {
                        // change to stone
                        me._data[x][y] = Tiles.STONE;
-                   } else {
-                       me._data[x][y] = me._randomTile();
                    }
                }
            }
       },
+
+       /**
+        * check if x,y is a border tile
+        *
+        * @param x
+        * @param y
+        * @returns {boolean}
+        * @private
+        */
+       _isBorder: function(x, y) {
+           var me = this;
+
+           if (x == 0 || y == 0 || x >= me._width - 1 || y >= me._height - 1) {
+               return true;
+           } else {
+               return false;
+           }
+       },
 
        /**
         * count how many tiles around (x,y) are stone tiles (within one step)
@@ -198,7 +209,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
               stoneTileCount = 0,
               me = this;
 
-           var pos_x, pos_y;
+          var pos_x, pos_y;
 
           for (i = 0; i < offsets.length; i++) {
               for (j = 0; j < offsets.length; j++) {
@@ -207,7 +218,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
                   pos_y = y + offsets[j];
 
                   if (me._data[pos_x] && Tiles.STONE == me._data[pos_x][pos_y]) {
-                    stoneTileCount++;
+                      stoneTileCount++;
                   }
               }
           }
