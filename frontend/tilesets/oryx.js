@@ -28,7 +28,9 @@ define(['underscore', 'util', 'tiles', 'tilesets'],
       mapping: Tiles.compile({
          hunter: {ix: 0, iy: 0},
          lichking: {ix: 6, iy: 1},
-         ogre: {ix:6, iy: 2}
+         ogre: {ix:6, iy: 2},
+         spider: {ix: 2, iy:4},
+         snake: {ix: 11, iy:1}
       })
    });
 
