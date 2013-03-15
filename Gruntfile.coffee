@@ -21,4 +21,6 @@ exports = module.exports = (grunt) ->
         "scripts/**/*.js"
       ]
 
+  grunt.registerTask('default', ['jshint']);
+
   grunt.loadNpmTasks 'grunt-contrib-jshint'
