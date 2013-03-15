@@ -125,7 +125,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
    World.RandomMap = Util.extend(World.Map, {
       _weights: {
          forest: 0.2,
-         stone: 0.2,
+         stone: 0.3,
          dirt: 0.5,
          grass: 1
       },
@@ -148,6 +148,71 @@ define(['underscore', 'util', 'geometry', 'tiles'],
                me._data[x][y] = me._randomTile();
             }
          }
+
+         for (var i = 0; i < 2; i++) {
+            me._smooth();
+         }
+      },
+
+       /**
+        * smooth the generated world
+        *
+        * @see http://roguebasin.roguelikedevelopment.org/index.php?title=Cellular_Automata_Method_for_Generating_Random_Cave-Like_Levels
+        *
+        * @private
+        */
+      _smooth: function() {
+           var me = this,
+               x,
+               y,
+               stoneTileCount;
+
+           for (x = 0; x < me._width; x++) {
+               for (y = 0; y < me._height; y++) {
+                   stoneTileCount = me._countStoneTilesWithinOneStep(x, y)
+
+                   console.log('count for ' + x + ',' + y + ' ' + stoneTileCount);
+
+                   if (stoneTileCount >= 5) {
+                       // change to stone
+                       me._data[x][y] = Tiles.STONE;
+                   } else {
+                       me._data[x][y] = me._randomTile();
+                   }
+               }
+           }
+      },
+
+       /**
+        * count how many tiles around (x,y) are stone tiles (within one step)
+        *
+        * @param x
+        * @param y
+        * @returns {number}
+        * @private
+        */
+      _countStoneTilesWithinOneStep: function(x, y) {
+          var offsets = [-1, 0, 1],
+              i,
+              j,
+              stoneTileCount = 0,
+              me = this;
+
+           var pos_x, pos_y;
+
+          for (i = 0; i < offsets.length; i++) {
+              for (j = 0; j < offsets.length; j++) {
+
+                  pos_x = x + offsets[i];
+                  pos_y = y + offsets[j];
+
+                  if (me._data[pos_x] && Tiles.STONE == me._data[pos_x][pos_y]) {
+                    stoneTileCount++;
+                  }
+              }
+          }
+
+          return stoneTileCount;
       },
 
       _normalizeWeights: function() {
