@@ -63,7 +63,7 @@ setInterval(function() {
    changeset.splice(0, changeset.length);
 
    _.each(world.getEntities(), function(entity, index) {
-      if (index === 0 || Math.random() > 0.3) return;
+      if (Math.random() > 0.3) return;
 
       var dx = _.random(2) - 1;
       var dy = _.random(2) - 1;
