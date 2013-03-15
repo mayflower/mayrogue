@@ -59,6 +59,11 @@ define(['underscore', 'util', 'tiles'],
          var me = this;
 
          if (me._mapping[tile]) {
+            // DRAW SOME grass under trees
+            if (tile == Tiles.FOREST || tile == Tiles.FLOWER_WHITE || tile == Tiles.FLOWER_RED) {
+                me.drawTo(context, x, y, me._mapping[Tiles.GRASS].ix, me._mapping[Tiles.GRASS].iy);
+            }
+
             me.drawTo(context, x, y, me._mapping[tile].ix, me._mapping[tile].iy);
             return true;
          } else {

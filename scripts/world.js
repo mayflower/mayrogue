@@ -124,10 +124,12 @@ define(['underscore', 'util', 'geometry', 'tiles'],
 
    World.RandomMap = Util.extend(World.Map, {
       _weights: {
-         forest: 0.2,
-         stone: 0.3,
-         dirt: 0.5,
-         grass: 1
+         forest: 0.4,
+         flower_white: 0.1,
+         flower_red: 0.1,
+         stone: 0.5,
+         dirt: 0.7,
+         grass: 1.9
       },
 
       create: function(config) {
@@ -233,7 +235,6 @@ define(['underscore', 'util', 'geometry', 'tiles'],
          _.each(me._weights, function(weight, tile) {
             me._weights[tile] /= norm;
          });
-
       },
 
       _randomTile: function() {

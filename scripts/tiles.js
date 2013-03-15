@@ -8,6 +8,8 @@ define(['underscore'],
       GRASS: 1,
       DIRT: 2,
       STONE: 3,
+      FLOWER_WHITE: 4,
+      FLOWER_RED: 5,
 
       HUNTER: 400,
       LICHKING: 401,
@@ -15,7 +17,7 @@ define(['underscore'],
       CTHULHU_GUY: 403,
 
       MIN_GROUND: 0,
-      MAX_GROUND: 3,
+      MAX_GROUND: 5,
 
       MIN_ENTITIES: 400,
       MAX_ENTITIES: 403
@@ -24,9 +26,6 @@ define(['underscore'],
    var tileProperties = {
       stone: {
          walkable: false
-      },
-      forest: {
-          walkable: false
       },
       cthulhu_guy: {
          large: true,
