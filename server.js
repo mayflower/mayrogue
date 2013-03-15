@@ -15,20 +15,26 @@ var Tiles = requirejs('tiles');
 app.use(express.static(__dirname + '/frontend/'));
 app.use('/scripts/', express.static(__dirname + '/scripts/'));
 
-app.configure(function() {
-    io.set("transports", ["xhr-polling"]);
-    io.set("polling duration", 10);
-});
-
 // setup environments
-app.configure('development', function() {
-    app.use(express.logger('dev'));
+var configuration = {
+    'development': function() {
+        app.use(express.logger('dev'));
+    },
+    'production': function() {
+        io.set('log level', 1); // set log level to error and warn
+    },
+    'heroku': function() {
+        this.production(); // apply production settings
+
+        // disable websockets on heroku ceder stack
+        io.set("transports", ["xhr-polling"]);
+        io.set("polling duration", 10);
+    }
+};
+
+_.each(configuration, function(func, env, obj) {
+    app.configure(env, _.bind(func, obj));
 });
-
-app.configure('production', function() {
-
-});
-
 
 var world = World.create(35, 40);
 
