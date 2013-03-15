@@ -80,8 +80,25 @@ define(['underscore', 'util', 'geometry', 'tiles'],
          me._changePosition(x, y);
 
          return me;
+      },
+
+      serialize: function() {
+         var me = this;
+
+         return {
+            x: me.getX(),
+            y: me.getY(),
+            width: me._boundingBox.getWidth(),
+            height: me._boundingBox.getHeight(),
+            shape: me._shape,
+            id: me._id
+         }
       }
    });
+
+   World.Entity.unserialize = function(blob) {
+      return new World.Entity(blob);
+   };
 
    World.Map = Util.extend(Util.Base, {
       properties: [

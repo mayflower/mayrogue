@@ -9,46 +9,27 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
 
    var semaphore = new Util.Semaphore(0);
 
-   var world = null;
+   var map = null;
+   var entities = null;
 
-   socket.on('map', function(blob) {
-      var map = World.Map.unserialize(blob);
+   socket.on('map', function(payload) {
+      map = World.Map.unserialize(payload);
 
-      var hunter = new World.Entity({
+      semaphore.raise();
+   });
+
+   socket.on('entities', function(payload) {
+      var player = new World.Entity({
          x: 6,
          y: 6,
          shape: Tiles.HUNTER,
          id: 0
       });
 
-      var entities = [hunter];
+      entities = [player];
 
-      _.times(20, function(index) {
-         var shape;
-         var x = Math.random();
-
-         if (x < 0.3) {
-            shape = Tiles.LICHKING;
-         } else if (x < 0.6) {
-            shape = Tiles.OGRE;
-         } else {
-            shape = Tiles.CTHULHU_GUY;
-         }
-
-         entities.push(new World.Entity({
-            x: _.random(34),
-            y: _.random(49),
-            shape: shape,
-            id: index + 1
-         }));
-      });
-
-      world = new World.World({
-         map: map,
-         player: hunter,
-         entities: entities,
-         viewportWidth: 20,
-         viewportHeight: 15
+      _.each(payload, function(record) {
+         entities.push(World.Entity.unserialize(record));
       });
 
       semaphore.raise();
@@ -58,7 +39,15 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
       semaphore.raise();
    });
 
-   semaphore.when(2, function() {
+   semaphore.when(3, function() {
+
+      var world = new World.World({
+         map: map,
+         player: entities[0],
+         entities: entities,
+         viewportWidth: 20,
+         viewportHeight: 15
+      });
 
       var canvas = document.getElementById('stage');
 
