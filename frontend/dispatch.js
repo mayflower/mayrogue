@@ -1,7 +1,7 @@
-define(['lib/underscore', 'lib/mousetrap', 'tiles',
-   'tilesets/oryx', 'world', 'ui', 'socket.io', 'lib/domReady'
+define(['underscore', 'mousetrap', 'tiles',
+   '/tilesets/oryx.js', 'world', 'ui', 'socket.io', 'domReady'
 ],
-   function(_, Mousetrap, Tiles, Tileset, World, Ui)
+   function(_, Mousetrap, Tiles, Tileset, World, Ui, Io)
 {
    "use strict";
 
@@ -47,7 +47,7 @@ define(['lib/underscore', 'lib/mousetrap', 'tiles',
       viewportHeight: 15
    });
 
-   var socket = io.connect();
+   var socket = Io.connect();
    socket.on('news', function(data) {
       console.log('awesome data: ', data);
    });

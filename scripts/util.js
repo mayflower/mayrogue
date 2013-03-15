@@ -1,4 +1,4 @@
-define(['lib/underscore'],
+define(['underscore'],
    function(_)
 {
    "use strict";

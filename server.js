@@ -1,9 +1,17 @@
 var express = require('express'),
     app = express(),
     server = require('http').createServer(app),
-    io = require('socket.io').listen(server);
+    io = require('socket.io').listen(server),
+    requirejs = require('requirejs');
 
-app.use(express.static(__dirname + '/../frontend_prototype'));
+requirejs.config({
+   baseUrl: 'scripts'
+});
+
+var World = requirejs('world');
+
+app.use(express.static(__dirname + '/frontend/'));
+app.use('/scripts/', express.static(__dirname + '/scripts/'));
 
 // setup environments
 app.configure('development', function() {
@@ -12,10 +20,6 @@ app.configure('development', function() {
 
 app.configure('production', function() {
 
-});
-
-app.get('/foo', function(req, res) {
-    res.send('foobar\n');
 });
 
 io.sockets.on('connection', function (socket) {

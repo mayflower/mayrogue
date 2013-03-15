@@ -1,4 +1,4 @@
-define(['lib/underscore', 'util', 'geometry', 'tiles'],
+define(['underscore', 'util', 'geometry', 'tiles'],
    function(_, Util, Geometry, Tiles)
 {
    "use strict";
