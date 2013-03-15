@@ -25,6 +25,9 @@ define(['underscore'],
       stone: {
          walkable: false
       },
+      forest: {
+          walkable: false
+      },
       cthulhu_guy: {
          large: true,
          width: 2,
