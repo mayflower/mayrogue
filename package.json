@@ -17,6 +17,7 @@
   "license": "MIT",
   "gitHead": "c77c652c49dce2e9bd12faf80a3b4275011a8ae9",
   "dependencies": {
-    "jshint": "~1.1.0"
+    "jshint": "~1.1.0",
+    "connect": "~2.7.3"
   }
 }
