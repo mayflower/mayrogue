@@ -479,14 +479,19 @@ define(['underscore', 'util', 'geometry', 'tiles'],
 
         var entities = [];
         _.times(monsterCount, function(index) {
-           var shape = _.random(Tiles.LICHKING, Tiles.CTHULHU_GUY);
+           var shape = _.random(Tiles.LICHKING, Tiles.CTHULHU_GUY),
+               entity;
 
-           entities.push(new World.Entity({
-              x: _.random(width),
-              y: _.random(height),
-              shape: shape,
-              id: index + 1
-           }));
+           do {
+                entity = new World.Entity({
+                  x: _.random(width - 1),
+                  y: _.random(height - 1),
+                  shape: shape,
+                  id: index + 1
+               });
+           } while(!map.fieldAccessible(entity.getX(), entity.getY()));
+
+            entities.push(entity);
         });
 
         var world = new World.WorldBase({
