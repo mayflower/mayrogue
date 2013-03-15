@@ -41,7 +41,7 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
 
    semaphore.when(3, function() {
 
-      var world = new World.WorldVisible({
+      var world = new World.World({
          map: map,
          player: entities[0],
          entities: entities,

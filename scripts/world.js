@@ -386,7 +386,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
         }
     });
 
-    World.WorldVisible = Util.extend(World.WorldBase, {
+    World.World = Util.extend(World.WorldBase, {
         properties: ['dirty',
             {field: '_player', getter: true},
             {field: '_viewport', getter: true},
@@ -467,43 +467,6 @@ define(['underscore', 'util', 'geometry', 'tiles'],
             me._dirty = false;
         }
     });
-
-     World.create = function(width, height) {
-          var size = width * height,
-                monsterCount = parseInt(size / 75);
-
-          var map = new World.RandomMap({
-                width: width,
-                height: height
-          });
-
-          var entities = [];
-          _.times(monsterCount, function(index) {
-              var shape = _.random(Tiles.LICHKING, Tiles.CTHULHU_GUY),
-                    entity;
-
-              do {
-                     entity = new World.Entity({
-                        x: _.random(width - 1),
-                        y: _.random(height - 1),
-                        shape: shape,
-                        id: index + 1
-                    });
-              } while(!map.fieldAccessible(entity.getX(), entity.getY()));
-
-                entities.push(entity);
-          });
-
-          var world = new World.WorldBase({
-              map: map,
-              player: null,
-              entities: entities,
-              viewportWidth: 20,
-              viewportHeight: 15,
-          });
-
-          return world;
-     };
 
     return World;
 });
