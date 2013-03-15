@@ -1,2 +1,4 @@
 Makefile.local
 node_modules
+
+.idea
