@@ -1,6 +1,15 @@
 /* global require: true */
 
 require.config({
+   map: {
+       '*': {
+            'geometry': '/lib/geometry.js',
+            'tiles': '/lib/tiles.js',
+            'world': '/lib/world.js',
+            'util': '/lib/util.js'
+       }
+   },
+
    paths: {
       'socket.io': '/socket.io/socket.io.js'
    },
