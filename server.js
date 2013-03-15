@@ -32,6 +32,20 @@ app.configure('production', function() {
 
 var world = World.create(35, 40);
 
+var changeset = [];
+
+_.each(world.getEntities(), function(entity) {
+   entity.attachListeners({
+      change: function() {
+         changeset.push({
+            id: entity.getId(),
+            x: entity.getX(),
+            y: entity.getY()
+         });
+      }
+   }, null);
+});
+
 io.sockets.on('connection', function (socket) {
     socket.emit('map', world.getMap().serialize());
     socket.emit('entities', _.map(world.getEntities(), function(entity) {
@@ -40,6 +54,7 @@ io.sockets.on('connection', function (socket) {
 });
 
 setInterval(function() {
+   changeset.splice(0, changeset.length);
 
    _.each(world.getEntities(), function(entity, index) {
       if (index === 0 || Math.random() > 0.3) return;
@@ -49,8 +64,8 @@ setInterval(function() {
       entity.setXY(entity.getX() + dx, entity.getY() + dy);
    });
 
-   if (world.getChangeset().length > 0) {
-      io.sockets.volatile.emit('update', world.getChangeset());
+   if (changeset.length > 0) {
+      io.sockets.volatile.emit('update', changeset);
    }
 }, 200);
 

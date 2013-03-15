@@ -294,8 +294,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
       properties: [
          {field: '_map', getter: true},
          {field: '_entities', getter: true},
-         {field: '_batchInProgress', getter: 'batchInProgress'},
-         {field: '_changeset', getter: true}
+         {field: '_batchInProgress', getter: 'batchInProgress'}
       ],
       mixins: [Util.Observable],
 
@@ -305,7 +304,6 @@ define(['underscore', 'util', 'geometry', 'tiles'],
          var me = this;
 
          me.getConfig(config, ['map']);
-         me._changeset = [];
 
          me._entities = [];
          if (config.entities) _.each(config.entities, function(entity) {
@@ -500,19 +498,6 @@ define(['underscore', 'util', 'geometry', 'tiles'],
            entities: entities,
            viewportWidth: 20,
            viewportHeight: 15,
-           changeset: []
-        });
-
-        _.each(entities, function(entity) {
-           entity.attachListeners({
-              change: function() {
-                 world.getChangeset().push({
-                    id: entity.getId(),
-                    x: entity.getX(),
-                    y: entity.getY()
-                 });
-              }
-           }, null);
         });
 
         return world;
