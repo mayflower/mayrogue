@@ -33,7 +33,6 @@ define(['underscore', 'util'],
          var me = this;
 
          me._world.detachListeners({visibleChange: me.redraw}, me);
-         me.parent.destroy.call(me);
       },
 
       redraw: function() {

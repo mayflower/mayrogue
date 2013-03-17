@@ -18,6 +18,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
 
         create: function(config) {
             var me = this;
+            Util.Observable.prototype.create.apply(me, arguments);
 
             me.getConfig(config, ['map', 'shape', 'id']);
 
@@ -304,6 +305,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
 
         create: function(config) {
             var me = this;
+            Util.Observable.prototype.create.apply(me, arguments);
 
             me.getConfig(config, ['map']);
 
@@ -357,8 +359,6 @@ define(['underscore', 'util', 'geometry', 'tiles'],
             _.each(me._entities, function(entity) {
                 entity.detachListeners({change: me._onEntityChange}, me);
             });
-
-            me.parent.destroy.call(me);
         },
 
         rectAccessible: function(rect, entity) {
@@ -391,7 +391,6 @@ define(['underscore', 'util', 'geometry', 'tiles'],
             {field: '_player', getter: true},
             {field: '_viewport', getter: true},
         ],
-        mixins: [Util.Observable],
 
         _dirty: false,
         _batchInProgress: false,
@@ -403,7 +402,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
         create: function(config) {
             var me = this;
 
-            me.parent.create.call(me, config);
+            World.WorldBase.prototype.create.apply(me, arguments);
 
             me.getConfig(config,
                 ['player', 'viewportWidth', 'viewportHeight']);
@@ -424,7 +423,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
         _onEntityChange: function(entity, bbOld, bbNew) {
             var me = this;
 
-            me.parent._onEntityChange.apply(me, arguments);
+            World.WorldBase.prototype._onEntityChange.apply(me, arguments);
 
             if (entity === me._player) {
                 me._trackPlayer();

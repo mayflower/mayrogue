@@ -8,7 +8,6 @@ var Util = requirejs('util'),
     Tiles = requirejs('tiles');
 
 var World = Util.extend(WorldShared.WorldBase, {
-    mixins: [Util.Observable]
 });
 
 World.createRandom = function(width, height) {

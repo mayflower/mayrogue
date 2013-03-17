@@ -76,9 +76,6 @@ define(['underscore'],
       var me = this;
 
       if (me.create) me.create.apply(me, arguments);
-      _.each(me.constructor.mixins, function(mixin) {
-         if (mixin.create) mixin.create.apply(me, arguments);
-      });
 
       return me;
    };
@@ -121,7 +118,6 @@ define(['underscore'],
          _processClassDefinition(def, ctor),
          {
             constructor: ctor,
-            parent: base.prototype
          }
       );
       return ctor;
@@ -148,8 +144,6 @@ define(['underscore'],
 
          return me;
       },
-
-      destroy: function() {}
    });
 
    Util.Promise = Util.define({
