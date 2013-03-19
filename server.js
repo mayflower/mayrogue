@@ -8,7 +8,7 @@ var express = require('express'),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server),
     _ = require('underscore'),
-    World = require('./server/world');
+    Maker = require('./server/maker');
 
 var Tiles = requirejs('tiles');
 
@@ -36,7 +36,10 @@ _.each(configuration, function(func, env, obj) {
     app.configure(env, _.bind(func, obj));
 });
 
-var world = World.createRandom(35, 40);
+var world = Maker.create({
+    width: 35,
+    height: 40
+});
 
 var changeset = [];
 

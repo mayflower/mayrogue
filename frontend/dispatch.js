@@ -1,7 +1,9 @@
 define(['underscore', 'util', 'mousetrap', 'tiles',
-   '/tilesets/oryx.js', 'world', 'ui', 'socket.io', 'fastclick', 'domReady'
+   '/tilesets/oryx.js', 'world', 'entity', 'map',
+   'ui', 'socket.io', 'fastclick', 'domReady'
 ],
-   function(_, Util, Mousetrap, Tiles, Tileset, World, Ui, Io, FastClick)
+   function(_, Util, Mousetrap, Tiles, Tileset, World, Entity, Map,
+      Ui, Io, FastClick)
 {
    "use strict";
 
@@ -13,13 +15,13 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
    var entities = null;
 
    socket.on('map', function(payload) {
-      map = World.Map.unserialize(payload);
+      map = Map.unserialize(payload);
 
       semaphore.raise();
    });
 
    socket.on('entities', function(payload) {
-      var player = new World.Entity({
+      var player = new Entity({
          x: 6,
          y: 6,
          shape: Tiles.HUNTER,
@@ -29,7 +31,7 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
       entities = [player];
 
       _.each(payload, function(record) {
-         entities.push(World.Entity.unserialize(record));
+         entities.push(Entity.unserialize(record));
       });
 
       semaphore.raise();
@@ -41,7 +43,7 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
 
    semaphore.when(3, function() {
 
-      var world = new World.World({
+      var world = new World({
          map: map,
          player: entities[0],
          entities: entities,
