@@ -1,104 +1,106 @@
+// vim: set softtabstop=4
+
 define(['underscore', 'util', 'mousetrap', 'tiles',
-   '/tilesets/oryx.js', 'world', 'entity', 'map',
-   'mapView', 'socket.io', 'fastclick', 'domReady'
+    '/tilesets/oryx.js', 'world', 'entity', 'map',
+    'mapView', 'socket.io', 'fastclick', 'domReady'
 ],
-   function(_, Util, Mousetrap, Tiles, Tileset, World, Entity, Map,
-      MapView, Io, FastClick)
+    function(_, Util, Mousetrap, Tiles, Tileset, World, Entity, Map,
+        MapView, Io, FastClick)
 {
-   "use strict";
+    "use strict";
 
-   var socket = Io.connect();
+    var socket = Io.connect();
 
-   var semaphore = new Util.Semaphore(0);
+    var semaphore = new Util.Semaphore(0);
 
-   var map = null;
-   var entities = null;
+    var map = null;
+    var entities = null;
 
-   socket.on('map', function(payload) {
-      map = Map.unserialize(payload);
+    socket.on('map', function(payload) {
+        map = Map.unserialize(payload);
 
-      semaphore.raise();
-   });
+        semaphore.raise();
+    });
 
-   socket.on('entities', function(payload) {
-      var player = new Entity({
-         x: 6,
-         y: 6,
-         shape: Tiles.HUNTER,
-         id: 0
-      });
+    socket.on('entities', function(payload) {
+        var player = new Entity({
+            x: 6,
+            y: 6,
+            shape: Tiles.HUNTER,
+            id: 0
+        });
 
-      entities = [player];
+        entities = [player];
 
-      _.each(payload, function(record) {
-         entities.push(Entity.unserialize(record));
-      });
+        _.each(payload, function(record) {
+            entities.push(Entity.unserialize(record));
+        });
 
-      semaphore.raise();
-   });
+        semaphore.raise();
+    });
 
-   Tileset.ready.then(function() {
-      semaphore.raise();
-   });
+    Tileset.ready.then(function() {
+        semaphore.raise();
+    });
 
-   semaphore.when(3, function() {
+    semaphore.when(3, function() {
 
-      var world = new World({
-         map: map,
-         player: entities[0],
-         entities: entities,
-         viewportWidth: 20,
-         viewportHeight: 15
-      });
+        var world = new World({
+            map: map,
+            player: entities[0],
+            entities: entities,
+            viewportWidth: 20,
+            viewportHeight: 15
+        });
 
-      var canvas = document.getElementById('stage');
+        var canvas = document.getElementById('stage');
 
-      var mapview = new MapView({
-         world: world,
-         tiles: Tileset,
-         canvas: canvas
-      });
+        var mapview = new MapView({
+            world: world,
+            tiles: Tileset,
+            canvas: canvas
+        });
 
-      var player = world.getPlayer();
+        var player = world.getPlayer();
 
-      _.each({
-         left: function() {
-            player.setX(player.getX() - 1);
-         },
-         right: function() {
-            player.setX(player.getX() + 1);
-         },
-         up: function() {
-            player.setY(player.getY() - 1);
-         },
-         down: function() {
-            player.setY(player.getY() + 1);
-         }
-      }, function(handler, key) {
-         Mousetrap.bind(key, handler);
-
-         var el = document.getElementById('control-' + key);
-         if (el) {
-            el.onclick = handler;
-            new FastClick(el);
-         }
-      });
-
-      socket.on('update', function(payload) {
-         _.each(payload, function(changeset) {
-            world.startBatchUpdate();
-
-            var entity = world.getEntityById(changeset.id);
-
-            if (entity) {
-               entity.setXY(changeset.x, changeset.y);
+        _.each({
+            left: function() {
+                player.setX(player.getX() - 1);
+            },
+            right: function() {
+                player.setX(player.getX() + 1);
+            },
+            up: function() {
+                player.setY(player.getY() - 1);
+            },
+            down: function() {
+                player.setY(player.getY() + 1);
             }
+        }, function(handler, key) {
+            Mousetrap.bind(key, handler);
 
-            world.endBatchUpdate();
-         });
-      });
+            var el = document.getElementById('control-' + key);
+            if (el) {
+                el.onclick = handler;
+                new FastClick(el);
+            }
+        });
 
-      // pacify jshint
-      return mapview;
-   });
+        socket.on('update', function(payload) {
+            _.each(payload, function(changeset) {
+                world.startBatchUpdate();
+
+                var entity = world.getEntityById(changeset.id);
+
+                if (entity) {
+                    entity.setXY(changeset.x, changeset.y);
+                }
+
+                world.endBatchUpdate();
+            });
+        });
+
+        // pacify jshint
+        return mapview;
+    });
 });
