@@ -11,17 +11,12 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
 
     var socket = Io.connect();
 
-    var semaphore = new Util.Semaphore(0);
-
-    var map = null;
-    var entities = null;
-
+    var map = new Util.Promise();
     socket.on('map', function(payload) {
-        map = Map.unserialize(payload);
-
-        semaphore.raise();
+        map.resolve(Map.unserialize(payload));
     });
 
+    var entities = new Util.Promise();
     socket.on('entities', function(payload) {
         var player = new Entity({
             x: 6,
@@ -30,20 +25,18 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
             id: 0
         });
 
-        entities = [player];
+        var _entities = [player];
 
         _.each(payload, function(record) {
-            entities.push(Entity.unserialize(record));
+            _entities.push(Entity.unserialize(record));
         });
 
-        semaphore.raise();
+        entities.resolve(_entities);
     });
 
-    Tileset.ready.then(function() {
-        semaphore.raise();
-    });
+    map.and(entities).and(Tileset.ready).then(function(success, map, entities) {
 
-    semaphore.when(3, function() {
+        if (!success) return;
 
         var world = new World({
             map: map,

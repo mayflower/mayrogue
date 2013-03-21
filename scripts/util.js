@@ -156,18 +156,18 @@ define(['underscore'],
         _stack: [],
 
         _resolved: false,
-        _cancelled: false,
         _value: null,
 
         create: function() {
             var me = this;
 
             me._stack = [];
+            me._value = [];
         },
 
         _invoke: function(callback) {
             var me = this;
-            callback(!me._cancelled, me._value);
+            callback.apply(null, me._value);
         },
 
         then: function(callback) {
@@ -180,25 +180,54 @@ define(['underscore'],
             }
         },
 
-        resolve: function(value) {
+        resolve: function() {
             var me = this;
             if (me._resolved) return;
 
-            if (typeof(value) !=  'undefined') {
-                me._value = value;
-            }
-            _.each(me._stack, me._invoke, me);
-
+            me._value = Array.prototype.slice.call(arguments, 0);
+            me._value.unshift(true);
             me._resolved = true;
+            _.each(me._stack, me._invoke, me);
         },
 
         cancel: function() {
             var me = this;
             if (me._resolved) return;
 
+            me._value = [false];
+            me._resolved = true;
             _.each(me._stack, me._invoke, me);
 
-            me._resolved = true;
+        },
+
+        and: function(other) {
+            var me = this;
+
+            var composite = new Util.Promise();
+            me.then(function(success) {
+                if (success) {
+                    var values = Array.prototype.slice.call(arguments, 1);
+
+                    other.then(function(success) {
+
+                        if (success) {
+                            var othervalues = Array.prototype.slice.call(arguments, 1);
+                            composite.resolve.apply(composite, values.concat(othervalues));
+                        }
+                    });
+                } else {
+
+                    composite.cancel();
+                }
+            });
+
+            other.then(function(success) {
+                if (!success) {
+                    composite.cancel();
+                }
+            });
+
+            return composite;
         }
     });
 
