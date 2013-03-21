@@ -5,9 +5,7 @@ define(['underscore', 'util'],
 {
     "use strict";
 
-    var ui = {};
-
-    ui.MapView = Util.extend(Util.Base, {
+    var MapView = Util.extend(Util.Base, {
         properties: [
             {field: '_world', getter: true},
             {field: '_tiles', getter: true},
@@ -66,5 +64,5 @@ define(['underscore', 'util'],
         }
     });
 
-    return ui;
+    return MapView;
 });

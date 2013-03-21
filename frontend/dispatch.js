@@ -1,9 +1,9 @@
 define(['underscore', 'util', 'mousetrap', 'tiles',
    '/tilesets/oryx.js', 'world', 'entity', 'map',
-   'ui', 'socket.io', 'fastclick', 'domReady'
+   'mapView', 'socket.io', 'fastclick', 'domReady'
 ],
    function(_, Util, Mousetrap, Tiles, Tileset, World, Entity, Map,
-      Ui, Io, FastClick)
+      MapView, Io, FastClick)
 {
    "use strict";
 
@@ -53,7 +53,7 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
 
       var canvas = document.getElementById('stage');
 
-      var mapview = new Ui.MapView({
+      var mapview = new MapView({
          world: world,
          tiles: Tileset,
          canvas: canvas
