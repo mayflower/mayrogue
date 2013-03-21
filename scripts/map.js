@@ -13,6 +13,7 @@ define(['underscore', 'util', 'tiles'],
 
         create: function(config) {
             var me = this;
+            Util.Base.prototype.create.apply(me, arguments);
 
             me.getConfig(config, ['data', 'height', 'width']);
             if (!me._width) me._width = _.max(me._data);

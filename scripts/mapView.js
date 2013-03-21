@@ -16,6 +16,7 @@ define(['underscore', 'util'],
 
         create: function(config) {
             var me = this;
+            Util.Base.prototype.create.apply(me, arguments);
 
             me.getConfig(config,
                 ['world', 'tiles', 'canvas']);

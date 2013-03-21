@@ -17,6 +17,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
 
         create: function(config) {
             var me = this;
+            Util.Base.prototype.create.apply(me, arguments);
             Util.Observable.prototype.create.apply(me, arguments);
 
             me.getConfig(config, ['map', 'shape', 'id']);
