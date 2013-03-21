@@ -146,6 +146,10 @@ define(['underscore'],
 
             return me;
         },
+
+        create: function() {},
+
+        destroy: function() {}
     });
 
     Util.Promise = Util.define({
