@@ -49,12 +49,8 @@ io.sockets.on('connection', function (socket) {
 });
 
 setInterval(function() {
-   _.each(world.getEntities(), function(entity, index) {
-      if (Math.random() > 0.3) return;
-
-      var dx = _.random(2) - 1;
-      var dy = _.random(2) - 1;
-      entity.setXY(entity.getX() + dx, entity.getY() + dy);
+   _.each(world.getEntities(), function(entity) {
+      entity.fireEvent('tick');
    });
 
    var changeset = world.pickupChangeset();

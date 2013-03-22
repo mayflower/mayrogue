@@ -3,12 +3,12 @@
 var requirejs = require('requirejs'),
     _ = require('underscore'),
     World = require('./world'),
-    RandomMap = require('./randomMap');
+    RandomMap = require('./randomMap'),
+    Brain = require('./brain');
 
 
 var Entity = requirejs('entity');
     Tiles = requirejs('tiles');
-
 
 exports.create = function(config) {
     var height = config.height, width = config.width;
@@ -27,15 +27,16 @@ exports.create = function(config) {
             entity;
 
         do {
-             entity = new Entity({
+            entity = new Entity({
                 x: _.random(width - 1),
                 y: _.random(height - 1),
                 shape: shape,
                 id: index + 1
             });
         } while(!map.fieldAccessible(entity.getX(), entity.getY()));
-
-         entities.push(entity);
+        
+        (new Brain.RandomWalker()).decorate(entity);
+        entities.push(entity);
     });
 
     var world = new World({
