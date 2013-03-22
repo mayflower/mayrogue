@@ -1,5 +1,7 @@
 // vim: set softtabstop=4
 
+"use strict";
+
 var _ = require('underscore'),
     Util = require('../util');
 
