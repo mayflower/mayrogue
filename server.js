@@ -1,3 +1,5 @@
+"use strict";
+
 var requirejs = require('requirejs');
 requirejs.config({
    baseUrl: 'scripts'
@@ -8,9 +10,8 @@ var express = require('express'),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server),
     _ = require('underscore'),
-    Maker = require('./server/maker');
-
-var Tiles = requirejs('tiles');
+    Maker = require('./server/maker'),
+    Tiles = require('./server/tiles');
 
 app.use(express.static(__dirname + '/frontend/'));
 app.use('/scripts/', express.static(__dirname + '/scripts/'));

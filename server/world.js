@@ -1,10 +1,11 @@
 // vim: set softtabstop=4
 
-var requirejs = require('requirejs'),
-    _ = require('underscore');
+"use strict";
 
-var WorldBase = requirejs('worldBase')
-    Util = requirejs('util');
+var requirejs = require('requirejs'),
+    _ = require('underscore'),
+    Util = require('./util'),
+    WorldBase  = require('./worldBase');
 
 var World = Util.extend(WorldBase, {
 

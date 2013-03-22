@@ -1,14 +1,13 @@
 // vim: set softtabstop=4
 
-var requirejs = require('requirejs'),
-    _ = require('underscore'),
+"use strict";
+
+var _ = require('underscore'),
     World = require('./world'),
     RandomMap = require('./randomMap'),
-    Brain = require('./brain');
-
-
-var Entity = requirejs('entity');
-    Tiles = requirejs('tiles');
+    Brain = require('./brain'),
+    Entity = require('./entity'),
+    Tiles = require('./tiles');
 
 exports.create = function(config) {
     var height = config.height, width = config.width;

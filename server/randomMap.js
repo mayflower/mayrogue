@@ -1,11 +1,11 @@
 // vim: set softtabstop=4
 
-var _ = require('underscore'),
-    requirejs = require('requirejs');
+"use strict";
 
-var Util = requirejs('util'),
-    Map = requirejs('map'),
-    Tiles = requirejs('tiles');
+var _ = require('underscore'),
+    Util = require('./util'),
+    Map = require('./map'),
+    Tiles = require('./tiles');
 
 module.exports = Util.extend(Map, {
     _weights: {
