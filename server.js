@@ -41,20 +41,6 @@ var world = Maker.create({
     height: 40
 });
 
-var changeset = [];
-
-_.each(world.getEntities(), function(entity) {
-   entity.attachListeners({
-      change: function() {
-         changeset.push({
-            id: entity.getId(),
-            x: entity.getX(),
-            y: entity.getY()
-         });
-      }
-   }, null);
-});
-
 io.sockets.on('connection', function (socket) {
     socket.emit('map', world.getMap().serialize());
     socket.emit('entities', _.map(world.getEntities(), function(entity) {
@@ -63,8 +49,6 @@ io.sockets.on('connection', function (socket) {
 });
 
 setInterval(function() {
-   changeset.splice(0, changeset.length);
-
    _.each(world.getEntities(), function(entity, index) {
       if (Math.random() > 0.3) return;
 
@@ -72,6 +56,8 @@ setInterval(function() {
       var dy = _.random(2) - 1;
       entity.setXY(entity.getX() + dx, entity.getY() + dy);
    });
+
+   var changeset = world.pickupChangeset();
 
    if (changeset.length > 0) {
       io.sockets.volatile.emit('update', changeset);
