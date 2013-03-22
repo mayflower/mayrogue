@@ -1,8 +1,10 @@
+// vim: set softtabstop=4
+
 "use strict";
 
 var requirejs = require('requirejs');
 requirejs.config({
-   baseUrl: 'scripts'
+    baseUrl: 'scripts'
 });
 
 var express = require('express'),
@@ -50,15 +52,15 @@ io.sockets.on('connection', function (socket) {
 });
 
 setInterval(function() {
-   _.each(world.getEntities(), function(entity) {
-      entity.fireEvent('tick');
-   });
+    _.each(world.getEntities(), function(entity) {
+        entity.fireEvent('tick');
+    });
 
-   var changeset = world.pickupChangeset();
+    var changeset = world.pickupChangeset();
 
-   if (changeset.length > 0) {
-      io.sockets.volatile.emit('update', changeset);
-   }
+    if (changeset.length > 0) {
+        io.sockets.volatile.emit('update', changeset);
+    }
 }, 200);
 
 
