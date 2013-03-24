@@ -11,36 +11,28 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
 
     var socket = Io.connect();
 
-    var map = new Util.Promise();
-    socket.on('map', function(payload) {
-        map.resolve(Map.unserialize(payload));
-    });
+    var welcomePackage = new Util.Promise();
+    socket.on('welcome', function(payload) {
+        var map = Map.unserialize(payload.map);
 
-    var entities = new Util.Promise();
-    socket.on('entities', function(payload) {
-        var player = new Entity({
-            x: 6,
-            y: 6,
-            shape: Tiles.HUNTER,
-            id: 0
+        var entities = _.map(payload.entities, function(record) {
+            return Entity.unserialize(record);
         });
 
-        var _entities = [player];
-
-        _.each(payload, function(record) {
-            _entities.push(Entity.unserialize(record));
+        var player = _.find(entities, function(entity) {
+            return entity.getId() === payload.playerId;
         });
 
-        entities.resolve(_entities);
+        welcomePackage.resolve(map, entities, player);
     });
 
-    map.and(entities).and(Tileset.ready).then(function(success, map, entities) {
+    welcomePackage.and(Tileset.ready).then(function(success, map, entities, player) {
 
         if (!success) return;
 
         var world = new World({
             map: map,
-            player: entities[0],
+            player: player,
             entities: entities,
             viewportWidth: 20,
             viewportHeight: 15

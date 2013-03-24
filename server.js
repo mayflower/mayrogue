@@ -12,7 +12,7 @@ var express = require('express'),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server),
     _ = require('underscore'),
-    Maker = require('./server/maker'),
+    RandomWorld = require('./server/randomWorld'),
     Tiles = require('./server/tiles');
 
 app.use(express.static(__dirname + '/frontend/'));
@@ -39,16 +39,27 @@ _.each(configuration, function(func, env, obj) {
     app.configure(env, _.bind(func, obj));
 });
 
-var world = Maker.create({
+var world = new RandomWorld({
     width: 35,
     height: 40
 });
 
 io.sockets.on('connection', function (socket) {
-    socket.emit('map', world.getMap().serialize());
-    socket.emit('entities', _.map(world.getEntities(), function(entity) {
-       return entity.serialize();
-    }));
+    var player = world.addNewRandomEntity({
+        shape: Tiles.HUNTER
+    });
+
+    socket.emit('welcome', {
+        map: world.getMap().serialize(),
+        entities: _.map(world.getEntities(), function(entity) {
+           return entity.serialize();
+        }),
+        playerId: player.getId()
+    });
+
+    socket.on('disconnect', function() {
+        world.removeEntity(player);
+    });
 });
 
 setInterval(function() {

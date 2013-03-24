@@ -11,7 +11,7 @@ var World = Util.extend(WorldBase, {
 
     _changeset: null,
 
-    create: function() {
+    create: function(config) {
         var me = this;
 
         WorldBase.prototype.create.apply(me, arguments);

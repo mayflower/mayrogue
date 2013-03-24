@@ -37,6 +37,8 @@ define(['underscore', 'util', 'geometry', 'worldBase'],
                 x: Math.floor(me._viewport.getWidth() / 2),
                 y: Math.floor(me._viewport.getHeight() / 2)
             };
+
+            me._trackPlayer();
         },
 
         _onEntityChange: function(entity, bbOld, bbNew) {
