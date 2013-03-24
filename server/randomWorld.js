@@ -32,6 +32,8 @@ var RandomWorld = Util.extend(World, {
             
             (new Brain.RandomWalker()).decorate(entity);
         });
+
+        me.pickupChangeset();
     },
 
     _freeRandomPos: function() {

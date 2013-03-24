@@ -5,6 +5,7 @@
 var requirejs = require('requirejs'),
     _ = require('underscore'),
     Util = require('./util'),
+    Change = require('./change'),
     WorldBase  = require('./worldBase');
 
 var World = Util.extend(WorldBase, {
@@ -22,11 +23,32 @@ var World = Util.extend(WorldBase, {
         var me = this;
 
         WorldBase.prototype._onEntityChange.apply(me, arguments);
-        me._changeset.push({
+
+        if (!me._changeset) return;
+        me._changeset.push(new Change.Movement({
             id: entity.getId(),
             x: entity.getX(),
             y: entity.getY()
-        });
+        }));
+    },
+
+    addEntity: function(entity) {
+        var me = this;
+
+        WorldBase.prototype.addEntity.apply(me, arguments);
+
+        if (!me._changeset) return;
+        me._changeset.push(new Change.AddEntity({entity: entity}));
+    },
+
+    removeEntity: function(entity) {
+        var me = this;
+
+        WorldBase.prototype.removeEntity.apply(me, arguments);
+
+        if (!me._changeset) return;
+        me._changeset.push(new Change.RemoveEntity({entity: entity}));
+        console.log(me._changeset);
     },
 
     pickupChangeset: function() {

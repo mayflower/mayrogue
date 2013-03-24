@@ -13,6 +13,7 @@ var express = require('express'),
     io = require('socket.io').listen(server),
     _ = require('underscore'),
     RandomWorld = require('./server/randomWorld'),
+    Change = require('./server/change'),
     Tiles = require('./server/tiles');
 
 app.use(express.static(__dirname + '/frontend/'));
@@ -57,6 +58,11 @@ io.sockets.on('connection', function (socket) {
         playerId: player.getId()
     });
 
+    socket.on('movement', function(movement) {
+        player.setXY(player.getX() + movement.x, player.getY() + movement.y);
+        console.log('move');
+    });
+
     socket.on('disconnect', function() {
         world.removeEntity(player);
     });
@@ -67,7 +73,7 @@ setInterval(function() {
         entity.fireEvent('tick');
     });
 
-    var changeset = world.pickupChangeset();
+    var changeset = _.map(world.pickupChangeset(), Change.serialize);
 
     if (changeset.length > 0) {
         io.sockets.volatile.emit('update', changeset);

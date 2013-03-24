@@ -2,10 +2,10 @@
 
 define(['underscore', 'util', 'mousetrap', 'tiles',
     '/tilesets/oryx.js', 'world', 'entity', 'map',
-    'mapView', 'socket.io', 'fastclick', 'domReady'
+    'mapView', 'change', 'socket.io', 'fastclick', 'domReady'
 ],
     function(_, Util, Mousetrap, Tiles, Tileset, World, Entity, Map,
-        MapView, Io, FastClick)
+        MapView, Change, Io, FastClick)
 {
     "use strict";
 
@@ -50,16 +50,20 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
 
         _.each({
             left: function() {
-                player.setX(player.getX() - 1);
+                player.setX(player.getX() - 1)
+                socket.emit('movement', {x: -1, y: 0});
             },
             right: function() {
                 player.setX(player.getX() + 1);
+                socket.emit('movement', {x: 1, y: 0});
             },
             up: function() {
                 player.setY(player.getY() - 1);
+                socket.emit('movement', {x: 0, y: -1});
             },
             down: function() {
                 player.setY(player.getY() + 1);
+                socket.emit('movement', {x: 0, y: 1});
             }
         }, function(handler, key) {
             Mousetrap.bind(key, handler);
@@ -72,17 +76,11 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
         });
 
         socket.on('update', function(payload) {
-            _.each(payload, function(changeset) {
-                world.startBatchUpdate();
+            var changeset = _.map(payload, Change.unserialize);
 
-                var entity = world.getEntityById(changeset.id);
-
-                if (entity) {
-                    entity.setXY(changeset.x, changeset.y);
-                }
-
-                world.endBatchUpdate();
-            });
+            world.startBatchUpdate();
+            _.each(changeset, function(change) {change.apply(world)});
+            world.endBatchUpdate();
         });
 
         // pacify jshint
