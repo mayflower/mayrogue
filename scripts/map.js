@@ -1,4 +1,4 @@
-// vim: set softtabstop=4
+// vim:softtabstop=4:shiftwidth=4
 
 define(['underscore', 'util', 'tiles'],
     function(_, Util, Tiles)
