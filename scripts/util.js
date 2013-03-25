@@ -119,7 +119,7 @@ define(['underscore'],
         ctor.prototype = _.extend(Util.objectCreate(base.prototype),
             _processClassDefinition(def, ctor),
             {
-                constructor: ctor,
+                constructor: ctor
             }
         );
         return ctor;

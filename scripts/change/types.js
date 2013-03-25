@@ -1,7 +1,7 @@
 // vim:softtabstop=4:shiftwidth=4
 
-define(['underscore'],
-    function(_)
+define([],
+    function()
 {
 
     "use strict";
@@ -9,7 +9,7 @@ define(['underscore'],
     var Types = {
         MOVEMENT: 1,
         ADD_ENTITY: 2,
-        REMOVE_ENTITY: 3,
+        REMOVE_ENTITY: 3
     };
 
     return Types;

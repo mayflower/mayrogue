@@ -2,8 +2,7 @@
 
 "use strict";
 
-var _ = require('underscore'),
-    Util = require('../util');
+var Util = require('../util');
 
 var Base = Util.extend(Util.Base, {
     properties: [
@@ -17,7 +16,7 @@ var Base = Util.extend(Util.Base, {
 
         me._entity = entity;
         entity._brain = me;
-        entity.getBrain = function() {return this._brain};
+        entity.getBrain = function() {return this._brain;};
         entity.attachListeners({
             tick: me._onTick
         }, me);
@@ -28,10 +27,11 @@ var Base = Util.extend(Util.Base, {
 
         if (!me._entity) return;
 
-        me._entity._brain = null;
-        entity.detachListeners({
-            tick: _onTick
+        me._entity.detachListeners({
+            tick: me._onTick
         }, me);
+
+        me._entity._brain = null;
     }
 });
 

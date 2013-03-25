@@ -46,8 +46,6 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
             canvas: canvas
         });
 
-        var player = world.getPlayer();
-
         var generation = 0;
 
         function broadcastMovement(dx, dy) {
@@ -59,7 +57,7 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
 
         _.each({
             left: function() {
-                player.setX(player.getX() - 1)
+                player.setX(player.getX() - 1);
                 broadcastMovement(-1, 0);
             },
             right: function() {
@@ -80,7 +78,8 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
             var el = document.getElementById('control-' + key);
             if (el) {
                 el.onclick = handler;
-                new FastClick(el);
+                // pacify JSHint --- avoid "don't use new for side effects..."
+                return new FastClick(el);
             }
         });
 
@@ -89,7 +88,7 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
             var stale = (generation !== payload.generation);
 
             world.startBatchUpdate();
-            _.each(changeset, function(change) {change.apply(world, stale)});
+            _.each(changeset, function(change) {change.apply(world, stale);});
             world.endBatchUpdate();
         });
 

@@ -2,9 +2,7 @@
 
 "use strict";
 
-var requirejs = require('requirejs'),
-    _ = require('underscore'),
-    Util = require('./util'),
+var Util = require('./util'),
     Change = require('./change'),
     WorldBase  = require('./worldBase');
 
@@ -12,7 +10,7 @@ var World = Util.extend(WorldBase, {
 
     _changeset: null,
 
-    create: function(config) {
+    create: function() {
         var me = this;
 
         WorldBase.prototype.create.apply(me, arguments);

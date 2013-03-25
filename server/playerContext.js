@@ -2,8 +2,7 @@
 
 "use strict";
 
-var _ = require('underscore'),
-    Util = require('./util');
+var Util = require('./util');
 
 var PlayerContext = Util.extend(Util.Base, {
     properties: ['entity', 'connection', 'generation'],
@@ -14,7 +13,7 @@ var PlayerContext = Util.extend(Util.Base, {
         var me = this;
         Util.Base.prototype.create.apply(me, arguments);
 
-        me.getConfig(config, ['connection', 'entity'])
+        me.getConfig(config, ['connection', 'entity']);
     }
 });
 

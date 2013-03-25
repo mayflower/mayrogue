@@ -1,7 +1,7 @@
 // vim:softtabstop=4:shiftwidth=4
 
 define(['underscore', 'util', 'change/base', 'change/types', 'entity'],
-    function(_, Util, Base, Types, Entity)
+    function(_, Util, Base, Types)
 {
     "use strict";
 

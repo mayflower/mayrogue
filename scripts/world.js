@@ -8,7 +8,7 @@ define(['underscore', 'util', 'geometry', 'worldBase'],
     var World = Util.extend(WorldBase, {
         properties: ['dirty',
             {field: '_player', getter: true},
-            {field: '_viewport', getter: true},
+            {field: '_viewport', getter: true}
         ],
 
         _dirty: false,

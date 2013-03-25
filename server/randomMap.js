@@ -4,10 +4,12 @@
 
 var _ = require('underscore'),
     Util = require('./util'),
-    Map = require('./map'),
-    Tiles = require('./tiles');
+    Tiles = require('./tiles'),
+    // For some sick, pervert reason, JSHint complains about "redefining Map"
+    // (sic), so we use _Map instead
+    _Map = require('./map');
 
-module.exports = Util.extend(Map, {
+var randomMap = Util.extend(_Map, {
     _weights: {
         forest: 0.1,
         forest1: 0.1,
@@ -77,7 +79,7 @@ module.exports = Util.extend(Map, {
      _isBorder: function(x, y) {
           var me = this;
 
-          if (x == 0 || y == 0 || x >= me._width - 1 || y >= me._height - 1) {
+          if (x === 0 || y === 0 || x >= me._width - 1 || y >= me._height - 1) {
                 return true;
           } else {
                 return false;
@@ -140,3 +142,4 @@ module.exports = Util.extend(Map, {
     }
 });
 
+module.exports = randomMap;

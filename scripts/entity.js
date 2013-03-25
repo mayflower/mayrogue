@@ -95,7 +95,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
                 height: me._boundingBox.getHeight(),
                 shape: me._shape,
                 id: me._id
-            }
+            };
         }
     });
 

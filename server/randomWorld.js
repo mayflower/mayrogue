@@ -17,13 +17,13 @@ var RandomWorld = Util.extend(World, {
         var me = this;
 
         var size = config.width * config.height,
-             monsterCount = parseInt(size / 75);
+             monsterCount = parseInt(size / 75, 10);
 
         World.prototype.create.call(me, _.extend({
             map: new RandomMap(config)
         }, config));
 
-        _.times(monsterCount, function(index) {
+        _.times(monsterCount, function() {
             var shape = _.random(Tiles.LICHKING, Tiles.CTHULHU_GUY);
 
             var entity = me.addNewRandomEntity({

@@ -4,6 +4,8 @@ define(['underscore', 'util', 'tiles'],
     function(_, Util, Tiles)
 {
 
+    "use strict";
+
     var Map = Util.extend(Util.Base, {
         properties: [
             {field: '_data', getter: true},

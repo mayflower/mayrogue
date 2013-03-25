@@ -2,7 +2,9 @@
 
 define(['underscore', 'util'],
     function(_, Util) {
-        
+
+    "use strict";
+
     var WorldBase = Util.extend(Util.Base, {
         properties: [
             {field: '_map', getter: true},
@@ -46,7 +48,7 @@ define(['underscore', 'util'],
             entity.detachListeners({change: me._onEntityChange}, me);
         },
 
-        _onEntityChange: function(entity, bbOld, bbNew) {
+        _onEntityChange: function() {
             var me = this;
 
             me.fireEvent('change');
