@@ -46,8 +46,14 @@ var world = new RandomWorld({
 });
 
 io.sockets.on('connection', function (socket) {
+    var shapes = {
+        0: Tiles.HUNTER,
+        1: Tiles.WARRIOR,
+        2: Tiles.MAGE
+    };
+
     var player = world.addNewRandomEntity({
-        shape: Tiles.HUNTER
+        shape: shapes[_.random(2)]
     });
 
     socket.emit('welcome', {

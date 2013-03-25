@@ -29,6 +29,8 @@ define(['underscore', 'util', 'tiles', 'tilesets'],
         tileHeight: 32,
         mapping: Tiles.compile({
             hunter: {ix: 0, iy: 0},
+            warrior: {ix: 1, iy: 0},
+            mage: {ix: 2, iy: 0},
             lichking: {ix: 6, iy: 1},
             ogre: {ix:6, iy: 2},
             spider: {ix: 2, iy:4},

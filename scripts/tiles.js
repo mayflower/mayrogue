@@ -20,12 +20,14 @@ define(['underscore'],
       SPIDER: 403,
       SNAKE: 404,
       CTHULHU_GUY: 405,
+      WARRIOR: 406,
+      MAGE: 407,
 
       MIN_GROUND: 0,
       MAX_GROUND: 8,
 
       MIN_ENTITIES: 400,
-      MAX_ENTITIES: 405
+      MAX_ENTITIES: 407
    };
 
    var tileProperties = {
