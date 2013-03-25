@@ -1,7 +1,7 @@
 // vim:softtabstop=4:shiftwidth=4
 
-define(['underscore', 'util', 'change/base'],
-    function(_, Util, Base)
+define(['underscore', 'util', 'change/base', 'change/types'],
+    function(_, Util, Base, Types)
 {
     "use strict";
 
@@ -9,6 +9,8 @@ define(['underscore', 'util', 'change/base'],
         _x: null,
         _y: null,
         _id: null,
+
+        type: Types.MOVEMENT,
 
         create: function(config) {
             var me = this;

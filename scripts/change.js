@@ -1,34 +1,19 @@
 // vim:softtabstop=4:shiftwidth=4
 
-define(['underscore', 'util', 'change/movement',
+define(['underscore', 'util', 'change/types', 'change/movement',
         'change/addEntity', 'change/removeEntity'],
-    function(_, Util, Movement, AddEntity, RemoveEntity)
+    function(_, Util, Types, Movement, AddEntity, RemoveEntity)
 {
     "use strict";
 
     var Change = {
-        MOVEMENT: 1,
-        ADDENTITY: 2,
-        REMOVEENTITY: 3,
-
         Movement: Movement,
         AddEntity: AddEntity,
         RemoveEntity: RemoveEntity,
 
         serialize: function(change) {
-            var type;
-            if (change instanceof Movement) {
-                type = Change.MOVEMENT;
-            } else if (change instanceof AddEntity) {
-                type = Change.ADDENTITY;
-            } else if (change instanceof RemoveEntity) {
-                type = Change.REMOVEENTITY;
-            } else {
-                return;
-            }
-
             return {
-                type: type,
+                type: change.type,
                 data: change.serialize()
             };
         },
@@ -37,15 +22,17 @@ define(['underscore', 'util', 'change/movement',
             switch (blob.type) {
                 case (Change.MOVEMENT):
                     return Movement.unserialize(blob.data);
-                case (Change.ADDENTITY):
+                case (Change.ADD_ENTITY):
                     return AddEntity.unserialize(blob.data);
-                case (Change.REMOVEENTITY):
+                case (Change.REMOVE_ENTITY):
                     return RemoveEntity.unserialize(blob.data);
                 default:
                     return null;
             }
         }
     };
+
+    _.extend(Change, Types);
 
     return Change;
 });

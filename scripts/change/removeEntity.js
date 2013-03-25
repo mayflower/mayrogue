@@ -1,12 +1,14 @@
 // vim:softtabstop=4:shiftwidth=4
 
-define(['underscore', 'util', 'change/base', 'entity'],
-    function(_, Util, Base, Entity)
+define(['underscore', 'util', 'change/base', 'change/types', 'entity'],
+    function(_, Util, Base, Types, Entity)
 {
     "use strict";
 
     var RemoveEntity = Util.extend(Base, {
         properties: ['id'],
+
+        type: Types.REMOVE_ENTITY,
 
         create: function(config) {
             var me = this;
