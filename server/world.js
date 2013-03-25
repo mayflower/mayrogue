@@ -48,7 +48,6 @@ var World = Util.extend(WorldBase, {
 
         if (!me._changeset) return;
         me._changeset.push(new Change.RemoveEntity({entity: entity}));
-        console.log(me._changeset);
     },
 
     pickupChangeset: function() {

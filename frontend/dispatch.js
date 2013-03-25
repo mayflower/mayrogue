@@ -48,22 +48,31 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
 
         var player = world.getPlayer();
 
+        var generation = 0;
+
+        function broadcastMovement(dx, dy) {
+            socket.emit('movement', {
+                generation: ++generation,
+                delta: {x: dx, y: dy}
+            });
+        }
+
         _.each({
             left: function() {
                 player.setX(player.getX() - 1)
-                socket.emit('movement', {x: -1, y: 0});
+                broadcastMovement(-1, 0);
             },
             right: function() {
                 player.setX(player.getX() + 1);
-                socket.emit('movement', {x: 1, y: 0});
+                broadcastMovement(1, 0);
             },
             up: function() {
                 player.setY(player.getY() - 1);
-                socket.emit('movement', {x: 0, y: -1});
+                broadcastMovement(0, -1);
             },
             down: function() {
                 player.setY(player.getY() + 1);
-                socket.emit('movement', {x: 0, y: 1});
+                broadcastMovement(0, 1);
             }
         }, function(handler, key) {
             Mousetrap.bind(key, handler);
@@ -76,10 +85,11 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
         });
 
         socket.on('update', function(payload) {
-            var changeset = _.map(payload, Change.unserialize);
+            var changeset = _.map(payload.changeset, Change.unserialize);
+            var stale = (generation !== payload.generation);
 
             world.startBatchUpdate();
-            _.each(changeset, function(change) {change.apply(world)});
+            _.each(changeset, function(change) {change.apply(world, stale)});
             world.endBatchUpdate();
         });
 

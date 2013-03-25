@@ -14,7 +14,8 @@ var express = require('express'),
     _ = require('underscore'),
     RandomWorld = require('./server/randomWorld'),
     Change = require('./server/change'),
-    Tiles = require('./server/tiles');
+    Tiles = require('./server/tiles'),
+    PlayerContext = require('./server/playerContext');
 
 app.use(express.static(__dirname + '/frontend/'));
 app.use('/scripts/', express.static(__dirname + '/scripts/'));
@@ -45,6 +46,8 @@ var world = new RandomWorld({
     height: 40
 });
 
+var players = [];
+
 io.sockets.on('connection', function (socket) {
     var shapes = {
         0: Tiles.HUNTER,
@@ -56,6 +59,12 @@ io.sockets.on('connection', function (socket) {
         shape: shapes[_.random(2)]
     });
 
+    var playerContext = new PlayerContext({
+        entity: player,
+        connection: socket
+    });
+    players.push(playerContext);
+
     socket.emit('welcome', {
         map: world.getMap().serialize(),
         entities: _.map(world.getEntities(), function(entity) {
@@ -64,12 +73,15 @@ io.sockets.on('connection', function (socket) {
         playerId: player.getId()
     });
 
-    socket.on('movement', function(movement) {
-        player.setXY(player.getX() + movement.x, player.getY() + movement.y);
+    socket.on('movement', function(data) {
+        var delta = data.delta;
+        player.setXY(player.getX() + delta.x, player.getY() + delta.y);
+        playerContext.setGeneration(data.generation);
     });
 
     socket.on('disconnect', function() {
         world.removeEntity(player);
+        players = _.without(players, playerContext);
     });
 });
 
@@ -81,7 +93,12 @@ setInterval(function() {
     var changeset = _.map(world.pickupChangeset(), Change.serialize);
 
     if (changeset.length > 0) {
-        io.sockets.volatile.emit('update', changeset);
+        _.each(players, function(player) {
+            player.getConnection().volatile.emit('update', {
+                generation: player.getGeneration(),
+                changeset: changeset
+            });
+        });
     }
 }, 200);
 
