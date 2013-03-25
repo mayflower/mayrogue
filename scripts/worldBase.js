@@ -12,6 +12,7 @@ define(['underscore', 'util'],
         mixins: [Util.Observable],
 
         _dirty: false,
+        _entityMap: null,
 
         create: function(config) {
             var me = this;
@@ -21,6 +22,7 @@ define(['underscore', 'util'],
             me.getConfig(config, ['map']);
 
             me._entities = [];
+            me._entityMap = {};
             if (config.entities) _.each(config.entities, function(entity) {
                 me.addEntity(entity);
             });
@@ -30,6 +32,7 @@ define(['underscore', 'util'],
             var me = this;
 
             me._entities.push(entity);
+            me._entityMap[entity.getId()] = entity;
             entity.setWorld(me);
             entity.attachListeners({change: me._onEntityChange}, me);
         },
@@ -38,6 +41,7 @@ define(['underscore', 'util'],
             var me = this;
 
             me._entities = _.without(me._entities, entity);
+            delete me._entityMap[entity.getId()];
             entity.setWorld(null);
             entity.detachListeners({change: me._onEntityChange}, me);
         },
@@ -50,12 +54,8 @@ define(['underscore', 'util'],
 
         getEntityById: function(id) {
             var me = this;
-            var found = _.find(me._entities, function(entity) {
-                return id === entity.getId();
-            });
 
-            if (!found) return null;
-            return found;
+            return me._entityMap[id] ? me._entityMap[id] : null;
         },
 
         getMapData: function() {
