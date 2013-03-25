@@ -6,9 +6,7 @@ define(['underscore', 'util', 'change/base', 'change/types'],
     "use strict";
 
     var Movement = Util.extend(Base, {
-        _x: null,
-        _y: null,
-        _id: null,
+        properties: ['x', 'y', 'id'],
 
         type: Types.MOVEMENT,
 
