@@ -66,7 +66,6 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('movement', function(movement) {
         player.setXY(player.getX() + movement.x, player.getY() + movement.y);
-        console.log('move');
     });
 
     socket.on('disconnect', function() {
