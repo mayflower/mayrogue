@@ -9,7 +9,8 @@ define(['underscore', 'util', 'geometry', 'tiles'],
     var Entity = Util.extend(Util.Base, {
         properties: ['shape', 'world',
             {field: '_id', getter: true},
-            {field: '_boundingBox', getter: true}
+            {field: '_boundingBox', getter: true},
+            {field: '_hp', getter: true}
         ],
         mixins: [Util.Observable],
 
@@ -49,6 +50,12 @@ define(['underscore', 'util', 'geometry', 'tiles'],
             }
         },
 
+        _doAttack: function(target) {
+            var me = this;
+            // todo do some bounding box math
+            //me.fireEvent('change', me, target);
+        },
+
         getX: function() {
             var me = this;
 
@@ -83,6 +90,24 @@ define(['underscore', 'util', 'geometry', 'tiles'],
             me._changePosition(x, y);
 
             return me;
+        },
+
+        attack: function(x, y) {
+            var me = this,
+                attackTarget = {};
+
+            if (this.getX() + x && this.getY() + y) {
+                attackTarget = {
+                    x: this.getX() + x,
+                    y: this.getY() + y
+                }
+                this._doAttack(attackTarget);
+            } else {
+                return;
+            }
+
+            console.debug("me", this.getX(), this.getY());
+            console.debug("now attacking", attackTarget.x, attackTarget.y);
         },
 
         serialize: function() {
