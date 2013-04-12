@@ -7,10 +7,9 @@ define(['underscore', 'util', 'geometry', 'tiles'],
     "use strict";
 
     var Entity = Util.extend(Util.Base, {
-        properties: ['shape', 'world',
+        properties: ['shape', 'world', 'hp',
             {field: '_id', getter: true},
-            {field: '_boundingBox', getter: true},
-            {field: '_hp', getter: true}
+            {field: '_boundingBox', getter: true}
         ],
         mixins: [Util.Observable],
 
@@ -21,7 +20,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
             Util.Base.prototype.create.apply(me, arguments);
             Util.Observable.prototype.create.apply(me, arguments);
 
-            me.getConfig(config, ['map', 'shape', 'id']);
+            me.getConfig(config, ['map', 'shape', 'id', 'hp']);
 
             me._boundingBox = new Geometry.Rectangle({
                 x: config.x,
@@ -52,7 +51,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
 
         _doAttack: function(target) {
             var me = this;
-            // todo do some bounding box math
+            // todo do some bounding box math and animation
             //me.fireEvent('change', me, target);
         },
 
