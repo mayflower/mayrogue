@@ -5,6 +5,11 @@ define(['underscore'],
 {
     "use strict";
 
+    /**
+     * Process a class definition by applying properties and mixins.
+     *
+     * @private
+     */
     var _processClassDefinition = function(def, ctor) {
         var proto = _.omit(def, 'properties', 'mixins');
 
@@ -14,6 +19,17 @@ define(['underscore'],
         return proto;
     };
 
+    /**
+     * Process class mixings by copying all properties (with the exception of
+     * create) over to the prototype. Mixins are specified in the the array
+     * 'mixins' in the class definition and may be either plain javascript
+     * objects or classes.
+     *
+     * NOTE that inheritance between is currently NOT honoured, only the
+     * prototype's own properties are copied.
+     *
+     * @private
+     */
     var _processClassMixins = function(def, proto, ctor) {
         ctor.mixins = [];
         if (!_.isArray(def.mixins)) return proto;
@@ -35,9 +51,23 @@ define(['underscore'],
         return proto;
     };
 
+    /**
+     * Process class properties. Properties are defined with the 'properties'
+     * array of the class definition and may be either a string or an object
+     * with the entries 'field', 'getter' and 'setter'.
+     *
+     * In the first case, a private property '_name' and a getter / setter pair
+     * 'getName' / 'setName' is generated. In the second form, 'field' specifies
+     * the property name, and 'getter' / 'setter' specify getter and setter
+     * names. Placing 'true' instead of a name automatically infers the
+     * generated name from 'field' by stripping a possible leading underscore
+     * and camelizing, eg '_name' -> 'getName'. Leaving out 'getter' / 'setter'
+     * will skip.
+     */
     var _processClassProperties = function(def, proto) {
         if (!_.isArray(def.properties)) return proto;
 
+        // First step: compile the properties into an associative array
         var properties = {};
         _.each(def.properties, function(val) {
             if (_.isString(val)) {
@@ -48,6 +78,7 @@ define(['underscore'],
                 };
             } else if (_.isObject(val) && val.field !== undefined) {
 
+                // Generate names if neccessary
                 if (val.getter !== undefined && !_.isString(val.getter) && val.getter)
                     val.getter = 'get' + Util.ucFirst(val.field.replace(/^_/, ''));
                 if (val.setter !== undefined && !_.isString(val.setter) && val.setter)
@@ -57,6 +88,7 @@ define(['underscore'],
             }
         });
 
+        // Tag field and getter / setter onto the prototype
         _.each(properties, function(config, field) {
             if (proto[field] === undefined) proto[field] = null;
 
@@ -74,6 +106,11 @@ define(['underscore'],
         return proto;
     };
 
+    /**
+     * Generic constructor. Calls 'create' if applicable.
+     *
+     * @private
+     */
     var _ctor = function() {
         var me = this;
 
@@ -84,6 +121,9 @@ define(['underscore'],
 
     var Util = {};
     
+    /**
+     * Uppercase the first character of a string.
+     */
     Util.ucFirst = function(val) {
         var res = '';
         if (val.length > 0) res += val.substr(0, 1).toUpperCase();
@@ -92,6 +132,9 @@ define(['underscore'],
         return res;
     };
 
+    /**
+     * Create a new object with a given prototype.
+     */
     Util.objectCreate = function(proto) {
         if (Object.create) {
             return Object.create(proto);
@@ -102,6 +145,9 @@ define(['underscore'],
         }
     };
 
+    /**
+     * Define a new class.
+     */
     Util.define = function(def) {
         var ctor = function() {
             return _ctor.apply(this, arguments);
@@ -111,6 +157,9 @@ define(['underscore'],
         return ctor;
     };
 
+    /**
+     * Extend an existing clas..
+     */
     Util.extend = function(base, def) {
         var ctor = function() {
             return _ctor.apply(this, arguments);
@@ -125,6 +174,9 @@ define(['underscore'],
         return ctor;
     };
 
+    /**
+     * Make sure that a value lies in a certain interval.
+     */
     Util.boundValue = function(value, min, max) {
         if (value < min) {
             value = min;
@@ -135,7 +187,15 @@ define(['underscore'],
         return value;
     };
 
+    /**
+     * Generic base class, poll for nice-to-have helpers.
+     */
     Util.Base = Util.define({
+        /**
+         * Process constructor parameters: for each 'name' in properties,
+         * we try to set '_name' on the object from an initial value
+         * provided as 'config[name]'.
+         */
         getConfig: function(config, properties) {
             var me = this;
 
@@ -147,17 +207,29 @@ define(['underscore'],
             return me;
         },
 
+        /**
+         * Stub constructor.
+         */
         create: function() {},
 
+        /**
+         * Stub destructor
+         */
         destroy: function() {}
     });
 
+    /**
+     * Promise.
+     */
     Util.Promise = Util.define({
         _stack: [],
 
         _resolved: false,
         _value: null,
 
+        /**
+         * Create a new promise.
+         */
         create: function() {
             var me = this;
 
@@ -170,6 +242,11 @@ define(['underscore'],
             callback.apply(null, me._value);
         },
 
+        /**
+         * Registers a callback. On resolving the promise, callbacks ara
+         * called and provided with the promise status and any parameters
+         * passed to resolve.
+         */
         then: function(callback) {
             var me = this;
 
@@ -180,6 +257,10 @@ define(['underscore'],
             }
         },
 
+        /**
+         * Resolve the promise. Parameters are passed through to registered
+         * callbacks.
+         */
         resolve: function() {
             var me = this;
             if (me._resolved) return;
@@ -190,6 +271,9 @@ define(['underscore'],
             _.each(me._stack, me._invoke, me);
         },
 
+        /**
+         * Cancels the promise.
+         */
         cancel: function() {
             var me = this;
             if (me._resolved) return;
@@ -200,6 +284,13 @@ define(['underscore'],
 
         },
 
+        /**
+         * Chain two promises by creating a new one which resolves once
+         * both parents are resolved. The new promise is cancelled if any
+         * of its parents are cancelled. If it is resolved, all parameters
+         * provided to the parent resolve calls are passed to the callbacks
+         * as arguments (in the order in which they are chained).
+         */
         and: function(other) {
             var me = this;
 
