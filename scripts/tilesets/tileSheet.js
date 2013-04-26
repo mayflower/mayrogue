@@ -79,15 +79,46 @@ define(['underscore', 'util', 'tilesets/base'],
             );
         },
 
-        drawTo: function(context, x, y, tile) {
+        drawWorldTo: function(context, x, y, tile) {
             var me = this;
 
             var def = me._mapping[tile];
 
             if (!def) return false;
 
-            for (var i = 0; i < def.length; i++)
-                me._drawTo(context, x, y, def[i].ix, def[i].iy);
+            for (var i = 0; i < def.length; i++) {
+                var ix = def[i].ix;
+                var iy = def[i].iy;
+
+                me._drawTo(context, x, y, ix, iy);
+            }
+            return true;
+        },
+
+        drawEntityTo: function(context, x, y, entity) {
+            var me = this;
+
+            var tile = entity.getShape();
+
+            var def = me._mapping[tile];
+
+            if (!def) return false;
+
+            for (var i = 0; i < def.length; i++) {
+
+                if (def[i].heading) {
+
+                    var ix = def[i][entity.getHeading()].ix;
+                    var iy = def[i][entity.getHeading()].iy;
+
+
+                } else {
+                    var ix = def[i].ix;
+                    var iy = def[i].iy;
+                }
+
+                me._drawTo(context, x, y, ix, iy);
+            }
             return true;
         }
     });
