@@ -66,9 +66,15 @@ define(['underscore', 'util', 'tilesets/base'],
             return me;
         },
 
-        drawTo: function(context, x, y, tile) {
+         drawWorldTo: function(context, x, y, tile) {
+             return _.some(this._members, function(tilesheet) {
+                 return tilesheet.drawWorldTo(context, x, y, tile);
+             });
+         },
+
+        drawEntityTo: function(context, x, y, entity) {
             return _.some(this._members, function(tilesheet) {
-                return tilesheet.drawTo(context, x, y, tile);
+                return tilesheet.drawEntityTo(context, x, y, entity);
             });
         },
 

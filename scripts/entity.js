@@ -7,7 +7,11 @@ define(['underscore', 'util', 'geometry', 'tiles'],
     "use strict";
 
     var Entity = Util.extend(Util.Base, {
-        properties: ['shape', 'world', 'hp',
+        properties: [
+            'shape',
+            'world',
+            'hp',
+            'heading',
             {field: '_id', getter: true},
             {field: '_boundingBox', getter: true}
         ],
@@ -21,6 +25,10 @@ define(['underscore', 'util', 'geometry', 'tiles'],
             Util.Observable.prototype.create.apply(me, arguments);
 
             me.getConfig(config, ['map', 'shape', 'id', 'hp']);
+
+            if (!me._heading) {
+                me._heading = 'east';
+            }
 
             me._boundingBox = new Geometry.Rectangle({
                 x: config.x,
@@ -41,11 +49,28 @@ define(['underscore', 'util', 'geometry', 'tiles'],
             });
             var boundingBoxOld = me._boundingBox;
 
-            if (!me._world ||
-                    me._world.rectAccessible(boundingBoxNew, me))
+            me._setHeadingAfterMovement(boundingBoxOld, boundingBoxNew);
+
+            if (!me._world || me._world.rectAccessible(boundingBoxNew, me))
             {
                 me._boundingBox = boundingBoxNew;
                 me.fireEvent('change', me, boundingBoxOld, boundingBoxNew);
+            } else {
+                me.fireEvent('change', me, boundingBoxOld, boundingBoxOld);
+            }
+        },
+
+        _setHeadingAfterMovement: function(boundingBoxOld, boundingBoxNew)
+        {
+            var me = this;
+            if (boundingBoxOld.getX() > boundingBoxNew.getX()) {
+                me._heading = "west";
+            } else if (boundingBoxOld.getX() < boundingBoxNew.getX()) {
+                me._heading = "east";
+            } else if (boundingBoxOld.getY() > boundingBoxNew.getY()) {
+                me._heading = "north";
+            } else if (boundingBoxOld.getY() < boundingBoxNew.getY()) {
+                me._heading = "south";
             }
         },
 

@@ -22,8 +22,10 @@ define(['underscore', 'util', 'tiles', 'tilesets/tileSheet'],
             );
         },
 
-        drawTo: function(context, x, y, tile) {
+        drawEntityTo: function(context, x, y, entity) {
             var me = this;
+
+            var tile = entity.getShape();
 
             var tiledef = Tiles.properties[tile];
             var def = me._mapping[tile];

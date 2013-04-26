@@ -10,7 +10,7 @@ define(['underscore', 'util', 'change/base', 'change/types'],
     "use strict";
 
     var Movement = Util.extend(Base, {
-        properties: ['x', 'y', 'id'],
+        properties: ['x', 'y', 'id', 'heading'],
 
         type: Types.MOVEMENT,
 
@@ -18,7 +18,7 @@ define(['underscore', 'util', 'change/base', 'change/types'],
             var me = this;
             Base.prototype.create.apply(me, arguments);
 
-            me.getConfig(config, ['x', 'y', 'id']);
+            me.getConfig(config, ['x', 'y', 'id', 'heading']);
         },
 
         /**
@@ -35,6 +35,7 @@ define(['underscore', 'util', 'change/base', 'change/types'],
             var entity = world.getEntityById(me._id);
             if (entity) {
                 entity.setXY(me._x, me._y);
+                entity.setHeading(me._heading);
             }
         },
 
@@ -44,7 +45,8 @@ define(['underscore', 'util', 'change/base', 'change/types'],
             return {
                 x: me._x,
                 y: me._y,
-                id: me._id
+                id: me._id,
+                heading: me._heading
             };
         }
     });
