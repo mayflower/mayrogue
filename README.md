@@ -1,10 +1,18 @@
 # Mayrogue
 
+## Install dependencies
+
+```
+npm install
+```
+
 ## Run
 
 ```
 node server.js
 ```
+
+Visit http://localhost:3000 with your browser after the server started.
 
 ## Develop
 
