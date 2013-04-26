@@ -1,5 +1,9 @@
 // vim:softtabstop=4:shiftwidth=4
 
+/**
+ * Client main.
+ */
+
 define(['underscore', 'util', 'mousetrap', 'tiles',
     '/tilesets/oryx.js', 'world', 'entity', 'map',
     'mapView', 'change', 'socket.io', 'fastclick', 'domReady'

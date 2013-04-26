@@ -1,5 +1,14 @@
 // vim:softtabstop=4:shiftwidth=4
 
+/**
+ * Tilesheet. Provides a set of tiles from a spritesheet image.
+ *
+ * Tile shapes are defined by a mapping definition. The mapping definition
+ * is an associative array mapping tile types to arrays of tile positions on the
+ * sheet in the 
+ *
+ */
+
 define(['underscore', 'util', 'tilesets/base'],
     function(_, Util, Base)
 {

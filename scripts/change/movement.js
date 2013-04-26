@@ -1,5 +1,9 @@
 // vim:softtabstop=4:shiftwidth=4
 
+/**
+ * Movement.
+ */
+
 define(['underscore', 'util', 'change/base', 'change/types'],
     function(_, Util, Base, Types)
 {
@@ -17,6 +21,10 @@ define(['underscore', 'util', 'change/base', 'change/types'],
             me.getConfig(config, ['x', 'y', 'id']);
         },
 
+        /**
+         * If a movement of the player entity is stale, we discard it --- avoids
+         * jumping in case of pending requests.
+         */
         apply: function(world, stale) {
             var me = this;
 

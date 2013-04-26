@@ -1,5 +1,9 @@
 // vim:softtabstop=4:shiftwidth=4
 
+/**
+ * Add an entity to the world.
+ */
+
 define(['underscore', 'util', 'change/base', 'change/types', 'entity'],
     function(_, Util, Base, Types, Entity)
 {

@@ -322,6 +322,11 @@ define(['underscore'],
         }
     });
 
+    /**
+     * Semaphore. A semaphore is a counter which can be lowered and raised;
+     * callbacks can be registered which are fired whenever the semaphore
+     * aquires a certain value (trippoint).
+     */
     Util.Semaphore = Util.define({
         _trippoints: null,
         _value: 0,
@@ -332,6 +337,9 @@ define(['underscore'],
             me._trippoints = [];
         },
 
+        /**
+         * Register a handler for a specific trippoint.
+         */
         when: function(value, handler) {
             var me = this;
 
@@ -361,6 +369,10 @@ define(['underscore'],
         }
     });
 
+    /**
+     * Observable. Usually used as a mixin -> take care to call our
+     * constructor in the target class constructor.
+     */
     Util.Observable = Util.define({
         _listeners: null,
 
@@ -370,6 +382,10 @@ define(['underscore'],
             me._listeners = {};
         },
 
+        /**
+         * Attach event listeners. Arguments are an associative array of event
+         * <-> handler pairs, scope is the execution scope if the handlers.
+         */
         attachListeners: function(listeners, scope) {
             var me = this;
 
@@ -383,6 +399,11 @@ define(['underscore'],
             });
         },
 
+        /**
+         * Detach event handlers. Signature is identical to attachListeners.
+         * IMPORTANT: Both scope and handler must match those passed during
+         * registration.
+         */
         detachListeners: function(listeners, scope) {
             var me = this;
 
@@ -397,6 +418,9 @@ define(['underscore'],
             });
         },
 
+        /**
+         * Detach all handlers registered with a given scope.
+         */
         detachAllListeners: function(scope) {
             var me = this;
 
@@ -409,6 +433,10 @@ define(['underscore'],
             });
         },
 
+        /**
+         * Trigger an event. First argument is the event name, all other
+         * arguments are directly passed to the handler.
+         */
         fireEvent: function() {
             var me = this;
             var args = _.values(arguments);

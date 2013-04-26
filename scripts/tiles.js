@@ -1,3 +1,5 @@
+// vim:softtabstop=4:shiftwidth=4
+
 define(['underscore'],
    function(_)
 {

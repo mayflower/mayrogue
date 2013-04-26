@@ -1,5 +1,9 @@
 // vim:softtabstop=4:shiftwidth=4
 
+/**
+ * Tileset base. Defines a standard set of properties shared by all Tilesets.
+ */
+
 define(['underscore', 'util'],
     function(_, Util)
 {

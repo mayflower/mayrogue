@@ -1,5 +1,9 @@
 // vim:softtabstop=4:shiftwidth=4
 
+/**
+ * Enumerate the change types.
+ */
+
 define([],
     function()
 {

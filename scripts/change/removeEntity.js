@@ -1,5 +1,9 @@
 // vim:softtabstop=4:shiftwidth=4
 
+/**
+ * Remove an entity.
+ */
+
 define(['underscore', 'util', 'change/base', 'change/types', 'entity'],
     function(_, Util, Base, Types)
 {

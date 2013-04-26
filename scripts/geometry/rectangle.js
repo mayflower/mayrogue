@@ -1,5 +1,10 @@
 // vim:softtabstop=4:shiftwidth=4
 
+/**
+ * A rectangle on a grid. This is slightly special as a rectangle of width /
+ * height zero indeed covers an extend.
+ */
+
 define(['underscore', 'util'],
     function(_, Util)
 {
