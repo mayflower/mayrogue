@@ -26,7 +26,8 @@ var World = Util.extend(WorldBase, {
         me._changeset.push(new Change.Movement({
             id: entity.getId(),
             x: entity.getX(),
-            y: entity.getY()
+            y: entity.getY(),
+            heading: entity.getHeading()
         }));
     },
 
