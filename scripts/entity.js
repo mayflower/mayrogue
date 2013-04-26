@@ -41,8 +41,6 @@ define(['underscore', 'util', 'geometry', 'tiles'],
         _changePosition: function(x, y) {
             var me = this;
 
-            //console.debug(arguments);
-
             var boundingBoxNew = new Geometry.Rectangle({
                 x: x,
                 y: y,
