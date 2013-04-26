@@ -7,7 +7,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
     "use strict";
 
     var Entity = Util.extend(Util.Base, {
-        properties: ['shape', 'world',
+        properties: ['shape', 'world', 'hp',
             {field: '_id', getter: true},
             {field: '_boundingBox', getter: true}
         ],
@@ -20,7 +20,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
             Util.Base.prototype.create.apply(me, arguments);
             Util.Observable.prototype.create.apply(me, arguments);
 
-            me.getConfig(config, ['map', 'shape', 'id']);
+            me.getConfig(config, ['map', 'shape', 'id', 'hp']);
 
             me._boundingBox = new Geometry.Rectangle({
                 x: config.x,
@@ -47,6 +47,12 @@ define(['underscore', 'util', 'geometry', 'tiles'],
                 me._boundingBox = boundingBoxNew;
                 me.fireEvent('change', me, boundingBoxOld, boundingBoxNew);
             }
+        },
+
+        _doAttack: function(target) {
+            var me = this;
+            // todo do some bounding box math and animation
+            //me.fireEvent('change', me, target);
         },
 
         getX: function() {
@@ -83,6 +89,24 @@ define(['underscore', 'util', 'geometry', 'tiles'],
             me._changePosition(x, y);
 
             return me;
+        },
+
+        attack: function(x, y) {
+            var me = this,
+                attackTarget = {};
+
+            if (this.getX() + x && this.getY() + y) {
+                attackTarget = {
+                    x: this.getX() + x,
+                    y: this.getY() + y
+                }
+                this._doAttack(attackTarget);
+            } else {
+                return;
+            }
+
+            console.debug("me", this.getX(), this.getY());
+            console.debug("now attacking", attackTarget.x, attackTarget.y);
         },
 
         serialize: function() {

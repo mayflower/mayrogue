@@ -13,7 +13,8 @@ define([],
     var Types = {
         MOVEMENT: 1,
         ADD_ENTITY: 2,
-        REMOVE_ENTITY: 3
+        REMOVE_ENTITY: 3,
+        ATTACK: 4
     };
 
     return Types;

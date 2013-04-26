@@ -79,6 +79,12 @@ io.sockets.on('connection', function (socket) {
         playerContext.setGeneration(data.generation);
     });
 
+    socket.on('attack', function(data) {
+        var target = data.target;
+        console.warn('attack target:' + target);
+        // todo do attack math
+    });
+
     socket.on('disconnect', function() {
         world.removeEntity(player);
         players = _.without(players, playerContext);
