@@ -5,7 +5,7 @@ define(['underscore', 'util', 'geometry', 'worldBase'],
 {
     "use strict";
 
-    var World = Util.extend(WorldBase, {
+    var WorldClient = Util.extend(WorldBase, {
         properties: ['dirty',
             {field: '_player', getter: true},
             {field: '_viewport', getter: true}
@@ -60,6 +60,10 @@ define(['underscore', 'util', 'geometry', 'worldBase'],
             }
         },
 
+        _onEntityAttack: function()
+        {
+        },
+
         _trackPlayer: function() {
             var me = this;
 
@@ -88,5 +92,5 @@ define(['underscore', 'util', 'geometry', 'worldBase'],
         }
     });
 
-    return World;
+    return WorldClient;
 });

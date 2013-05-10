@@ -13,8 +13,8 @@ var express = require('express'),
     io = require('socket.io').listen(server),
     _ = require('underscore'),
     RandomWorld = require('./server/randomWorld'),
-    Change = require('./server/change'),
-    Tiles = require('./server/tiles'),
+    Change = require('./server/client/change'),
+    Tiles = require('./server/client/tiles'),
     PlayerContext = require('./server/playerContext');
 
 app.use(express.static(__dirname + '/frontend/'));
@@ -80,9 +80,8 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('attack', function(data) {
-        var target = data.target;
-        console.warn('attack target:' + target);
-        // todo do attack math
+        var attacker = world.getEntityById(data.attacker);
+        attacker.attack();
     });
 
     socket.on('disconnect', function() {

@@ -2,7 +2,7 @@
 
 "use strict";
 
-var Util = require('./util');
+var Util = require('./client/util');
 
 var PlayerContext = Util.extend(Util.Base, {
     properties: ['entity', 'connection', 'generation'],
