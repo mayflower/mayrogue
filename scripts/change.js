@@ -22,8 +22,8 @@
  */
 
 define(['underscore', 'util', 'change/types', 'change/movement',
-        'change/addEntity', 'change/removeEntity', 'change/attack', 'change/stats'],
-    function(_, Util, Types, Movement, AddEntity, RemoveEntity, Attack, Stats)
+        'change/addEntity', 'change/removeEntity', 'change/stats'],
+    function(_, Util, Types, Movement, AddEntity, RemoveEntity, Stats)
 {
     "use strict";
 
@@ -31,7 +31,6 @@ define(['underscore', 'util', 'change/types', 'change/movement',
         Movement: Movement,
         AddEntity: AddEntity,
         RemoveEntity: RemoveEntity,
-        Attack: Attack,
         Stats: Stats,
 
         /**
@@ -57,8 +56,7 @@ define(['underscore', 'util', 'change/types', 'change/movement',
 
                 case (Change.REMOVE_ENTITY):
                     return RemoveEntity.unserialize(blob.data);
-                case (Change.ATTACK):
-                    return Attack.unserialize(blob.data);
+
                 case (Change.STATS):
                     return Stats.unserialize(blob.data);
                 default:

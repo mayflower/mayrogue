@@ -100,6 +100,7 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('attack', function(data) {
         var attacker = world.getEntityById(data.attacker);
+        playerContext.setGeneration(data.generation);
         attacker.attack();
     });
 
