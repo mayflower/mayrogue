@@ -35,7 +35,17 @@ define(['underscore', 'util'],
                 me.isInside(rect._x + rect._width - 1, rect._y) ||
                 me.isInside(rect._x, rect._y + rect._height - 1) ||
                 me.isInside(rect._x + rect._width - 1, rect._y + rect._height - 1);
+        },
+
+        clone: function() {
+            return new Rectangle({
+                x: this._x,
+                y: this._y,
+                width: this._width,
+                height: this._height
+            });
         }
+
     });
 
     return Rectangle;

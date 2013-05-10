@@ -41,8 +41,7 @@ var WorldServer = Util.extend(WorldBase, {
     _onEntityAttack: function(attacker)
     {
         var me = this;
-        var attackTarget = attacker.getAttackTarget();
-        var rect = new Geometry.Rectangle({x: attackTarget.x, y: attackTarget.y, width: 1, height: 1});
+        var rect = attacker.getAttackTarget();
 
         _.each(me._entities, function(entity) {
             if (rect.intersect(entity.getBoundingBox())) {
