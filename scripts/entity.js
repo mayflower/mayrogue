@@ -133,27 +133,33 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
 
         getAttackTarget: function()
         {
-            var attackTarget = {
+            var attackRect = new Geometry.Rectangle({
                 x: this.getX(),
-                y: this.getY()
-            };
+                y: this.getY(),
+                height: 1,
+                width: 1
+            });
 
             switch (this._heading) {
                 case 'north':
-                    attackTarget.y -= 1;
+                    attackRect.setY(attackRect.getY() - 1);
+                    attackRect.setWidth(this._boundingBox.getWidth());
                     break;
                 case 'south':
-                    attackTarget.y += 1;
+                    attackRect.setY(attackRect.getY() + 1 + this._boundingBox.getHeight() - 1);
+                    attackRect.setWidth(this._boundingBox.getWidth());
                     break;
                 case 'east':
-                    attackTarget.x += 1;
+                    attackRect.setX(attackRect.getX() + 1 + this._boundingBox.getWidth() - 1);
+                    attackRect.setHeight(this._boundingBox.getHeight());
                     break;
                 case 'west':
-                    attackTarget.x -= 1;
+                    attackRect.setX(attackRect.getX() - 1);
+                    attackRect.setHeight(this._boundingBox.getHeight());
                     break;
             }
 
-            return attackTarget;
+            return attackRect;
         },
 
         serialize: function() {
