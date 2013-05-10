@@ -71,29 +71,36 @@ var AggressiveWalker = Util.extend(Base, {
 
     attack: function(entity, enemy) {
 
-        var myX = entity.getX();
-        var myY = entity.getY();
-        var enemyX = enemy.getX();
-        var enemyY = enemy.getY();
-
+        var myBox = entity.getBoundingBox();
+        var enemyBox = enemy.getBoundingBox();
         var attack = false;
 
-        if (myX == enemyX) {
-            if (myY == enemyY - 1) {
-                entity._heading = 'south';
-                attack = true;
-            } else if (myY == enemyY + 1) {
-                entity._heading = 'north';
-                attack = true;
-            }
-        } else if (myY == enemyY) {
-            if (myX == enemyX - 1) {
-                entity._heading = 'east';
-                attack = true;
-            } else if (myX == enemyX + 1) {
-                entity._heading = 'west';
-                attack = true;
-            }
+        var eastBox = myBox.clone();
+        eastBox.setX(myBox.getX() + 1);
+        if (eastBox.intersect(enemyBox)) {
+            entity._heading = 'east';
+            attack = true;
+        }
+
+        var westBox = myBox.clone();
+        westBox.setX(myBox.getX() - 1);
+        if (westBox.intersect(enemyBox)) {
+            entity._heading = 'west';
+            attack = true;
+        }
+
+        var northBox = myBox.clone();
+        northBox.setY(myBox.getY() - 1);
+        if (northBox.intersect(enemyBox)) {
+            entity._heading = 'north';
+            attack = true;
+        }
+
+        var southBox = myBox.clone();
+        southBox.setY(myBox.getY() + 1);
+        if (southBox.intersect(enemyBox)) {
+            entity._heading = 'south';
+            attack = true;
         }
 
         if (attack) {
