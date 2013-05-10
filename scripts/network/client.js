@@ -91,8 +91,28 @@ define(['util', 'change'],
                 _.each(changeset, function(change) {change.apply(world, stale);});
                 world.endBatchUpdate();
             });
-        }
+        },
 
+        /**
+         * Log in the user with a username
+         *
+         * @param {string} username
+         */
+        login: function(username) {
+            var me = this;
+            me.Socket.emit('login', {'username': username});
+            me.Socket.on('reconnect', me.login(username));
+        },
+
+        /**
+         * Reconnect the user with the given name
+         *
+         * @param {string} username
+         */
+        reconnect: function(username) {
+            var me = this;
+            me.login(username);
+        }
     });
 
     return client;
