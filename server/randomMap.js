@@ -3,11 +3,11 @@
 "use strict";
 
 var _ = require('underscore'),
-    Util = require('./util'),
-    Tiles = require('./tiles'),
+    Util = require('./client/util'),
+    Tiles = require('./client/tiles'),
     // For some sick, pervert reason, JSHint complains about "redefining Map"
     // (sic), so we use _Map instead
-    _Map = require('./map');
+    _Map = require('./client/map');
 
 var randomMap = Util.extend(_Map, {
     _weights: {

@@ -8,7 +8,7 @@ var Util = require('./client/util'),
     Geometry = require('./client/geometry'),
     _ = require('underscore');
 
-var World = Util.extend(WorldBase, {
+var WorldServer = Util.extend(WorldBase, {
 
     _changeset: null,
 
@@ -73,4 +73,4 @@ var World = Util.extend(WorldBase, {
 
 });
 
-module.exports = World;
+module.exports = WorldServer;

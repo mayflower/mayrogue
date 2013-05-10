@@ -2,7 +2,7 @@
 
 "use strict";
 
-var Util = require('../util');
+var Util = require('../client/util');
 
 var Base = Util.extend(Util.Base, {
     properties: [

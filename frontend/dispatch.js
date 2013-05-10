@@ -5,7 +5,7 @@
  */
 
 define(['underscore', 'util', 'mousetrap', 'tiles',
-    '/tilesets/oryx.js', 'world', 'entity', 'map',
+    '/tilesets/oryx.js', 'worldClient', 'entity', 'map',
     'mapView', 'change', 'socket.io', 'fastclick', 'domReady'
 ],
     function(_, Util, Mousetrap, Tiles, Tileset, World, Entity, Map,
@@ -44,6 +44,8 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
 
         var canvas = document.getElementById('stage');
 
+
+        //noinspection JSUnusedLocalSymbols
         var mapview = new MapView({
             world: world,
             tiles: Tileset,
@@ -95,8 +97,9 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
             var el = document.getElementById('control-' + key);
             if (el) {
                 el.onclick = handler;
-                // pacify JSHint --- avoid "don't use new for side effects..."
-                return new FastClick(el);
+
+                //noinspection JSUnusedLocalSymbols
+                var fastClick = new FastClick(el);
             }
         });
 
@@ -108,8 +111,5 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
             _.each(changeset, function(change) {change.apply(world, stale);});
             world.endBatchUpdate();
         });
-
-        // pacify jshint
-        return mapview;
     });
 });
