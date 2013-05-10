@@ -4,22 +4,19 @@
  * Client main.
  */
 
-define(['underscore', 'util', 'eventBus', 'tiles',
+define(['underscore', 'util', 'eventBus', 'mousetrap', 'tiles',
     '/tilesets/oryx.js', 'worldClient', 'entity', 'map',
-    'mapView', 'change', 'socket.io', 'fastclick' /*@todo move it to the touch controller */, 'controls/controls', 'network/client','domReady'
+    'mapView', 'change', 'statsView', 'socket.io', 'fastclick' /*@todo move it to the touch controller */, 'controls/controls', 'network/client','domReady'
 ],
     function(_, Util, EventBus, Tiles, Tileset, World, Entity, Map,
-        MapView, Change, Io, FastClick, Control, Client)
+        MapView, Change, StatsView, Io, FastClick, Control, Client)
 {
     "use strict";
 
     var startDispater = function(username) {
         var socket = Io.connect();
-        var client = null;
-        //@todo this is now part of the client
         socket.emit('login', {'username': username});
 
-        //@todo move this welcome function to client
         var welcomePackage = new Util.Promise();
         socket.on('welcome', function(payload) {
             var map = Map.unserialize(payload.map);
@@ -35,7 +32,10 @@ define(['underscore', 'util', 'eventBus', 'tiles',
             welcomePackage.resolve(map, entities, player);
         });
 
+        var mapview = null,
+            statsView = null;
         var initWorld = function(success, map, entities, player) {
+
             if (!success) return;
 
             var world = new World({
@@ -46,23 +46,22 @@ define(['underscore', 'util', 'eventBus', 'tiles',
                 viewportHeight: 15
             });
 
-            client = new Client(socket, world, player);
             var canvas = document.getElementById('stage');
 
-            //@todo maybe this can be delete/only call the constructor
-            var mapview = new MapView({
+            mapview = new MapView({
                 world: world,
                 tiles: Tileset,
                 canvas: canvas
             });
 
-            //enable the controls
-            var controls = new Control(client);
-            controls.enable();
+            statsView = new StatsView({
+                player: player,
+                elt: document.getElementById('stats')
+            });
         };
         welcomePackage.and(Tileset.ready).then(initWorld);
 
-        /*socket.on('update', function(payload) {
+        socket.on('update', function(payload) {
             var changeset = _.map(payload.changeset, Change.unserialize);
             var stale = (generation !== payload.generation);
             var world = mapview.getWorld();
@@ -70,9 +69,8 @@ define(['underscore', 'util', 'eventBus', 'tiles',
             world.startBatchUpdate();
             _.each(changeset, function(change) {change.apply(world, stale);});
             world.endBatchUpdate();
-        });*/
+        });
 
-        //@todo refactor to reuse the welcome function
         socket.on('reconnecting', function() {
             if (mapview) {
                 welcomePackage = new Util.Promise();
@@ -83,7 +81,6 @@ define(['underscore', 'util', 'eventBus', 'tiles',
             }
         });
 
-        //@todo this is now part of the client
         socket.on('reconnect', function () {
             socket.emit('login', {'username': username});
         });
