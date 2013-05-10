@@ -4,18 +4,22 @@
  * Client main.
  */
 
-define(['underscore', 'util', 'mousetrap', 'tiles',
+define(['underscore', 'util', 'tiles',
     '/tilesets/oryx.js', 'worldClient', 'entity', 'map',
-    'mapView', 'change', 'socket.io', 'fastclick', 'domReady', 'controls/controls'
+    'mapView', 'socket.io', 'fastclick' /*@todo move it to the touch controller */, 'controls/controls', 'network/client','domReady'
 ],
-    function(_, Util, Mousetrap, Tiles, Tileset, World, Entity, Map,
-        MapView, Change, Io, FastClick, control)
+    function(_, Util, Tiles, Tileset, World, Entity, Map,
+        MapView, Io, FastClick, Control, Client)
 {
     "use strict";
 
+    var me = this;
     var socket = Io.connect();
 
     var welcomePackage = new Util.Promise();
+    /**
+     * @todo move this part to the network/client, it should be better located there
+     */
     socket.on('welcome', function(payload) {
         var map = Map.unserialize(payload.map);
 
@@ -42,6 +46,8 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
             viewportHeight: 15
         });
 
+        var client = new Client(socket, world, player);
+
         var canvas = document.getElementById('stage');
 
 
@@ -52,66 +58,8 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
             canvas: canvas
         });
 
-        var generation = 0;
-
-        function broadcastMovement(dx, dy) {
-            socket.emit('movement', {
-                generation: ++generation,
-                delta: {x: dx, y: dy}
-            });
-        }
-
-        function broadcastAttack() {
-            socket.emit('attack', {
-                generation: ++generation,
-                attacker: player.getId()
-            });
-        }
-
         //enable the controls
-        debugger;
-        control.apply();
-
-        /*window.addEventListener("playerMoveLeft", function() {
-            player.setX(player.getX() - 1);
-            broadcastMovement(-1, 0);
-        });*/
-        /*
-        _.each({
-                   playerMoveLeft: function() {
-                       player.setX(player.getX() - 1);
-                       broadcastMovement(-1, 0);
-
-                   },
-                   playerMoveRight: function() {
-                       player.setX(player.getX() + 1);
-                       broadcastMovement(1, 0);
-                   },
-                   playerMoveUp: function() {
-                       player.setY(player.getY() - 1);
-                       broadcastMovement(0, -1);
-                   },
-                   playerMoveDown: function() {
-                       player.setY(player.getY() + 1);
-                       broadcastMovement(0, 1);
-                   },
-                   playerAttack: function() {
-                       // attack local
-                       player.attack(1,1);
-                       // send attack to server
-                       broadcastAttack(1,1);
-                   }
-               }, function(handler, event) {
-                    window.addEventListener(event, handler);
-            });*/
-
-        socket.on('update', function(payload) {
-            var changeset = _.map(payload.changeset, Change.unserialize);
-            var stale = (generation !== payload.generation);
-
-            world.startBatchUpdate();
-            _.each(changeset, function(change) {change.apply(world, stale);});
-            world.endBatchUpdate();
-        });
+        var controls = new Control(client);
+        controls.enable();
     });
 });
