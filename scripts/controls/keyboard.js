@@ -1,27 +1,42 @@
-define(['underscore', 'util', 'change/base'],
-    function(_, Util, Base)
+define(['underscore', 'util', 'mousetrap'],
+    function(_, Util, Mousetrap)
 {
     "use strict";
 
 
-    var keyboardControls = Util.extend(Base, {
+    var keyboardControls = Util.extend(Util.Base, {
+
+        mixins: [Util.Observable],
+
+        /**
+         * constructor
+         */
+        create: function() {
+            var me = this;
+            Util.Base.prototype.create.apply(me, arguments);
+            Util.Observable.prototype.create.apply(me, arguments);
+        },
+
+        /**
+         * Map keyboard keys to specific (movement) events
+         */
         mapKeys: function() {
-            /*_.each({
+            var me = this;
+            _.each({
                 left: function() {
-                    //new event playerMoveLeft
-                    new CustomEvent("playerMoveLeft", {});
+                    me.fireEvent("playerMoveLeft");
                 },
                 right: function() {
-                    new CustomEvent("playerMoveRight", {});
+                    me.fireEvent("playerMoveRight");
                 },
                 up: function() {
-                    new CustomEvent("playerMoveUp", {});
+                    me.fireEvent("playerMoveUp");
                 },
                 down: function() {
-                    new CustomEvent("playerMoveDown", {});
+                    me.fireEvent("playerMoveDown");
                 },
                 a: function() {
-                    new CustomEvent("playerAttack", {});
+                    me.fireEvent("playerAttack");
                 }
             }, function(handler, key) {
                 Mousetrap.bind(key, handler);
@@ -32,7 +47,7 @@ define(['underscore', 'util', 'change/base'],
                     // pacify JSHint --- avoid "don't use new for side effects..."
                     return new FastClick(el);
                 }
-            });*/
+            });
         }
     });
 
