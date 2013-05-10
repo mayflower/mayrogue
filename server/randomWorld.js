@@ -8,8 +8,7 @@ var _ = require('underscore'),
     RandomMap = require('./randomMap'),
     Brain = require('./brain'),
     Entity = require('./client/entity'),
-    Tiles = require('./client/tiles'),
-    Geometry = require('./client/geometry');
+    Tiles = require('./client/tiles');
 
 var RandomWorld = Util.extend(WorldServer, {
     _nextId: 0,
@@ -32,10 +31,11 @@ var RandomWorld = Util.extend(WorldServer, {
                 hp: 10
             });
 
+            var brain = null;
             if (Math.floor((Math.random()*10)) <= 3) {
-                var brain = new Brain.AggressiveWalker();
+                brain = new Brain.AggressiveWalker();
             } else {
-                var brain = new Brain.RandomWalker();
+                brain = new Brain.RandomWalker();
             }
 
             brain.decorate(entity);
