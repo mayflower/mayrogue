@@ -69,6 +69,8 @@ define(['underscore', 'util', 'geometry', 'worldBase'],
             var me = this;
 
             if (me._viewport.intersect(entity.getBoundingBox())) {
+                console.log('stats change!');
+
                 me._onVisibleChange();
             }
         },

@@ -61,7 +61,8 @@ io.sockets.on('connection', function (socket) {
         shape: shapes[_.random(2)],
         stats: new Stats({
             hp: 20,
-            maxHp: 20
+            maxHp: 20,
+            name: 'Arschkopp'
         })
     });
 

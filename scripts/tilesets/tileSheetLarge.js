@@ -36,7 +36,8 @@ define(['underscore', 'util', 'tiles', 'tilesets/tileSheet'],
                 me._drawTo(context, x, y, def[i].ix, def[i].iy,
                     tiledef.width, tiledef.height);
 
-            context.fillText("HP: " + entity.getStats().getHp(), x, y);
+            me._drawEntityStats(context, x, y, entity);
+
             return true;
         }
     });

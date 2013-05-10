@@ -104,23 +104,39 @@ define(['underscore', 'util', 'tilesets/base'],
 
             if (!def) return false;
 
+            var ix, iy;
             for (var i = 0; i < def.length; i++) {
 
                 if (def[i].heading) {
 
-                    var ix = def[i][entity.getHeading()].ix;
-                    var iy = def[i][entity.getHeading()].iy;
+                    ix = def[i][entity.getHeading()].ix;
+                    iy = def[i][entity.getHeading()].iy;
 
 
                 } else {
-                    var ix = def[i].ix;
-                    var iy = def[i].iy;
+                    ix = def[i].ix;
+                    iy = def[i].iy;
                 }
 
                 me._drawTo(context, x, y, ix, iy);
-                context.fillText("HP: " + entity.getStats().getHp(), x, y);
             }
+
+            me._drawEntityStats(context, x, y, entity);
+
             return true;
+        },
+
+        _drawEntityStats: function(context, x, y, entity) {
+            //noinspection JSUnusedLocalSymbols
+            var me = this,
+                stats = entity.getStats();
+
+            var name = stats.getName(),
+                text = '';
+            if (name) text += (name + ', ');
+            text += ("HP: " + entity.getStats().getHp());
+
+            context.fillText(text, x, y);
         }
     });
 
