@@ -6,10 +6,10 @@
 
 define(['underscore', 'util', 'mousetrap', 'tiles',
     '/tilesets/oryx.js', 'worldClient', 'entity', 'map',
-    'mapView', 'change', 'socket.io', 'fastclick', 'domReady'
+    'mapView', 'change', 'socket.io', 'fastclick', 'domReady', 'controls/controls'
 ],
     function(_, Util, Mousetrap, Tiles, Tileset, World, Entity, Map,
-        MapView, Change, Io, FastClick)
+        MapView, Change, Io, FastClick, control)
 {
     "use strict";
 
@@ -68,40 +68,40 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
             });
         }
 
-        _.each({
-            left: function() {
-                player.setX(player.getX() - 1);
-                broadcastMovement(-1, 0);
-            },
-            right: function() {
-                player.setX(player.getX() + 1);
-                broadcastMovement(1, 0);
-            },
-            up: function() {
-                player.setY(player.getY() - 1);
-                broadcastMovement(0, -1);
-            },
-            down: function() {
-                player.setY(player.getY() + 1);
-                broadcastMovement(0, 1);
-            },
-            a: function() {
-                // attack local
-                player.attack();
-                // send attack to server
-                broadcastAttack();
-            }
-        }, function(handler, key) {
-            Mousetrap.bind(key, handler);
-
-            var el = document.getElementById('control-' + key);
-            if (el) {
-                el.onclick = handler;
-
-                //noinspection JSUnusedLocalSymbols
-                var fastClick = new FastClick(el);
-            }
+        //enable the controls
+        control();
+        window.addEventListener("playerMoveLeft", function() {
+            player.setX(player.getX() - 1);
+            broadcastMovement(-1, 0);
         });
+        /*
+        _.each({
+                   playerMoveLeft: function() {
+                       player.setX(player.getX() - 1);
+                       broadcastMovement(-1, 0);
+
+                   },
+                   playerMoveRight: function() {
+                       player.setX(player.getX() + 1);
+                       broadcastMovement(1, 0);
+                   },
+                   playerMoveUp: function() {
+                       player.setY(player.getY() - 1);
+                       broadcastMovement(0, -1);
+                   },
+                   playerMoveDown: function() {
+                       player.setY(player.getY() + 1);
+                       broadcastMovement(0, 1);
+                   },
+                   playerAttack: function() {
+                       // attack local
+                       player.attack(1,1);
+                       // send attack to server
+                       broadcastAttack(1,1);
+                   }
+               }, function(handler, event) {
+                    window.addEventListener(event, handler);
+            });*/
 
         socket.on('update', function(payload) {
             var changeset = _.map(payload.changeset, Change.unserialize);
