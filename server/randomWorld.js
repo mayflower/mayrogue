@@ -4,13 +4,14 @@
 
 var _ = require('underscore'),
     Util = require('./client/util'),
-    World = require('./worldServer'),
+    WorldServer = require('./worldServer'),
     RandomMap = require('./randomMap'),
     Brain = require('./brain'),
     Entity = require('./client/entity'),
-    Tiles = require('./client/tiles');
+    Tiles = require('./client/tiles'),
+    Geometry = require('./client/geometry');
 
-var RandomWorld = Util.extend(World, {
+var RandomWorld = Util.extend(WorldServer, {
     _nextId: 0,
 
     create: function(config) {
@@ -19,7 +20,7 @@ var RandomWorld = Util.extend(World, {
         var size = config.width * config.height,
              monsterCount = parseInt(size / 75, 10);
 
-        World.prototype.create.call(me, _.extend({
+        WorldServer.prototype.create.call(me, _.extend({
             map: new RandomMap(config)
         }, config));
 
@@ -36,29 +37,23 @@ var RandomWorld = Util.extend(World, {
         me.pickupChangeset();
     },
 
-    _freeRandomPos: function() {
-        var me = this;
-        var x, y;
-        var width = me._map.getWidth(), height = me._map.getHeight();
-
-        do {
-            x = _.random(width - 1);
-            y = _.random(height - 1);
-        } while (!me._map.fieldAccessible(x, y));
-        return {x: x, y: y};
-    },
-
     addNewRandomEntity: function(config) {
         var me = this;
-        var randomPos = me._freeRandomPos();
         
         var entity = new Entity(_.extend(config, {
             id : me._nextId++,
-            x: randomPos.x,
-            y: randomPos.y
+            x: 0,
+            y: 0
         }));
 
-        me.addEntity(entity);
+        var boundingBox = entity.getBoundingBox();
+        var placement = me.getFreeRandomRect(boundingBox.getWidth(), boundingBox.getHeight());
+
+        if (placement) {
+            entity.setXY(placement.getX(), placement.getY());
+            me.addEntity(entity);
+        }
+
         return entity;
     }
 });

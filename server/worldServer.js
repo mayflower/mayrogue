@@ -40,9 +40,22 @@ var WorldServer = Util.extend(WorldBase, {
         var rect = new Geometry.Rectangle({x: attackTarget.x, y: attackTarget.y, width: 1, height: 1});
         _.each(me._entities, function(entity) {
             if (rect.intersect(entity.getBoundingBox())) {
-                me.removeEntity(entity);
+                me._warpEntity(entity);
             }
         });
+    },
+
+    _warpEntity: function(entity, maxTries) {
+        var me = this;
+
+        var boundingBox = entity.getBoundingBox(),
+            placement = me.getFreeRandomRect(boundingBox.getWidth(), boundingBox.getHeight(), maxTries);
+        if (placement) {
+            entity.setXY(placement.getX(), placement.getY());
+            return true;
+        } else {
+            return false;
+        }
     },
 
     addEntity: function(entity) {
@@ -69,8 +82,33 @@ var WorldServer = Util.extend(WorldBase, {
         var changeset = me._changeset;
         me._changeset = [];
         return changeset;
-    }
+    },
 
+    getFreeRandomRect: function(width, height, maxTries) {
+        var me = this,
+            rect = null,
+            thisTry = 0,
+            accessible = false;
+
+        var mapWidth = me._map.getWidth(), mapHeight = me._map.getHeight();
+
+        if (!maxTries) maxTries = 100;
+
+        do {
+            rect = new Geometry.Rectangle({
+                width: width,
+                height: height,
+                x: _.random(mapWidth - 1),
+                y: _.random(mapHeight - 1)
+            });
+        } while (!(accessible = me._map.rectAccessible(rect)) && thisTry++ < maxTries);
+
+        if (accessible) {
+            return rect;
+        } else {
+            return null;
+        }
+    }
 });
 
 module.exports = WorldServer;
