@@ -39,11 +39,11 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
 
             me._stats = config.stats ? config.stats : new Stats();
             me._stats.attachListeners({
-                change: me._statsChange
+                change: me._onStatsChange
             }, me);
         },
 
-        _statsChange: function() {
+        _onStatsChange: function() {
             var me = this;
 
             me.fireEvent('statsChange', me);

@@ -68,9 +68,9 @@ define(['underscore', 'util', 'geometry', 'worldBase'],
         _onEntityStatsChange: function(entity) {
             var me = this;
 
-            if (me._viewport.intersect(entity.getBoundingBox())) {
-                console.log('stats change!');
+            WorldBase.prototype._onEntityStatsChange.apply(me, arguments);
 
+            if (me._viewport.intersect(entity.getBoundingBox())) {
                 me._onVisibleChange();
             }
         },

@@ -45,7 +45,7 @@ define(['underscore', 'util'],
         setName: function(name) {
             var me = this;
 
-            if (name =! me._name) {
+            if (name != me._name) {
                 me._name = name;
                 me.fireEvent('change');
             }

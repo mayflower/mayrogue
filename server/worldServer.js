@@ -31,6 +31,10 @@ var WorldServer = Util.extend(WorldBase, {
             y: entity.getY(),
             heading: entity.getHeading()
         }));
+    },
+
+    _onEntityStatsChange: function(entity) {
+        var me = this;
 
         me._changeset.push(new Change.Stats({
             id: entity.getId(),
