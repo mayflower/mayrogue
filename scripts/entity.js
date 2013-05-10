@@ -154,7 +154,8 @@ define(['underscore', 'util', 'geometry', 'tiles'],
                 width: me._boundingBox.getWidth(),
                 height: me._boundingBox.getHeight(),
                 shape: me._shape,
-                id: me._id
+                id: me._id,
+                hp: me.getHp()
             };
         }
     });

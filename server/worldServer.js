@@ -29,7 +29,8 @@ var WorldServer = Util.extend(WorldBase, {
             id: entity.getId(),
             x: entity.getX(),
             y: entity.getY(),
-            heading: entity.getHeading()
+            heading: entity.getHeading(),
+            hp: entity.getHp()
         }));
     },
 
@@ -40,7 +41,12 @@ var WorldServer = Util.extend(WorldBase, {
         var rect = new Geometry.Rectangle({x: attackTarget.x, y: attackTarget.y, width: 1, height: 1});
         _.each(me._entities, function(entity) {
             if (rect.intersect(entity.getBoundingBox())) {
-                me._warpEntity(entity);
+                var hp = entity.getHp() - 1;
+                if (hp <= 0) {
+                    me._warpEntity(entity);
+                } else {
+                    entity.setHp(hp);
+                }
             }
         });
     },

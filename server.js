@@ -56,7 +56,8 @@ io.sockets.on('connection', function (socket) {
     };
 
     var player = world.addNewRandomEntity({
-        shape: shapes[_.random(2)]
+        shape: shapes[_.random(2)],
+        hp: 20
     });
 
     var playerContext = new PlayerContext({

@@ -28,7 +28,8 @@ var RandomWorld = Util.extend(WorldServer, {
             var shape = _.random(Tiles.LICHKING, Tiles.CTHULHU_GUY);
 
             var entity = me.addNewRandomEntity({
-                shape: shape
+                shape: shape,
+                hp: 10
             });
             
             (new Brain.RandomWalker()).decorate(entity);
