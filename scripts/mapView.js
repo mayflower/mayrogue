@@ -25,7 +25,9 @@ define(['underscore', 'util'],
 
             me._canvas.width = me._tiles.width * me._world.getViewport().getWidth();
             me._canvas.height = me._tiles.height * me._world.getViewport().getHeight();
+
             me._context = me._canvas.getContext('2d');
+            me._context.fillStyle = config.textColor || '#FFFFFF';
 
             me.redraw();
         },
