@@ -24,8 +24,22 @@ var RandomWalker = Util.extend(Base, {
 
         if (Math.random() > me._propability) return;
 
-        var dx = _.random(2) - 1;
-        var dy = _.random(2) - 1;
+        var dx = 0, dy = 0;
+        switch (_.random(3)) {
+            case(0):
+                dx = 1;
+                break;
+            case(1):
+                dx = -1;
+                break;
+            case(2):
+                dy = 1;
+                break;
+            case(3):
+                dy = -1;
+                break;
+        }
+
         me._entity.setXY(me._entity.getX() + dx, me._entity.getY() + dy);
     }
 });
