@@ -6,10 +6,10 @@
 
 define(['underscore', 'util', 'eventBus', 'mousetrap', 'tiles',
     '/tilesets/oryx.js', 'worldClient', 'entity', 'map',
-    'mapView', 'change', 'socket.io', 'fastclick', 'domReady'
+    'mapView', 'change', 'statsView', 'socket.io', 'fastclick', 'domReady'
 ],
     function(_, Util, EventBus, Mousetrap, Tiles, Tileset, World, Entity, Map,
-        MapView, Change, Io, FastClick)
+        MapView, Change, StatsView, Io, FastClick)
 {
     "use strict";
 
@@ -32,7 +32,8 @@ define(['underscore', 'util', 'eventBus', 'mousetrap', 'tiles',
             welcomePackage.resolve(map, entities, player);
         });
 
-        var mapview = null;
+        var mapview = null,
+            statsView = null;
         var generation = 0;
         var initWorld = function(success, map, entities, player) {
 
@@ -52,6 +53,11 @@ define(['underscore', 'util', 'eventBus', 'mousetrap', 'tiles',
                 world: world,
                 tiles: Tileset,
                 canvas: canvas
+            });
+
+            statsView = new StatsView({
+                player: player,
+                elt: document.getElementById('stats')
             });
 
             generation = 0;
