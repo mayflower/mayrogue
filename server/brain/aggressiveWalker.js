@@ -45,6 +45,13 @@ var AggressiveWalker = Util.extend(Base, {
 
         me.currentEnemy = enemy;
 
+        var goTo = me.findWayToEnemy(entity, enemy, world);
+        me._entity.setXY(goTo.x, goTo.y);
+
+        me.attack(entity, enemy);
+    },
+
+    findWayToEnemy: function(entity, enemy, world) {
         var goTo = {
             x: entity.getX(),
             y: entity.getY()
@@ -59,8 +66,40 @@ var AggressiveWalker = Util.extend(Base, {
         } else if (entity.getY() > enemy.getY() && world.fieldAccessible(goTo.x, goTo.y - 1, entity)) {
             goTo.y = goTo.y - 1;
         }
+        return goTo;
+    },
 
-        me._entity.setXY(goTo.x, goTo.y);
+    attack: function(entity, enemy) {
+
+        var myX = entity.getX();
+        var myY = entity.getY();
+        var enemyX = enemy.getX();
+        var enemyY = enemy.getY();
+
+        var attack = false;
+
+        if (myX == enemyX) {
+            if (myY == enemyY - 1) {
+                entity._heading = 'south';
+                attack = true;
+            } else if (myY == enemyY + 1) {
+                entity._heading = 'north';
+                attack = true;
+            }
+        } else if (myY == enemyY) {
+            if (myX == enemyX - 1) {
+                entity._heading = 'east';
+                attack = true;
+            } else if (myX == enemyX + 1) {
+                entity._heading = 'west';
+                attack = true;
+            }
+        }
+
+        if (attack) {
+            entity.attack();
+        }
+
     },
 
     chooseEnemy: function(enemies) {

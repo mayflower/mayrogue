@@ -1,24 +1,35 @@
 <html>
     <head>
-        <link rel="stylesheet" href="style.css"/>
         <title>Mayrogue</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="components/bootstrap-assets/css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link rel="stylesheet" href="style.css"/>
     </head>
     <body>
         <script data-main="main.js" type="text/javascript" src="require.js"></script>
 
-        <div id="main">
-            <canvas id="stage" width="800" height="600"></canvas>
-
-            <div id="controls">
-                <input type="button" value="up" id="control-up" /><br>
-                <input type="button" value="left" id="control-left" />
-                <input type="button" value="right" id="control-right" /><br>
-                <input type="button" value="down" id="control-down" /><br>
-                <input type="button" value="attack" id="control-ctrl" />
+        <div class="container">
+            <div class="navbar navbar-inverse">
+              <div class="navbar-inner">
+                <a class="brand" href="#">Mayrogue</a>
+                <ul class="nav">
+                  <li class="active"><a href="#">Home</a></li>
+                </ul>
+              </div>
             </div>
         </div>
+
+        <div class="container">
+            <div class="row">
+                <div id="main" class="span9">
+                    <canvas id="stage"></canvas>
+                </div>
+                <div id="stats" class="span3" style="background-color: fuchsia">
+                    STATS
+                </div>
+            </div>
+        </div>
+
 
     </body>
 </html>
