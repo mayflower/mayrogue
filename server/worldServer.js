@@ -118,7 +118,19 @@ var WorldServer = Util.extend(WorldBase, {
         } else {
             return null;
         }
+    },
+
+    getPlayersInRect: function(rect, excludeEntity) {
+        var me = this;
+        var entities = [];
+        _.each(me._entities, function(entity) {
+            if (rect.intersect(entity.getBoundingBox()) && entity != excludeEntity) {
+                entities.push(entity);
+            }
+        });
+        return entities;
     }
+
 });
 
 module.exports = WorldServer;
