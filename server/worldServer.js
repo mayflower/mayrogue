@@ -2,12 +2,11 @@
 
 "use strict";
 
-var Util = require('./util'),
-    Change = require('./change'),
-    WorldBase  = require('./worldBase'),
-    requirejs = require('requirejs'),
-    _ = require('underscore'),
-    Geometry = requirejs('geometry');
+var Util = require('./client/util'),
+    Change = require('./client/change'),
+    WorldBase  = require('./client/worldBase'),
+    Geometry = require('./client/geometry'),
+    _ = require('underscore');
 
 var World = Util.extend(WorldBase, {
 
