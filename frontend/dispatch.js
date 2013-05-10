@@ -69,11 +69,13 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
         }
 
         //enable the controls
-        control();
-        window.addEventListener("playerMoveLeft", function() {
+        debugger;
+        control.apply();
+
+        /*window.addEventListener("playerMoveLeft", function() {
             player.setX(player.getX() - 1);
             broadcastMovement(-1, 0);
-        });
+        });*/
         /*
         _.each({
                    playerMoveLeft: function() {

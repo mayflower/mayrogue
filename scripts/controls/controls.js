@@ -1,18 +1,25 @@
-define(['controls/keyboard', 'controls/touch'],
-    function(keyboard, touch)
+define(['util', 'change/base', 'controls/keyboard', 'controls/touch'],
+    function(Util, Base, keyboard, touch)
 {
     "use strict";
 
-    function isTouch() {
-        return (('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0));
-    }
+    var control = Util.extend(Base, {
 
-    //check if touch or keyboard
-    if(isTouch()) {
-        //enable touch control
-        touch();
-    } else {
-        //enable keyboard control
-        keyboard();
-    }
+        isTouch: function() {
+            return (('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0));
+        },
+
+        //check if touch or keyboard
+         apply: function() {
+            if(this.isTouch()) {
+                //enable touch control
+                //touch();
+            } else {
+                //enable keyboard control
+                //keyboard.mapKeys();
+            }
+        }
+    });
+
+    return control;
 });
