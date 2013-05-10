@@ -19,6 +19,7 @@ var express = require('express'),
 
 app.use(express.static(__dirname + '/frontend/'));
 app.use('/scripts/', express.static(__dirname + '/scripts/'));
+app.use('/components/', express.static(__dirname + '/components/'));
 
 // setup environments
 var configuration = {

@@ -7,7 +7,10 @@ require.config({
       'underscore': '../underscore',
       'mousetrap': '../mousetrap',
       'domReady': '../domReady',
-      'fastclick': '../fastclick'
+      'fastclick': '../fastclick',
+      // Bootstrap
+      'bootstrap': '../components/bootstrap-assets/js/bootstrap.min',
+      'jquery': '../components/jquery/jquery.min'
    },
    shim: {
       'underscore': {
@@ -18,8 +21,12 @@ require.config({
       },
       'socket.io': {
          exports: 'io'
-      }
+      },
+      'jquery': {
+         exports: 'jQuery'
+      },
+      'bootstrap': ['jquery']
    }
 });
 
-require(['/dispatch.js']);
+require(['/dispatch.js', '/gui.js']);
