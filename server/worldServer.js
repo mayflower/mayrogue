@@ -29,7 +29,11 @@ var WorldServer = Util.extend(WorldBase, {
             id: entity.getId(),
             x: entity.getX(),
             y: entity.getY(),
-            heading: entity.getHeading(),
+            heading: entity.getHeading()
+        }));
+
+        me._changeset.push(new Change.Stats({
+            id: entity.getId(),
             hp: entity.getHp()
         }));
     },
