@@ -37,6 +37,7 @@ define(['underscore', 'util'],
             me._entityMap[entity.getId()] = entity;
             entity.setWorld(me);
             entity.attachListeners({change: me._onEntityChange}, me);
+            entity.attachListeners({attack: me._onEntityAttack}, me);
         },
 
         removeEntity: function(entity) {
@@ -52,6 +53,10 @@ define(['underscore', 'util'],
             var me = this;
 
             me.fireEvent('change');
+        },
+
+        _onEntityAttack: function()
+        {
         },
 
         getEntityById: function(id) {

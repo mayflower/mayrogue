@@ -60,6 +60,10 @@ define(['underscore', 'util', 'geometry', 'worldBase'],
             }
         },
 
+        _onEntityAttack: function()
+        {
+        },
+
         _trackPlayer: function() {
             var me = this;
 

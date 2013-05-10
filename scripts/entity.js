@@ -76,8 +76,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
 
         _doAttack: function(target) {
             var me = this;
-            // todo do some bounding box math and animation
-            //me.fireEvent('change', me, target);
+            me.fireEvent('attack', me, target);
         },
 
         getX: function() {
@@ -116,22 +115,34 @@ define(['underscore', 'util', 'geometry', 'tiles'],
             return me;
         },
 
-        attack: function(x, y) {
-            var me = this,
-                attackTarget = {};
+        attack: function() {
+            var attackTarget = this.getAttackTarget();
+            this._doAttack(attackTarget);
+        },
 
-            if (this.getX() + x && this.getY() + y) {
-                attackTarget = {
-                    x: this.getX() + x,
-                    y: this.getY() + y
-                }
-                this._doAttack(attackTarget);
-            } else {
-                return;
+        getAttackTarget: function()
+        {
+            var attackTarget = {
+                x: this.getX(),
+                y: this.getY()
+            };
+
+            switch (this._heading) {
+                case 'north':
+                    attackTarget.y -= 1;
+                    break;
+                case 'south':
+                    attackTarget.y += 1;
+                    break;
+                case 'east':
+                    attackTarget.x += 1;
+                    break;
+                case 'west':
+                    attackTarget.x -= 1;
+                    break;
             }
 
-            console.debug("me", this.getX(), this.getY());
-            console.debug("now attacking", attackTarget.x, attackTarget.y);
+            return attackTarget;
         },
 
         serialize: function() {
