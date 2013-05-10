@@ -59,10 +59,10 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
             });
         }
 
-        function broadcastAttack(dx, dy) {
+        function broadcastAttack() {
             socket.emit('attack', {
                 generation: ++generation,
-                target: {x: dx, y: dy}
+                attacker: player.getId()
             });
         }
 
@@ -83,11 +83,11 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
                 player.setY(player.getY() + 1);
                 broadcastMovement(0, 1);
             },
-            ctrl: function() {
+            a: function() {
                 // attack local
-                player.attack(1,1);
+                player.attack();
                 // send attack to server
-                broadcastAttack(1,1);
+                broadcastAttack();
             }
         }, function(handler, key) {
             Mousetrap.bind(key, handler);

@@ -4,7 +4,10 @@
 
 var Util = require('./util'),
     Change = require('./change'),
-    WorldBase  = require('./worldBase');
+    WorldBase  = require('./worldBase'),
+    requirejs = require('requirejs'),
+    _ = require('underscore'),
+    Geometry = requirejs('geometry');
 
 var World = Util.extend(WorldBase, {
 
@@ -29,6 +32,18 @@ var World = Util.extend(WorldBase, {
             y: entity.getY(),
             heading: entity.getHeading()
         }));
+    },
+
+    _onEntityAttack: function(attacker)
+    {
+        var me = this;
+        var attackTarget = attacker.getAttackTarget();
+        var rect = new Geometry.Rectangle({x: attackTarget.x, y: attackTarget.y, width: 1, height: 1});
+        _.each(me._entities, function(entity) {
+            if (rect.intersect(entity.getBoundingBox())) {
+                me.removeEntity(entity);
+            }
+        });
     },
 
     addEntity: function(entity) {
