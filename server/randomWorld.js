@@ -31,8 +31,14 @@ var RandomWorld = Util.extend(WorldServer, {
                 shape: shape,
                 hp: 10
             });
-            
-            (new Brain.RandomWalker()).decorate(entity);
+
+            if (Math.floor((Math.random()*10)) <= 3) {
+                var brain = new Brain.AggressiveWalker();
+            } else {
+                var brain = new Brain.RandomWalker();
+            }
+
+            brain.decorate(entity);
         });
 
         me.pickupChangeset();
