@@ -118,6 +118,7 @@ define(['underscore', 'util', 'tilesets/base'],
                 }
 
                 me._drawTo(context, x, y, ix, iy);
+                context.fillText("HP: " + entity.getHp(), x, y);
             }
             return true;
         }
