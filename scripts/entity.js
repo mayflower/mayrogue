@@ -1,7 +1,7 @@
 // vim:softtabstop=4:shiftwidth=4
 
-define(['underscore', 'util', 'geometry', 'tiles'],
-    function(_, Util, Geometry, Tiles)
+define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
+    function(_, Util, Geometry, Tiles, Stats)
 {
 
     "use strict";
@@ -10,10 +10,10 @@ define(['underscore', 'util', 'geometry', 'tiles'],
         properties: [
             'shape',
             'world',
-            'hp',
             'heading',
             {field: '_id', getter: true},
-            {field: '_boundingBox', getter: true}
+            {field: '_boundingBox', getter: true},
+            {field: '_stats', getter: true}
         ],
         mixins: [Util.Observable],
 
@@ -24,7 +24,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
             Util.Base.prototype.create.apply(me, arguments);
             Util.Observable.prototype.create.apply(me, arguments);
 
-            me.getConfig(config, ['map', 'shape', 'id', 'hp']);
+            me.getConfig(config, ['map', 'shape', 'id']);
 
             if (!me._heading) {
                 me._heading = 'east';
@@ -36,6 +36,17 @@ define(['underscore', 'util', 'geometry', 'tiles'],
                 width: Tiles.properties[me._shape].width,
                 height: Tiles.properties[me._shape].height
             });
+
+            me._stats = config.stats ? config.stats : new Stats();
+            me._stats.attachListeners({
+                change: me._statsChange
+            }, me);
+        },
+
+        _statsChange: function() {
+            var me = this;
+
+            me.fireEvent('statsChange', me);
         },
 
         _changePosition: function(x, y) {
@@ -155,12 +166,13 @@ define(['underscore', 'util', 'geometry', 'tiles'],
                 height: me._boundingBox.getHeight(),
                 shape: me._shape,
                 id: me._id,
-                hp: me.getHp()
+                stats: me._stats.serialize()
             };
         }
     });
 
     Entity.unserialize = function(blob) {
+        blob.stats = Stats.unserialize(blob.stats);
         return new Entity(blob);
     };
 

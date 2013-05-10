@@ -60,6 +60,16 @@ define(['underscore', 'util', 'geometry', 'worldBase'],
             }
         },
 
+        _onEntityStatsChange: function(entity) {
+            var me = this;
+
+            console.log('stats change');
+            if (me._viewport.intersect(entity.getBoundingBox())) {
+                me.fireEvent('visibleChange');
+                console.log('-> visible');
+            }
+        },
+
         _onEntityAttack: function()
         {
         },

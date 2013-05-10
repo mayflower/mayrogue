@@ -15,7 +15,8 @@ var express = require('express'),
     RandomWorld = require('./server/randomWorld'),
     Change = require('./server/client/change'),
     Tiles = require('./server/client/tiles'),
-    PlayerContext = require('./server/playerContext');
+    PlayerContext = require('./server/playerContext'),
+    Stats = require('./server/client/stats');
 
 app.use(express.static(__dirname + '/frontend/'));
 app.use('/scripts/', express.static(__dirname + '/scripts/'));
@@ -58,7 +59,10 @@ io.sockets.on('connection', function (socket) {
 
     var player = world.addNewRandomEntity({
         shape: shapes[_.random(2)],
-        hp: 20
+        stats: new Stats({
+            hp: 20,
+            maxHp: 20
+        })
     });
 
     var playerContext = new PlayerContext({

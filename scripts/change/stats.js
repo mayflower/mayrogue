@@ -25,7 +25,7 @@ define(['underscore', 'util', 'change/base', 'change/types'],
 
                 var entity = world.getEntityById(me._id);
                 if (entity) {
-                    entity.setHp(me._hp);
+                    entity.getStats().setHp(me._hp);
                 }
             },
 
