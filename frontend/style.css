@@ -1,22 +1,10 @@
 body {
     margin: 0;
     padding: 0;
+    background-color: #333333;
 }
 
 #stage {
     border: 1px solid;
-    margin: 10px;
-}
-
-div#controls {
-    width: 220px;
-    text-align: center;
-    padding: 10px;
-    display: inline-block;
-}
-
-div#controls input {
-    margin: auto;
-    width: 100px;
-    height: 100px;
+    margin: 0 34px;
 }

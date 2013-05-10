@@ -8,8 +8,8 @@ var _ = require('underscore'),
     RandomMap = require('./randomMap'),
     Brain = require('./brain'),
     Entity = require('./client/entity'),
-    Tiles = require('./client/tiles'),
-    Geometry = require('./client/geometry');
+    Stats = require('./client/stats'),
+    Tiles = require('./client/tiles');
 
 var RandomWorld = Util.extend(WorldServer, {
     _nextId: 0,
@@ -28,10 +28,21 @@ var RandomWorld = Util.extend(WorldServer, {
             var shape = _.random(Tiles.LICHKING, Tiles.CTHULHU_GUY);
 
             var entity = me.addNewRandomEntity({
-                shape: shape
+                shape: shape,
+                stats: new Stats({
+                    hp: 10,
+                    maxHp: 10
+                })
             });
-            
-            (new Brain.RandomWalker()).decorate(entity);
+
+            var brain = null;
+            if (Math.floor((Math.random()*10)) <= 3) {
+                brain = new Brain.AggressiveWalker();
+            } else {
+                brain = new Brain.RandomWalker();
+            }
+
+            brain.decorate(entity);
         });
 
         me.pickupChangeset();

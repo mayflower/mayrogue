@@ -15,10 +15,12 @@ var express = require('express'),
     RandomWorld = require('./server/randomWorld'),
     Change = require('./server/client/change'),
     Tiles = require('./server/client/tiles'),
-    PlayerContext = require('./server/playerContext');
+    PlayerContext = require('./server/playerContext'),
+    Stats = require('./server/client/stats');
 
 app.use(express.static(__dirname + '/frontend/'));
 app.use('/scripts/', express.static(__dirname + '/scripts/'));
+app.use('/components/', express.static(__dirname + '/components/'));
 
 // setup environments
 var configuration = {
@@ -48,7 +50,7 @@ var world = new RandomWorld({
 
 var players = [];
 
-io.sockets.on('connection', function (socket) {
+var initPlayer = function(socket, username) {
     var shapes = {
         0: Tiles.HUNTER,
         1: Tiles.WARRIOR,
@@ -56,7 +58,12 @@ io.sockets.on('connection', function (socket) {
     };
 
     var player = world.addNewRandomEntity({
-        shape: shapes[_.random(2)]
+        shape: shapes[_.random(2)],
+        stats: new Stats({
+            hp: 20,
+            maxHp: 20,
+            name: username
+        })
     });
 
     var playerContext = new PlayerContext({
@@ -65,12 +72,24 @@ io.sockets.on('connection', function (socket) {
     });
     players.push(playerContext);
 
-    socket.emit('welcome', {
-        map: world.getMap().serialize(),
-        entities: _.map(world.getEntities(), function(entity) {
-           return entity.serialize();
-        }),
-        playerId: player.getId()
+    return playerContext;
+};
+
+io.sockets.on('connection', function (socket) {
+    var playerContext = null,
+        player = null;
+
+    socket.on('login', function(data) {
+        playerContext = initPlayer(socket, data.username);
+        player = playerContext.getEntity();
+
+        socket.emit('welcome', {
+            map: world.getMap().serialize(),
+            entities: _.map(world.getEntities(), function(entity) {
+                return entity.serialize();
+            }),
+            playerId: player.getId()
+        });
     });
 
     socket.on('movement', function(data) {

@@ -35,6 +35,9 @@ define(['underscore', 'util', 'tiles', 'tilesets/tileSheet'],
             for (var i = 0; i < def.length; i++)
                 me._drawTo(context, x, y, def[i].ix, def[i].iy,
                     tiledef.width, tiledef.height);
+
+            me._drawEntityStats(context, x, y, entity);
+
             return true;
         }
     });

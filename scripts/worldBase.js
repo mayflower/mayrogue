@@ -36,8 +36,11 @@ define(['underscore', 'util'],
             me._entities.push(entity);
             me._entityMap[entity.getId()] = entity;
             entity.setWorld(me);
-            entity.attachListeners({change: me._onEntityChange}, me);
-            entity.attachListeners({attack: me._onEntityAttack}, me);
+            entity.attachListeners({
+                change: me._onEntityChange,
+                attack: me._onEntityAttack,
+                statsChange: me._onEntityStatsChange
+            }, me);
         },
 
         removeEntity: function(entity) {
@@ -50,6 +53,12 @@ define(['underscore', 'util'],
         },
 
         _onEntityChange: function() {
+            var me = this;
+
+            me.fireEvent('change');
+        },
+
+        _onEntityStatsChange: function() {
             var me = this;
 
             me.fireEvent('change');

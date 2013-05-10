@@ -31,16 +31,28 @@ var WorldServer = Util.extend(WorldBase, {
             y: entity.getY(),
             heading: entity.getHeading()
         }));
+
+        me._changeset.push(new Change.Stats({
+            id: entity.getId(),
+            hp: entity.getStats().getHp()
+        }));
     },
 
     _onEntityAttack: function(attacker)
     {
         var me = this;
-        var attackTarget = attacker.getAttackTarget();
-        var rect = new Geometry.Rectangle({x: attackTarget.x, y: attackTarget.y, width: 1, height: 1});
+        var rect = attacker.getAttackTarget();
+
         _.each(me._entities, function(entity) {
             if (rect.intersect(entity.getBoundingBox())) {
-                me._warpEntity(entity);
+                var hp = entity.getStats().getHp() - 1;
+
+                if (hp <= 0) {
+                    me._warpEntity(entity);
+                    hp = entity.getStats().getMaxHp();
+                }
+                
+                entity.getStats().setHp(hp);
             }
         });
     },
@@ -108,7 +120,19 @@ var WorldServer = Util.extend(WorldBase, {
         } else {
             return null;
         }
+    },
+
+    getPlayersInRect: function(rect, excludeEntity) {
+        var me = this;
+        var entities = [];
+        _.each(me._entities, function(entity) {
+            if (rect.intersect(entity.getBoundingBox()) && entity != excludeEntity) {
+                entities.push(entity);
+            }
+        });
+        return entities;
     }
+
 });
 
 module.exports = WorldServer;

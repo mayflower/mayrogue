@@ -3,7 +3,8 @@
 "use strict";
 
 var Brain = {
-    RandomWalker: require('./brain/randomWalker')
+    RandomWalker: require('./brain/randomWalker'),
+    AggressiveWalker: require('./brain/aggressiveWalker')
 };
 
 module.exports = Brain;

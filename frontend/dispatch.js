@@ -4,37 +4,35 @@
  * Client main.
  */
 
-define(['underscore', 'util', 'tiles',
+define(['underscore', 'util', 'eventBus', 'tiles',
     '/tilesets/oryx.js', 'worldClient', 'entity', 'map',
     'mapView', 'socket.io', 'fastclick' /*@todo move it to the touch controller */, 'controls/controls', 'network/client','domReady'
 ],
-    function(_, Util, Tiles, Tileset, World, Entity, Map,
-        MapView, Io, FastClick, Control, Client)
+    function(_, Util, EventBus, Tiles, Tileset, World, Entity, Map,
+        MapView, Change, Io, FastClick)
 {
     "use strict";
 
-    var me = this;
-    var socket = Io.connect();
+    var startDispater = function(username) {
+        var socket = Io.connect();
+        socket.emit('login', {'username': username});
 
-    var welcomePackage = new Util.Promise();
-    /**
-     * @todo move this part to the network/client, it should be better located there
-     */
-    socket.on('welcome', function(payload) {
-        var map = Map.unserialize(payload.map);
+        var welcomePackage = new Util.Promise();
+        socket.on('welcome', function(payload) {
+            var map = Map.unserialize(payload.map);
 
-        var entities = _.map(payload.entities, function(record) {
-            return Entity.unserialize(record);
+            var entities = _.map(payload.entities, function(record) {
+                return Entity.unserialize(record);
+            });
+
+            var player = _.find(entities, function(entity) {
+                return entity.getId() === payload.playerId;
+            });
+
+            welcomePackage.resolve(map, entities, player);
         });
 
-        var player = _.find(entities, function(entity) {
-            return entity.getId() === payload.playerId;
-        });
-
-        welcomePackage.resolve(map, entities, player);
-    });
-
-    welcomePackage.and(Tileset.ready).then(function(success, map, entities, player) {
+        var initWorld = function(success, map, entities, player) {
 
         if (!success) return;
 
@@ -47,19 +45,42 @@ define(['underscore', 'util', 'tiles',
         });
 
         var client = new Client(socket, world, player);
-
         var canvas = document.getElementById('stage');
 
-
-        //noinspection JSUnusedLocalSymbols
         var mapview = new MapView({
             world: world,
             tiles: Tileset,
             canvas: canvas
         });
 
-        //enable the controls
+        socket.on('update', function(payload) {
+            var changeset = _.map(payload.changeset, Change.unserialize);
+            var stale = (generation !== payload.generation);
+            var world = mapview.getWorld();
+
+            world.startBatchUpdate();
+            _.each(changeset, function(change) {change.apply(world, stale);});
+            world.endBatchUpdate();
+        });
+            
+        socket.on('reconnecting', function() {
+            if (mapview) {
+                welcomePackage = new Util.Promise();
+                welcomePackage.and(Tileset.ready).then(initWorld);
+
+                mapview.destroy();
+                mapview = null;
+            }
+        });
+
+        socket.on('reconnect', function () {
+            socket.emit('login', {'username': username});
+        });
+            
+                //enable the controls
         var controls = new Control(client);
-        controls.enable();
-    });
+        controls.enable();   
+    };
+        
+    EventBus.attachListeners({'login': startDispater});
 });

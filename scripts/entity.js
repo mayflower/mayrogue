@@ -1,7 +1,7 @@
 // vim:softtabstop=4:shiftwidth=4
 
-define(['underscore', 'util', 'geometry', 'tiles'],
-    function(_, Util, Geometry, Tiles)
+define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
+    function(_, Util, Geometry, Tiles, Stats)
 {
 
     "use strict";
@@ -10,10 +10,10 @@ define(['underscore', 'util', 'geometry', 'tiles'],
         properties: [
             'shape',
             'world',
-            'hp',
             'heading',
             {field: '_id', getter: true},
-            {field: '_boundingBox', getter: true}
+            {field: '_boundingBox', getter: true},
+            {field: '_stats', getter: true}
         ],
         mixins: [Util.Observable],
 
@@ -24,7 +24,7 @@ define(['underscore', 'util', 'geometry', 'tiles'],
             Util.Base.prototype.create.apply(me, arguments);
             Util.Observable.prototype.create.apply(me, arguments);
 
-            me.getConfig(config, ['map', 'shape', 'id', 'hp']);
+            me.getConfig(config, ['map', 'shape', 'id']);
 
             if (!me._heading) {
                 me._heading = 'east';
@@ -36,6 +36,17 @@ define(['underscore', 'util', 'geometry', 'tiles'],
                 width: Tiles.properties[me._shape].width,
                 height: Tiles.properties[me._shape].height
             });
+
+            me._stats = config.stats ? config.stats : new Stats();
+            me._stats.attachListeners({
+                change: me._statsChange
+            }, me);
+        },
+
+        _statsChange: function() {
+            var me = this;
+
+            me.fireEvent('statsChange', me);
         },
 
         _changePosition: function(x, y) {
@@ -122,27 +133,33 @@ define(['underscore', 'util', 'geometry', 'tiles'],
 
         getAttackTarget: function()
         {
-            var attackTarget = {
+            var attackRect = new Geometry.Rectangle({
                 x: this.getX(),
-                y: this.getY()
-            };
+                y: this.getY(),
+                height: 1,
+                width: 1
+            });
 
             switch (this._heading) {
                 case 'north':
-                    attackTarget.y -= 1;
+                    attackRect.setY(attackRect.getY() - 1);
+                    attackRect.setWidth(this._boundingBox.getWidth());
                     break;
                 case 'south':
-                    attackTarget.y += 1;
+                    attackRect.setY(attackRect.getY() + 1 + this._boundingBox.getHeight() - 1);
+                    attackRect.setWidth(this._boundingBox.getWidth());
                     break;
                 case 'east':
-                    attackTarget.x += 1;
+                    attackRect.setX(attackRect.getX() + 1 + this._boundingBox.getWidth() - 1);
+                    attackRect.setHeight(this._boundingBox.getHeight());
                     break;
                 case 'west':
-                    attackTarget.x -= 1;
+                    attackRect.setX(attackRect.getX() - 1);
+                    attackRect.setHeight(this._boundingBox.getHeight());
                     break;
             }
 
-            return attackTarget;
+            return attackRect;
         },
 
         serialize: function() {
@@ -154,12 +171,14 @@ define(['underscore', 'util', 'geometry', 'tiles'],
                 width: me._boundingBox.getWidth(),
                 height: me._boundingBox.getHeight(),
                 shape: me._shape,
-                id: me._id
+                id: me._id,
+                stats: me._stats.serialize()
             };
         }
     });
 
     Entity.unserialize = function(blob) {
+        blob.stats = Stats.unserialize(blob.stats);
         return new Entity(blob);
     };
 

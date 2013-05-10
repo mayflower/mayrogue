@@ -12,7 +12,6 @@ define(['underscore', 'util', 'change/base', 'change/types'],
 
         create: function(config) {
             var me = this;
-console.debug(config);
             Base.prototype.create.apply(me, arguments);
 
             me.getConfig(config, ['x', 'y', 'id']);
@@ -20,7 +19,6 @@ console.debug(config);
 
         apply: function(world, stale) {
             var me = this;
-console.debug(world, stale);
             if (stale && me._id === world.getPlayer().getId()) {
                 return;
             }
