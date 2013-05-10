@@ -51,22 +51,25 @@ define(['underscore', 'util', 'geometry', 'worldBase'],
             }
 
             if (me._viewport.intersect(bbOld) || me._viewport.intersect(bbNew)) {
+                me._onVisibleChange();
+            }
+        },
 
-                if (me._batchInProgress) {
-                    me._dirty = true;
-                } else {
-                    me.fireEvent('visibleChange');
-                }
+        _onVisibleChange: function() {
+            var me = this;
+
+            if (me._batchInProgress) {
+                me._dirty = true;
+            } else {
+                me.fireEvent('visibleChange');
             }
         },
 
         _onEntityStatsChange: function(entity) {
             var me = this;
 
-            console.log('stats change');
             if (me._viewport.intersect(entity.getBoundingBox())) {
-                me.fireEvent('visibleChange');
-                console.log('-> visible');
+                me._onVisibleChange();
             }
         },
 
