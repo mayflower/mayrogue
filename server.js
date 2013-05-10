@@ -50,7 +50,7 @@ var world = new RandomWorld({
 
 var players = [];
 
-io.sockets.on('connection', function (socket) {
+var initPlayer = function(socket, username) {
     var shapes = {
         0: Tiles.HUNTER,
         1: Tiles.WARRIOR,
@@ -62,7 +62,7 @@ io.sockets.on('connection', function (socket) {
         stats: new Stats({
             hp: 20,
             maxHp: 20,
-            name: 'Arschkopp'
+            name: username
         })
     });
 
@@ -72,12 +72,24 @@ io.sockets.on('connection', function (socket) {
     });
     players.push(playerContext);
 
-    socket.emit('welcome', {
-        map: world.getMap().serialize(),
-        entities: _.map(world.getEntities(), function(entity) {
-           return entity.serialize();
-        }),
-        playerId: player.getId()
+    return playerContext;
+};
+
+io.sockets.on('connection', function (socket) {
+    var playerContext = null,
+        player = null;
+
+    socket.on('login', function(data) {
+        playerContext = initPlayer(socket, data.username);
+        player = playerContext.getEntity();
+
+        socket.emit('welcome', {
+            map: world.getMap().serialize(),
+            entities: _.map(world.getEntities(), function(entity) {
+                return entity.serialize();
+            }),
+            playerId: player.getId()
+        });
     });
 
     socket.on('movement', function(data) {

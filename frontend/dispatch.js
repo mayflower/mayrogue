@@ -15,6 +15,7 @@ define(['underscore', 'util', 'eventBus', 'mousetrap', 'tiles',
 
     var startDispater = function(username) {
         var socket = Io.connect();
+        socket.emit('login', {'username': username});
 
         var welcomePackage = new Util.Promise();
         socket.on('welcome', function(payload) {
@@ -124,6 +125,10 @@ define(['underscore', 'util', 'eventBus', 'mousetrap', 'tiles',
                 mapview.destroy();
                 mapview = null;
             }
+        });
+
+        socket.on('reconnect', function () {
+            socket.emit('login', {'username': username});
         });
     };
 
