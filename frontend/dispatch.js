@@ -30,7 +30,9 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
         welcomePackage.resolve(map, entities, player);
     });
 
-    welcomePackage.and(Tileset.ready).then(function(success, map, entities, player) {
+    var mapview = null;
+    var generation = 0;
+    var initWorld = function(success, map, entities, player) {
 
         if (!success) return;
 
@@ -44,15 +46,13 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
 
         var canvas = document.getElementById('stage');
 
-
-        //noinspection JSUnusedLocalSymbols
-        var mapview = new MapView({
+        mapview = new MapView({
             world: world,
             tiles: Tileset,
             canvas: canvas
         });
 
-        var generation = 0;
+        generation = 0;
 
         function broadcastMovement(dx, dy) {
             socket.emit('movement', {
@@ -102,14 +102,26 @@ define(['underscore', 'util', 'mousetrap', 'tiles',
                 var fastClick = new FastClick(el);
             }
         });
+    };
+    welcomePackage.and(Tileset.ready).then(initWorld);
 
-        socket.on('update', function(payload) {
-            var changeset = _.map(payload.changeset, Change.unserialize);
-            var stale = (generation !== payload.generation);
+    socket.on('update', function(payload) {
+        var changeset = _.map(payload.changeset, Change.unserialize);
+        var stale = (generation !== payload.generation);
+        var world = mapview.getWorld();
 
-            world.startBatchUpdate();
-            _.each(changeset, function(change) {change.apply(world, stale);});
-            world.endBatchUpdate();
-        });
+        world.startBatchUpdate();
+        _.each(changeset, function(change) {change.apply(world, stale);});
+        world.endBatchUpdate();
+    });
+
+    socket.on('reconnecting', function() {
+        if (mapview) {
+            welcomePackage = new Util.Promise();
+            welcomePackage.and(Tileset.ready).then(initWorld);
+
+            mapview.destroy();
+            mapview = null;
+        }
     });
 });
