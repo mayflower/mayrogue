@@ -8,6 +8,7 @@ var _ = require('underscore'),
     RandomMap = require('./randomMap'),
     Brain = require('./brain'),
     Entity = require('./client/entity'),
+    Stats = require('./client/stats'),
     Tiles = require('./client/tiles');
 
 var RandomWorld = Util.extend(WorldServer, {
@@ -28,7 +29,10 @@ var RandomWorld = Util.extend(WorldServer, {
 
             var entity = me.addNewRandomEntity({
                 shape: shape,
-                hp: 10
+                stats: new Stats({
+                    hp: 10,
+                    maxHp: 10
+                })
             });
 
             var brain = null;
