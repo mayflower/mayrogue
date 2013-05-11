@@ -71,16 +71,6 @@ define(['underscore', 'util', 'eventBus', 'tiles',
 
             initWorld.apply(this, arguments);
 
-            socket.on('update', function(payload) {
-                var changeset = _.map(payload.changeset, Change.unserialize);
-                var stale = (generation !== payload.generation);
-                var world = mapview.getWorld();
-
-                world.startBatchUpdate();
-                _.each(changeset, function(change) {change.apply(world, stale);});
-                world.endBatchUpdate();
-            });
-
             socket.on('reconnecting', function() {
                 if (mapview) {
                     welcomePackage = new Util.Promise();
