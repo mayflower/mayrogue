@@ -63,7 +63,6 @@ define(['underscore', 'util', 'eventBus', 'tiles',
 
             //enable the controls
             var controls = new Control(client);
-            controls.enable();
         };
 
         welcomePackage.and(Tileset.ready).then(function(success) {

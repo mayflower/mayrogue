@@ -40,7 +40,7 @@ define(['util', 'controls/keyboard', 'controls/touch'],
             me._client = client;
             me._player = me._client.getPlayer();
 
-            if(me.isTouch()) {
+            if(me._isTouch()) {
                 me._controlHandler = new Touch();
             } else {
                 me._controlHandler = new Keyboard();
@@ -48,14 +48,13 @@ define(['util', 'controls/keyboard', 'controls/touch'],
 
             Util.Base.prototype.create.apply(me, arguments);
             Util.Observable.prototype.create.apply(me, arguments);
-
-            me.createMovementListeners();
+            me._createMovementListeners();
         },
 
         /**
          * Create all the movement handlers on the control handler
          */
-        createMovementListeners: function() {
+        _createMovementListeners: function() {
             var me = this;
             me._controlHandler.attachListeners({
                 playerMoveLeft: function() {
@@ -86,18 +85,8 @@ define(['util', 'controls/keyboard', 'controls/touch'],
          *
          * @returns {boolean}
          */
-        isTouch: function() {
+        _isTouch: function() {
             return (('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0));
-        },
-
-
-        /**
-         * Enable the specific keyboard/touch control
-         */
-        enable: function() {
-           var me = this;
-
-            me._controlHandler.mapKeys();
         }
     });
 

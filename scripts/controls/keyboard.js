@@ -15,12 +15,13 @@ define(['underscore', 'util', 'mousetrap'],
             var me = this;
             Util.Base.prototype.create.apply(me, arguments);
             Util.Observable.prototype.create.apply(me, arguments);
+            me._mapKeys();
         },
 
         /**
          * Map keyboard keys to specific (movement) events
          */
-        mapKeys: function() {
+        _mapKeys: function() {
             var me = this;
             _.each({
                 left: function() {
