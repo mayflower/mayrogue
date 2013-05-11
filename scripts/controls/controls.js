@@ -1,5 +1,18 @@
 /**
- * @todo complete doc and add possible events as list
+ * Object to abstract the movement/attack controlhandling, by mapping the specific device controls to
+ * some movement events.
+ * This events are:
+ * <ul>
+ *     <li>playerMoveLeft</li>
+ *     <li>playerMoveRight</li>
+ *     <li>playerMoveUp</li>
+ *     <li>playerMoveDown</li>
+ *     <li>playerAttack</li>
+ * </ul>
+ * each control mapper should throw this events, like the keyboard controller.
+ * E.g.: <code>
+ *     this.fireEvent("playerMoveLeft");
+ * </code>
  */
 define(['util', 'controls/keyboard', 'controls/touch'],
     function(Util, Keyboard, Touch)
