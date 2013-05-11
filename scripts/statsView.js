@@ -29,6 +29,19 @@ define(['underscore', 'util'],
                 var content = stats.getName();
                 me._elt.innerHTML = content;
                 me._renderHP(stats);
+                me._renderExp(stats);
+                console.log(stats);
+            },
+
+            _renderExp: function(stats) {
+                var expDisplay = document.getElementById('exp_stats');
+
+                var exp = stats.getExp();
+                var maxExp = stats.getNextLevelExp();
+                var percentage = (exp/maxExp) * 100;
+
+                expDisplay.style.width = percentage + '%';
+                expDisplay.innerHTML = exp + '/' + maxExp + ' Exp';
             },
 
             _renderHP: function(stats) {

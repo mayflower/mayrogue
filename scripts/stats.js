@@ -4,7 +4,16 @@ define(['underscore', 'util'],
     "use strict";
 
     var Stats = Util.extend(Util.Base, {
-        properties: ['hp', 'maxHp', 'name', 'exp', 'damage'],
+        properties: [
+            'hp',
+            'maxHp',
+            'name',
+            'exp',
+            'damage',
+            'lvl',
+            'nextLevelExp',
+            'hasExp'
+        ],
 
         mixins: [Util.Observable],
 
@@ -13,6 +22,9 @@ define(['underscore', 'util'],
         _name: '',
         _exp: 0,
         _dmg: 0,
+        _lvl: 1,
+        _nextLevelExp: 100,
+        _hasExp: true,
 
         create: function(config) {
             var me = this;
@@ -20,7 +32,7 @@ define(['underscore', 'util'],
             Util.Observable.prototype.create.apply(me, arguments);
             Util.Base.prototype.create.apply(me, arguments);
 
-            me.getConfig(config, ['hp', 'maxHp', 'name', 'exp', 'damage']);
+            me.getConfig(config, ['hp', 'maxHp', 'name', 'exp', 'damage', 'nextLevelExp']);
         },
 
         setHp: function(hp) {
@@ -51,13 +63,57 @@ define(['underscore', 'util'],
             }
         },
 
+        increaseExp: function(exp) {
+            var me = this;
+
+            console.log('Exp: ' + exp);
+            me.setExp(me._exp + exp);
+        },
+
         setExp: function(exp) {
             var me = this;
 
-            if (exp != me._exp) {
-                me._exp = exp;
-                me.fireEvent('change');
+            //check if the entity can increase his experience
+            if(me._hasExp) {
+                if (exp != me._exp) {
+                    me._exp = exp;
+
+                     if(me._hasNewLevel()) {
+                        //level up
+                        me._levelUp();
+                    }
+
+                    me.fireEvent('change');
+                }
             }
+        },
+
+        _levelUp: function() {
+            var me = this;
+
+            //@todo maybe it should be a x^2 or something like this
+            me._nextLevelExp += 100;
+            //increase max heal points
+            me.setMaxHp(Math.round(me._maxHp / me._lvl));
+            if(me._damage < 3) {
+                me._damage++;
+            }
+            //auto heal after level up
+            me._hp = me._maxHp;
+            me.fireEvent('levelUp');
+        },
+
+        _hasNewLevel: function() {
+            var me = this;
+            return ((me._nextLevelExp - me._exp) >= 0);
+        },
+
+        resetStats: function() {
+            var me = this;
+            me._hp = me._maxHp;
+
+            //remove all not for leveling used exp
+            me._exp -= me._exp - (me._lvl * 100);
         },
 
         setDamage: function(damage) {
@@ -77,6 +133,7 @@ define(['underscore', 'util'],
                 maxHp: me._maxHp,
                 name: me._name,
                 exp: me._exp,
+                nextLevelExp: me._nextLevelExp,
                 damage: me._damage
             };
         }

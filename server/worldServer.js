@@ -56,6 +56,8 @@ var WorldServer = Util.extend(WorldBase, {
 
                 if (hp <= 0) {
                     me._warpEntity(entity);
+                    //@todo remove some exp/all exp on the death entity they are not in the actual level
+                    //@todo gain the attacker some exp
                     hp = entity.getStats().getMaxHp();
                 }
                 

@@ -16,3 +16,8 @@ body {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
 }
+
+#exp_stats {
+    color: #000000;
+    text-align: center;
+}
