@@ -58,7 +58,7 @@ define(['underscore', 'util', 'eventBus', 'tiles',
 
             statsView = new StatsView({
                 player: player,
-                elt: document.getElementById('stats')
+                elt: document.getElementById('name_stats')
             });
 
             //enable the controls
