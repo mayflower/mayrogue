@@ -115,6 +115,10 @@ setInterval(function() {
         entity.fireEvent('tick');
     });
 
+    _.each(players, function(player) {
+        player.tick();
+    });
+
     var changeset = _.map(world.pickupChangeset(), Change.serialize);
 
     if (changeset.length > 0) {
