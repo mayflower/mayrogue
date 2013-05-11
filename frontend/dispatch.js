@@ -57,7 +57,7 @@ define(['underscore', 'util', 'eventBus', 'mousetrap', 'tiles',
 
             statsView = new StatsView({
                 player: player,
-                elt: document.getElementById('stats')
+                elt: document.getElementById('name_stats')
             });
 
             generation = 0;

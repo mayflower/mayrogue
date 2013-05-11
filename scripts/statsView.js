@@ -26,9 +26,18 @@ define(['underscore', 'util'],
 
                 var stats = me._player.getStats();
 
-                var content =   'Name: ' + stats.getName() + '<br/>' +
-                                'Hitopoints: ' + stats.getHp();
+                var content = stats.getName();
                 me._elt.innerHTML = content;
+                me._renderHP(stats);
+            },
+
+            _renderHP: function(stats) {
+                var hpDisplay = document.getElementById("live_stats");
+                var hp = stats.getHp();
+                var percent = (hp / stats.getMaxHp()) * 100;
+
+                hpDisplay.style.width = percent + '%';
+                hpDisplay.innerHTML = hp + " HP";
             },
 
             setPlayer: function(player) {
