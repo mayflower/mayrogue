@@ -1,5 +1,5 @@
-define(['underscore', 'util'],
-    function(_, Util) {
+define(['underscore', 'util', 'jquery'],
+    function(_, Util, $) {
         "use strict";
 
         var StatsView = Util.extend(Util.Base, {
@@ -7,12 +7,21 @@ define(['underscore', 'util'],
                 {field: '_elt', getter: 'getElt'}
             ],
 
+            _nameField: null,
+            _hpBar: null,
+            _hpBarProgress: null,
+
             create: function(config) {
                 var me = this;
 
                 Util.Base.prototype.create.apply(me, arguments);
 
                 me.getConfig(config, ['elt']);
+
+                me._nameField = $(me._elt).find('.name_field').get(0);
+                me._hpBar = $(me._elt).find('.hp_bar').get(0);
+                me._hpBarProgress = $(me._elt).find('.hp_bar_progress').get(0);
+
                 if (config.player) {
                     me.setPlayer(config.player);
                     me._render();
@@ -27,27 +36,26 @@ define(['underscore', 'util'],
                 var stats = me._player.getStats();
 
                 var content = stats.getName();
-                me._elt.innerHTML = content;
+                me._nameField.innerHTML = content;
                 me._renderHP(stats);
             },
 
             _renderHP: function(stats) {
-                var hpDisplay = document.getElementById("live_stats");
-                var hpProgressBar = document.getElementById("live_stats_progress");
+                var me = this;
 
                 var hp = stats.getHp();
                 var percent = (hp / stats.getMaxHp()) * 100;
 
                 if (percent <= 25) {
-                    hpProgressBar.setAttribute("class", "progress progress-danger");
+                    me._hpBar.setAttribute("class", "progress progress-danger");
                 } else if (percent <= 50) {
-                    hpProgressBar.setAttribute("class", "progress progress-warning");
+                    me._hpBar.setAttribute("class", "progress progress-warning");
                 } else {
-                    hpProgressBar.setAttribute("class", "progress progress-success");
+                    me._hpBar.setAttribute("class", "progress progress-success");
                 }
 
-                hpDisplay.style.width = percent + '%';
-                hpDisplay.innerHTML = hp + " HP";
+                me._hpBarProgress.style.width = percent + '%';
+                me._hpBarProgress.innerHTML = hp + " HP";
             },
 
             setPlayer: function(player) {
