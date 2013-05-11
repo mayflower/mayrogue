@@ -47,7 +47,11 @@ define(['underscore', 'util', 'eventBus', 'tiles',
                 viewportHeight: 15
             });
 
-            client = new Client(socket, world, player);
+            client = new Client({
+                socket: socket,
+                world: world,
+                player:player
+            });
             var canvas = document.getElementById('stage');
 
             mapview = new MapView({

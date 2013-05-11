@@ -21,17 +21,16 @@ define(['util', 'change'],
          * @param {object} world an instance of the current world
          * @param {object} player an instance of the current _player
          */
-        create: function(socket, world, player) {
+        create: function(config) {
             var me = this;
-            me._socket = socket;
-            me._world = world;
-            me._player = player;
-            me._generation = 0;
-
-            me._addSocketUpdateHandle();
 
             Util.Base.prototype.create.apply(me, arguments);
             Util.Observable.prototype.create.apply(me, arguments);
+
+            me.getConfig(config, ['socket', 'world', 'player']);
+            me._generation = 0;
+
+            me._addSocketUpdateHandle();
         },
 
         /**
