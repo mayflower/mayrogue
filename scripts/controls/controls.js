@@ -1,5 +1,5 @@
 /**
- * Object to abstract the movement/attack controlhandling, by mapping the specific device controls to
+ * Object to abstract the movement/attack control handling, by mapping the specific device controls to
  * some movement events.
  * This events are:
  * <ul>
