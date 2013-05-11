@@ -13,7 +13,7 @@ define(['underscore', 'util', 'eventBus', 'mousetrap', 'tiles',
 {
     "use strict";
 
-    var startDispater = function(username) {
+    var startDispatcher = function(username) {
         var socket = Io.connect();
         socket.emit('login', {'username': username});
 
@@ -111,32 +111,37 @@ define(['underscore', 'util', 'eventBus', 'mousetrap', 'tiles',
                 }
             });
         };
-        welcomePackage.and(Tileset.ready).then(initWorld);
 
-        socket.on('update', function(payload) {
-            var changeset = _.map(payload.changeset, Change.unserialize);
-            var stale = (generation !== payload.generation);
-            var world = mapview.getWorld();
+        welcomePackage.and(Tileset.ready).then(function(success) {
+            if (!success) return;
 
-            world.startBatchUpdate();
-            _.each(changeset, function(change) {change.apply(world, stale);});
-            world.endBatchUpdate();
-        });
+            initWorld.apply(this, arguments);
 
-        socket.on('reconnecting', function() {
-            if (mapview) {
-                welcomePackage = new Util.Promise();
-                welcomePackage.and(Tileset.ready).then(initWorld);
+            socket.on('update', function(payload) {
+                var changeset = _.map(payload.changeset, Change.unserialize);
+                var stale = (generation !== payload.generation);
+                var world = mapview.getWorld();
 
-                mapview.destroy();
-                mapview = null;
-            }
-        });
+                world.startBatchUpdate();
+                _.each(changeset, function(change) {change.apply(world, stale);});
+                world.endBatchUpdate();
+            });
 
-        socket.on('reconnect', function () {
-            socket.emit('login', {'username': username});
+            socket.on('reconnecting', function() {
+                if (mapview) {
+                    welcomePackage = new Util.Promise();
+                    welcomePackage.and(Tileset.ready).then(initWorld);
+
+                    mapview.destroy();
+                    mapview = null;
+                }
+            });
+
+            socket.on('reconnect', function () {
+                socket.emit('login', {'username': username});
+            });
         });
     };
 
-    EventBus.attachListeners({'login': startDispater});
+    EventBus.attachListeners({'login': startDispatcher});
 });

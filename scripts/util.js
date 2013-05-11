@@ -446,6 +446,15 @@ define(['underscore'],
             _.each(me._listeners[evt], function(handler) {
                 handler.callback.apply(handler.scope, args);
             });
+        },
+
+        /**
+         * Destructor: detach all listeners
+         */
+        destroy: function() {
+            var me = this;
+
+            me.listeners = {};
         }
     });
 

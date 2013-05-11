@@ -5,6 +5,8 @@ define(['underscore', 'util', 'geometry', 'worldBase'],
 {
     "use strict";
 
+    var _parent = WorldBase.prototype;
+
     var WorldClient = Util.extend(WorldBase, {
         properties: ['dirty',
             {field: '_player', getter: true},
@@ -21,7 +23,7 @@ define(['underscore', 'util', 'geometry', 'worldBase'],
         create: function(config) {
             var me = this;
 
-            WorldBase.prototype.create.apply(me, arguments);
+            _parent.create.apply(me, arguments);
 
             me.getConfig(config,
                 ['player', 'viewportWidth', 'viewportHeight']);
@@ -41,10 +43,10 @@ define(['underscore', 'util', 'geometry', 'worldBase'],
             me._trackPlayer();
         },
 
-        _onEntityChange: function(entity, bbOld, bbNew) {
+        _onEntityMove: function(entity, bbOld, bbNew) {
             var me = this;
 
-            WorldBase.prototype._onEntityChange.apply(me, arguments);
+            _parent._onEntityMove.apply(me, arguments);
 
             if (entity === me._player) {
                 me._trackPlayer();
@@ -68,15 +70,11 @@ define(['underscore', 'util', 'geometry', 'worldBase'],
         _onEntityStatsChange: function(entity) {
             var me = this;
 
-            WorldBase.prototype._onEntityStatsChange.apply(me, arguments);
+            _parent._onEntityStatsChange.apply(me, arguments);
 
             if (me._viewport.intersect(entity.getBoundingBox())) {
                 me._onVisibleChange();
             }
-        },
-
-        _onEntityAttack: function()
-        {
         },
 
         _trackPlayer: function() {
