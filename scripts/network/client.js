@@ -15,26 +15,6 @@ define(['util', 'change'],
         ],
 
         /**
-         * return the current _player
-         *
-         * @returns {object}
-         */
-        getPlayer: function() {
-            var me = this;
-            return me._player;
-        },
-
-        /**
-         * return the current world
-         *
-         * @returns {object}
-         */
-        getWorld: function() {
-            var me = this;
-            return me._world;
-        },
-
-        /**
          * Create an instance of the network client
          *
          * @param {object} socket an instance of _socket.io
