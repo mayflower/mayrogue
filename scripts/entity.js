@@ -13,7 +13,8 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
             'heading',
             {field: '_id', getter: true},
             {field: '_boundingBox', getter: true},
-            {field: '_stats', getter: true}
+            {field: '_stats', getter: true},
+            {field: '_world', getter: true, setter: true}
         ],
         mixins: [Util.Observable],
 
