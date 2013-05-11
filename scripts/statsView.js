@@ -33,8 +33,18 @@ define(['underscore', 'util'],
 
             _renderHP: function(stats) {
                 var hpDisplay = document.getElementById("live_stats");
+                var hpProgressBar = document.getElementById("live_stats_progress");
+
                 var hp = stats.getHp();
                 var percent = (hp / stats.getMaxHp()) * 100;
+
+                if (percent <= 25) {
+                    hpProgressBar.setAttribute("class", "progress progress-danger");
+                } else if (percent <= 50) {
+                    hpProgressBar.setAttribute("class", "progress progress-warning");
+                } else {
+                    hpProgressBar.setAttribute("class", "progress progress-success");
+                }
 
                 hpDisplay.style.width = percent + '%';
                 hpDisplay.innerHTML = hp + " HP";
