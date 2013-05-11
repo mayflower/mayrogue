@@ -27,14 +27,6 @@ body {
     width: 60px !important;
 }
 
-#up {
-    margin: 0 30px 0 30px;
-}
-
-#down {
-    margin: 0 30px 0 30px;
-}
-
-#attack {
-    margin: 10px 30px 0 30px;
+#up, #down {
+    margin: 5px 30px 5px 30px;
 }

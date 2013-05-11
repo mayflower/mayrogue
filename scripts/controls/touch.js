@@ -20,10 +20,25 @@ define(['underscore', 'util', 'fastclick'],
 
             me._el = document.getElementById('player_control');
             new FastClick(me._el);
-            me._createControls();
+            me._createMovementControls();
+            me._createAttackControl();
         },
 
-        _createControls: function() {
+        _createAttackControl: function() {
+            var me = this;
+            var canvas = document.getElementById('stage');
+
+            new FastClick(canvas);
+            canvas.onclick = function() {
+                me.fireEvent("playerAttack");
+            }
+        },
+
+        /**
+         * Create the controls for movement
+         *
+         */
+        _createMovementControls: function() {
             var me = this;
 
             _.each({
@@ -49,12 +64,6 @@ define(['underscore', 'util', 'fastclick'],
                     type: 'move',
                     func: function() {
                         me.fireEvent("playerMoveDown");
-                    }
-                },
-                attack: {
-                    type: 'attack',
-                    func: function() {
-                        me.fireEvent("playerAttack");
                     }
                 }
             }, function(ctrl, id) {
