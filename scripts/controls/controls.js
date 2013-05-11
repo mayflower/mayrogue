@@ -23,21 +23,11 @@ define(['util', 'controls/keyboard', 'controls/touch'],
 
         mixins: [Util.Observable],
 
-        /**
-         * Holds the control handler, e.g.: Keyboard or touch
-         */
-        ControlHandler: null,
-
-        /**
-         * Stores the communication socket, to send attack/movement requests to the server
-         * @todo should be encapsulated in a client/network class
-         */
-        Client: null,
-
-        /**
-         * The player which is controlled
-         */
-        Player: null,
+        properties: [
+            'controlHandler',
+            'client',
+            'player'
+        ],
 
         /**
          * Creates an control object, which handles the movement/attack events and instanciate the right controls for
@@ -47,13 +37,13 @@ define(['util', 'controls/keyboard', 'controls/touch'],
          */
         create: function(client) {
             var me = this;
-            me.Client = client;
-            me.Player = me.Client.getPlayer();
+            me._client = client;
+            me._player = me._client.getPlayer();
 
             if(me.isTouch()) {
-                me.ControlHandler = new Touch();
+                me._controlHandler = new Touch();
             } else {
-                me.ControlHandler = new Keyboard();
+                me._controlHandler = new Keyboard();
             }
 
             Util.Base.prototype.create.apply(me, arguments);
@@ -67,28 +57,28 @@ define(['util', 'controls/keyboard', 'controls/touch'],
          */
         createMovementListeners: function() {
             var me = this;
-            me.ControlHandler.attachListeners({
+            me._controlHandler.attachListeners({
                 playerMoveLeft: function() {
-                    me.Player.setX(me.Player.getX() - 1);
-                    me.Client.broadcastMovement(-1, 0);
+                    me._player.setX(me._player.getX() - 1);
+                    me._client.broadcastMovement(-1, 0);
                 },
                 playerMoveRight: function() {
-                    me.Player.setX(me.Player.getX() + 1);
-                    me.Client.broadcastMovement(1, 0);
+                    me._player.setX(me._player.getX() + 1);
+                    me._client.broadcastMovement(1, 0);
                 },
                 playerMoveUp: function() {
-                    me.Player.setY(me.Player.getY() - 1);
-                    me.Client.broadcastMovement(0, -1);
+                    me._player.setY(me._player.getY() - 1);
+                    me._client.broadcastMovement(0, -1);
                 },
                 playerMoveDown: function() {
-                    me.Player.setY(me.Player.getY() + 1);
-                    me.Client.broadcastMovement(0, 1);
+                    me._player.setY(me._player.getY() + 1);
+                    me._client.broadcastMovement(0, 1);
                 },
                 playerAttack: function() {
-                    me.Player.attack(1,1);
-                    me.Client.broadcastAttack(1,1);
+                    me._player.attack(1,1);
+                    me._client.broadcastAttack(1,1);
                 }
-            }, me.ControlHandler);
+            }, me._controlHandler);
         },
 
         /**
@@ -107,7 +97,7 @@ define(['util', 'controls/keyboard', 'controls/touch'],
         enable: function() {
            var me = this;
 
-            me.ControlHandler.mapKeys();
+            me._controlHandler.mapKeys();
         }
     });
 

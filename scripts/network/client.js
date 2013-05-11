@@ -7,19 +7,21 @@ define(['util', 'change'],
 
         mixins: [Util.Observable],
 
-        Socket: null,
-        World: null,
-        Player: null,
-        generation: 0,
+        properties: [
+            'socket',
+            'world',
+            'player',
+            'generation'
+        ],
 
         /**
-         * return the current player
+         * return the current _player
          *
          * @returns {object}
          */
         getPlayer: function() {
             var me = this;
-            return me.Player;
+            return me._player;
         },
 
         /**
@@ -29,21 +31,22 @@ define(['util', 'change'],
          */
         getWorld: function() {
             var me = this;
-            return me.World;
+            return me._world;
         },
 
         /**
          * Create an instance of the network client
          *
-         * @param {object} socket an instance of socket.io
+         * @param {object} socket an instance of _socket.io
          * @param {object} world an instance of the current world
-         * @param {object} player an instance of the current player
+         * @param {object} player an instance of the current _player
          */
         create: function(socket, world, player) {
             var me = this;
-            me.Socket = socket;
-            me.World = world;
-            me.Player = player;
+            me._socket = socket;
+            me._world = world;
+            me._player = player;
+            me._generation = 0;
 
             me._addSocketUpdateHandle();
 
@@ -52,15 +55,15 @@ define(['util', 'change'],
         },
 
         /**
-         * Send a player move request to the server
+         * Send a _player move request to the server
          *
          * @param {int} dx
          * @param {int} dy
          */
         broadcastMovement: function(dx, dy) {
             var me = this;
-            me.Socket.emit('movement', {
-                generation: ++me.generation,
+            me._socket.emit('movement', {
+                generation: ++me._generation,
                 delta: {x: dx, y: dy}
             });
         },
@@ -70,22 +73,22 @@ define(['util', 'change'],
          */
         broadcastAttack: function() {
             var me = this;
-            me.Socket.emit('attack', {
-                generation: ++me.generation,
-                attacker: me.Player.getId()
+            me._socket.emit('attack', {
+                generation: ++me._generation,
+                attacker: me._player.getId()
             });
         },
 
         /**
-         * Add handle to react on socket update response
+         * Add handle to react on _socket update response
          *
          * @private
          */
         _addSocketUpdateHandle: function() {
-            var me = this, world = me.World;
-            me.Socket.on('update', function(payload) {
+            var me = this, world = me._world;
+            me._socket.on('update', function(payload) {
                 var changeset = _.map(payload.changeset, Change.unserialize);
-                var stale = (me.generation !== payload.generation);
+                var stale = (me._generation !== payload.generation);
 
                 world.startBatchUpdate();
                 _.each(changeset, function(change) {change.apply(world, stale);});
@@ -100,8 +103,8 @@ define(['util', 'change'],
          */
         login: function(username) {
             var me = this;
-            me.Socket.emit('login', {'username': username});
-            me.Socket.on('reconnect', me.login(username));
+            me._socket.emit('login', {'username': username});
+            me._socket.on('reconnect', me.login(username));
         },
 
         /**
