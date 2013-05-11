@@ -4,7 +4,7 @@
  * Client main.
  */
 
-define(['underscore', 'util', 'eventBus', 'mousetrap', 'tiles',
+define(['underscore', 'util', 'eventBus', 'tiles',
     '/tilesets/oryx.js', 'worldClient', 'entity', 'map',
     'mapView', 'change', 'statsView', 'socket.io', 'fastclick' /*@todo move it to the touch controller */, 'controls/controls', 'network/client','domReady'
 ],
@@ -33,7 +33,8 @@ define(['underscore', 'util', 'eventBus', 'mousetrap', 'tiles',
         });
 
         var mapview = null,
-            statsView = null;
+            statsView = null,
+            client = null;
         var initWorld = function(success, map, entities, player) {
 
             if (!success) return;
@@ -46,6 +47,7 @@ define(['underscore', 'util', 'eventBus', 'mousetrap', 'tiles',
                 viewportHeight: 15
             });
 
+            client = new Client(socket, world, player);
             var canvas = document.getElementById('stage');
 
             mapview = new MapView({
@@ -58,18 +60,12 @@ define(['underscore', 'util', 'eventBus', 'mousetrap', 'tiles',
                 player: player,
                 elt: document.getElementById('stats')
             });
+
+            //enable the controls
+            var controls = new Control(client);
+            controls.enable();
         };
         welcomePackage.and(Tileset.ready).then(initWorld);
-
-        socket.on('update', function(payload) {
-            var changeset = _.map(payload.changeset, Change.unserialize);
-            var stale = (generation !== payload.generation);
-            var world = mapview.getWorld();
-
-            world.startBatchUpdate();
-            _.each(changeset, function(change) {change.apply(world, stale);});
-            world.endBatchUpdate();
-        });
 
         socket.on('reconnecting', function() {
             if (mapview) {
