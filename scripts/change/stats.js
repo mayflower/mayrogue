@@ -17,11 +17,8 @@ define(['underscore', 'util', 'change/base', 'change/types'],
                 me.getConfig(config, ['hp', 'id']);
             },
 
-            apply: function(world, stale) {
+            apply: function(world) {
                 var me = this;
-                if (stale && me._id === world.getPlayer().getId()) {
-                    return;
-                }
 
                 var entity = world.getEntityById(me._id);
                 if (entity) {

@@ -8,6 +8,8 @@ var Util = require('./client/util'),
     Geometry = require('./client/geometry'),
     _ = require('underscore');
 
+var _parent = WorldBase.prototype;
+
 var WorldServer = Util.extend(WorldBase, {
 
     _changeset: null,
@@ -15,14 +17,14 @@ var WorldServer = Util.extend(WorldBase, {
     create: function() {
         var me = this;
 
-        WorldBase.prototype.create.apply(me, arguments);
+        _parent.create.apply(me, arguments);
         me._changeset = [];
     },
 
-    _onEntityChange: function(entity) {
+    _onEntityMove: function(entity) {
         var me = this;
 
-        WorldBase.prototype._onEntityChange.apply(me, arguments);
+        _parent._onEntityMove.apply(me, arguments);
 
         if (!me._changeset) return;
         me._changeset.push(new Change.Movement({
@@ -31,6 +33,12 @@ var WorldServer = Util.extend(WorldBase, {
             y: entity.getY(),
             heading: entity.getHeading()
         }));
+    },
+
+    _onEntityStatsChange: function(entity) {
+        var me = this;
+
+        _parent._onEntityStatsChange.apply(me, arguments);
 
         me._changeset.push(new Change.Stats({
             id: entity.getId(),
@@ -43,8 +51,7 @@ var WorldServer = Util.extend(WorldBase, {
         var me = this;
         var rect = attacker.getAttackTarget();
 
-        _.each(me._entities, function(entity) {
-            if (rect.intersect(entity.getBoundingBox())) {
+        _.each(me._entityManager.entitiesIntersectingWith(rect), function(entity) {
                 var hp = entity.getStats().getHp() - 1;
 
                 if (hp <= 0) {
@@ -53,7 +60,6 @@ var WorldServer = Util.extend(WorldBase, {
                 }
                 
                 entity.getStats().setHp(hp);
-            }
         });
     },
 
@@ -73,7 +79,7 @@ var WorldServer = Util.extend(WorldBase, {
     addEntity: function(entity) {
         var me = this;
 
-        WorldBase.prototype.addEntity.apply(me, arguments);
+        _parent.addEntity.apply(me, arguments);
 
         if (!me._changeset) return;
         me._changeset.push(new Change.AddEntity({entity: entity}));
@@ -82,7 +88,7 @@ var WorldServer = Util.extend(WorldBase, {
     removeEntity: function(entity) {
         var me = this;
 
-        WorldBase.prototype.removeEntity.apply(me, arguments);
+        _parent.removeEntity.apply(me, arguments);
 
         if (!me._changeset) return;
         me._changeset.push(new Change.RemoveEntity({entity: entity}));
@@ -113,24 +119,13 @@ var WorldServer = Util.extend(WorldBase, {
                 x: _.random(mapWidth - 1),
                 y: _.random(mapHeight - 1)
             });
-        } while (!(accessible = me._map.rectAccessible(rect)) && thisTry++ < maxTries);
+        } while (!(accessible = me.rectAccessible(rect)) && thisTry++ < maxTries);
 
         if (accessible) {
             return rect;
         } else {
             return null;
         }
-    },
-
-    getPlayersInRect: function(rect, excludeEntity) {
-        var me = this;
-        var entities = [];
-        _.each(me._entities, function(entity) {
-            if (rect.intersect(entity.getBoundingBox()) && entity != excludeEntity) {
-                entities.push(entity);
-            }
-        });
-        return entities;
     }
 
 });

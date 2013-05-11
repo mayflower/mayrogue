@@ -39,11 +39,11 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
 
             me._stats = config.stats ? config.stats : new Stats();
             me._stats.attachListeners({
-                change: me._statsChange
+                change: me._onStatsChange
             }, me);
         },
 
-        _statsChange: function() {
+        _onStatsChange: function() {
             var me = this;
 
             me.fireEvent('statsChange', me);
@@ -65,9 +65,9 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
             if (!me._world || me._world.rectAccessible(boundingBoxNew, me))
             {
                 me._boundingBox = boundingBoxNew;
-                me.fireEvent('change', me, boundingBoxOld, boundingBoxNew);
+                me.fireEvent('move', me, boundingBoxOld, boundingBoxNew);
             } else {
-                me.fireEvent('change', me, boundingBoxOld, boundingBoxOld);
+                me.fireEvent('move', me, boundingBoxOld, boundingBoxOld);
             }
         },
 
@@ -83,11 +83,6 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
             } else if (boundingBoxOld.getY() < boundingBoxNew.getY()) {
                 me._heading = "south";
             }
-        },
-
-        _doAttack: function(target) {
-            var me = this;
-            me.fireEvent('attack', me, target);
         },
 
         getX: function() {
@@ -127,8 +122,9 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
         },
 
         attack: function() {
-            var attackTarget = this.getAttackTarget();
-            this._doAttack(attackTarget);
+            var me = this;
+
+            me.fireEvent('attack', me);
         },
 
         getAttackTarget: function()

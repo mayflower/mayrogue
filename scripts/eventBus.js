@@ -2,6 +2,7 @@ define(['util'], function(Util) {
     "use strict";
 
     var EventBus = Util.extend(Util.Base, {
+
         mixins: [Util.Observable],
 
         create: function() {

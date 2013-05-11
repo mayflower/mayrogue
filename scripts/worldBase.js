@@ -1,7 +1,7 @@
 // vim:softtabstop=4:shiftwidth=4
 
-define(['underscore', 'util'],
-    function(_, Util) {
+define(['underscore', 'util', 'entityManager'],
+    function(_, Util, EntityManager) {
 
     "use strict";
 
@@ -14,7 +14,7 @@ define(['underscore', 'util'],
         mixins: [Util.Observable],
 
         _dirty: false,
-        _entityMap: null,
+        _entityManager: null,
 
         create: function(config) {
             var me = this;
@@ -23,8 +23,13 @@ define(['underscore', 'util'],
 
             me.getConfig(config, ['map']);
 
-            me._entities = [];
-            me._entityMap = {};
+            me._entityManager = new EntityManager();
+            me._entityManager.attachListeners({
+                move: me._onEntityMove,
+                attack: me._onEntityAttack,
+                statsChange: me._onEntityStatsChange
+            }, me);
+
             if (config.entities) _.each(config.entities, function(entity) {
                 me.addEntity(entity);
             });
@@ -33,26 +38,18 @@ define(['underscore', 'util'],
         addEntity: function(entity) {
             var me = this;
 
-            me._entities.push(entity);
-            me._entityMap[entity.getId()] = entity;
+            me._entityManager.addEntity(entity);
             entity.setWorld(me);
-            entity.attachListeners({
-                change: me._onEntityChange,
-                attack: me._onEntityAttack,
-                statsChange: me._onEntityStatsChange
-            }, me);
         },
 
         removeEntity: function(entity) {
             var me = this;
 
-            me._entities = _.without(me._entities, entity);
-            delete me._entityMap[entity.getId()];
             entity.setWorld(null);
-            entity.detachListeners({change: me._onEntityChange}, me);
+            me._entityManager.removeEntity(entity);
         },
 
-        _onEntityChange: function() {
+        _onEntityMove: function() {
             var me = this;
 
             me.fireEvent('change');
@@ -68,12 +65,6 @@ define(['underscore', 'util'],
         {
         },
 
-        getEntityById: function(id) {
-            var me = this;
-
-            return me._entityMap[id] ? me._entityMap[id] : null;
-        },
-
         getMapData: function() {
             var me = this;
 
@@ -83,33 +74,41 @@ define(['underscore', 'util'],
         destroy: function() {
             var me = this;
 
-            _.each(me._entities, function(entity) {
-                entity.detachListeners({change: me._onEntityChange}, me);
-            });
+            me._entityManager.destroy();
+            Util.Observable.prototype.destroy.apply(me, arguments);
+            Util.Base.prototype.destroy.apply(me, arguments);
         },
 
         rectAccessible: function(rect, entity) {
             var me = this;
 
             if (!me._map.rectAccessible(rect)) return false;
-
-            if (!entity) return true;
-            return !_.some(me._entities, function(e) {
-                return (e !== entity &&
-                    e.getBoundingBox().intersect(rect));
-            });
+            return me._entityManager.rectAccessible(rect, entity);
         },
 
         fieldAccessible: function(x, y, entity) {
             var me = this;
 
             if (!me._map.fieldAccessible(x, y)) return false;
+            return me._entityManager.fieldAccessible(x, y, entity);
+        },
 
-            if (!entity) return true;
-            return !_.some(me._entities, function(e) {
-                return (e !== entity &&
-                    e.getBoundingBox().isInside(x, y));
-            });
+        entitiesIntersectingWith: function(entity) {
+            var me = this;
+
+            return me._entityManager.entitiesIntersectingWith(entity);
+        },
+
+        getEntityById: function(id) {
+            var me = this;
+
+            return me._entityManager.getEntityById(id);
+        },
+
+        getEntities: function() {
+            var me = this;
+
+            return me._entityManager.getEntities();
         }
     });
 

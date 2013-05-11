@@ -34,7 +34,7 @@ var AggressiveWalker = Util.extend(Base, {
             x: entity.getX() - 5,
             y: entity.getY() - 5
         });
-        var possibleEnemies = world.getPlayersInRect(rect, entity);
+        var possibleEnemies = _.without(world.entitiesIntersectingWith(rect), entity);
 
         var enemy = me.chooseEnemy(possibleEnemies);
 
@@ -46,7 +46,7 @@ var AggressiveWalker = Util.extend(Base, {
         me.currentEnemy = enemy;
 
         var goTo = me.findWayToEnemy(entity, enemy, world);
-        me._entity.setXY(goTo.x, goTo.y);
+        if (goTo) me._entity.setXY(goTo.x, goTo.y);
 
         me.attack(entity, enemy);
     },
@@ -59,14 +59,18 @@ var AggressiveWalker = Util.extend(Base, {
 
         if (entity.getX() < enemy.getX() && world.fieldAccessible(goTo.x + 1, goTo.y, entity)) {
             goTo.x = goTo.x + 1;
+            return goTo;
         } else if (entity.getX() > enemy.getX() && world.fieldAccessible(goTo.x - 1, goTo.y, entity)) {
             goTo.x = goTo.x - 1;
+            return goTo;
         } else if (entity.getY() < enemy.getY() && world.fieldAccessible(goTo.x, goTo.y + 1, entity)) {
             goTo.y = goTo.y + 1;
+            return goTo;
         } else if (entity.getY() > enemy.getY() && world.fieldAccessible(goTo.x, goTo.y - 1, entity)) {
             goTo.y = goTo.y - 1;
+            return goTo;
         }
-        return goTo;
+        return null;
     },
 
     attack: function(entity, enemy) {
@@ -124,6 +128,7 @@ var AggressiveWalker = Util.extend(Base, {
 
     lurkAround: function() {
         var me = this;
+
         if (Math.random() > me._propability) return;
 
         var dx = 0, dy = 0;
