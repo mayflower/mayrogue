@@ -82,7 +82,7 @@ define(['underscore', 'util', 'jquery', 'toastr'],
 
             _renderHeading: function(stats) {
                 var me = this;
-                me._nameField.innerHTML = stats.getName() + ' (Lvl: ' + stats._lvl + ')';
+                me._nameField.innerHTML = stats.getName() + ' (' + stats._lvl + ')';
             },
 
             setPlayer: function(player) {
