@@ -62,7 +62,11 @@ var initPlayer = function(socket, username) {
         stats: new Stats({
             hp: 20,
             maxHp: 20,
-            name: username
+            name: username,
+            exp: 0,
+            damage: 1,
+            nextLevelExp: 100,
+            hasExp: true
         })
     });
 

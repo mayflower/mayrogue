@@ -24,7 +24,7 @@ define(['underscore', 'util'],
         _dmg: 0,
         _lvl: 1,
         _nextLevelExp: 100,
-        _hasExp: true,
+        _hasExp: false,
 
         create: function(config) {
             var me = this;
@@ -32,7 +32,7 @@ define(['underscore', 'util'],
             Util.Observable.prototype.create.apply(me, arguments);
             Util.Base.prototype.create.apply(me, arguments);
 
-            me.getConfig(config, ['hp', 'maxHp', 'name', 'exp', 'damage', 'nextLevelExp']);
+            me.getConfig(config, ['hp', 'maxHp', 'name', 'exp', 'damage', 'nextLevelExp', 'hasExp']);
         },
 
         setHp: function(hp) {
@@ -66,8 +66,9 @@ define(['underscore', 'util'],
         increaseExp: function(exp) {
             var me = this;
 
-            console.log('Exp: ' + exp);
-            me.setExp(me._exp + exp);
+            if(me._hasExp) {
+                me.setExp(me._exp + exp);
+            }
         },
 
         setExp: function(exp) {
@@ -133,8 +134,8 @@ define(['underscore', 'util'],
                 maxHp: me._maxHp,
                 name: me._name,
                 exp: me._exp,
-                nextLevelExp: me._nextLevelExp,
-                damage: me._damage
+                damage: me._damage,
+                nextLevelExp: me._nextLevelExp
             };
         }
     });
