@@ -123,7 +123,7 @@ define(['underscore', 'util'],
 
         resetStats: function() {
             var me = this;
-            me._hp = me._maxHp;
+            me.setHp(me._maxHp);
 
             //remove all not for leveling used exp
             if(me._hasExp) {
