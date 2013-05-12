@@ -20,7 +20,11 @@
     "express": "~3.1.0",
     "socket.io": "~0.9.13",
     "requirejs": "~2.1.5",
-    "underscore": "~1.4.4"
+    "underscore": "~1.4.4",
+    "bower": "0.6.x"
+  },
+  "scripts": {
+    "postinstall": "./node_modules/bower/bin/bower install"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
