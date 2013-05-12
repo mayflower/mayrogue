@@ -6,6 +6,7 @@ var Util = require('./client/util'),
     Change = require('./client/change'),
     WorldBase  = require('./client/worldBase'),
     Geometry = require('./client/geometry'),
+    EntityManagerServer = require('./entityManagerServer'),
     _ = require('underscore');
 
 var _parent = WorldBase.prototype;
@@ -14,10 +15,12 @@ var WorldServer = Util.extend(WorldBase, {
 
     _changeset: null,
 
-    create: function() {
+    create: function(config) {
         var me = this;
 
-        _parent.create.apply(me, arguments);
+        if (!config.entityManager) config.entityManager = new EntityManagerServer();
+
+        _parent.create.call(me, config);
         me._changeset = [];
     },
 

@@ -21,9 +21,12 @@ define(['underscore', 'util', 'entityManager'],
             Util.Base.prototype.create.apply(me, arguments);
             Util.Observable.prototype.create.apply(me, arguments);
 
-            me.getConfig(config, ['map']);
+            me.getConfig(config, ['map', 'entityManager']);
 
-            me._entityManager = new EntityManager();
+            if (!me._entityManager) {
+                me._entityManager = new EntityManager();
+            }
+
             me._entityManager.attachListeners({
                 move: me._onEntityMove,
                 attack: me._onEntityAttack,
