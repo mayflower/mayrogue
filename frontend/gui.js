@@ -1,8 +1,6 @@
 define(['jquery', 'eventBus', 'bootstrap'], function($, EventBus) {
     "use strict";
 
-    $('#main').hide();
-
     var modal = $('#loginModal');
     var input = $('#inputUsername');
     var button = $('#btnLogin');
