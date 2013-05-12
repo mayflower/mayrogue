@@ -4,12 +4,12 @@
  * Client main.
  */
 
-define(['underscore', 'util', 'eventBus', 'mousetrap', 'tiles',
+define(['underscore', 'util', 'eventBus', 'tiles',
     '/tilesets/oryx.js', 'worldClient', 'entity', 'map',
-    'mapView', 'change', 'statsView', 'socket.io', 'fastclick', 'domReady'
+    'mapView', 'change', 'statsView', 'socket.io', 'fastclick' /*@todo move it to the touch controller */, 'controls/controls', 'network/client','domReady'
 ],
-    function(_, Util, EventBus, Mousetrap, Tiles, Tileset, World, Entity, Map,
-        MapView, Change, StatsView, Io, FastClick)
+    function(_, Util, EventBus, Tiles, Tileset, World, Entity, Map,
+        MapView, Change, StatsView, Io, FastClick, Control, Client)
 {
     "use strict";
 
@@ -33,8 +33,8 @@ define(['underscore', 'util', 'eventBus', 'mousetrap', 'tiles',
         });
 
         var mapview = null,
-            statsView = null;
-        var generation = 0;
+            statsView = null,
+            client = null;
         var initWorld = function(success, map, entities, player) {
 
             if (!success) return;
@@ -47,6 +47,11 @@ define(['underscore', 'util', 'eventBus', 'mousetrap', 'tiles',
                 viewportHeight: 15
             });
 
+            client = new Client({
+                socket: socket,
+                world: world,
+                player:player
+            });
             var canvas = document.getElementById('stage');
 
             mapview = new MapView({
@@ -60,72 +65,14 @@ define(['underscore', 'util', 'eventBus', 'mousetrap', 'tiles',
                 elt: document.getElementById('stats')
             });
 
-            generation = 0;
-
-            function broadcastMovement(dx, dy) {
-                socket.emit('movement', {
-                    generation: ++generation,
-                    delta: {x: dx, y: dy}
-                });
-            }
-
-            function broadcastAttack() {
-                socket.emit('attack', {
-                    generation: ++generation,
-                    attacker: player.getId()
-                });
-            }
-
-            _.each({
-                left: function() {
-                    player.setX(player.getX() - 1);
-                    broadcastMovement(-1, 0);
-                },
-                right: function() {
-                    player.setX(player.getX() + 1);
-                    broadcastMovement(1, 0);
-                },
-                up: function() {
-                    player.setY(player.getY() - 1);
-                    broadcastMovement(0, -1);
-                },
-                down: function() {
-                    player.setY(player.getY() + 1);
-                    broadcastMovement(0, 1);
-                },
-                a: function() {
-                    // attack local
-                    player.attack();
-                    // send attack to server
-                    broadcastAttack();
-                }
-            }, function(handler, key) {
-                Mousetrap.bind(key, handler);
-
-                var el = document.getElementById('control-' + key);
-                if (el) {
-                    el.onclick = handler;
-
-                    //noinspection JSUnusedLocalSymbols
-                    var fastClick = new FastClick(el);
-                }
-            });
+            //enable the controls
+            var controls = new Control(client);
         };
 
         welcomePackage.and(Tileset.ready).then(function(success) {
             if (!success) return;
 
             initWorld.apply(this, arguments);
-
-            socket.on('update', function(payload) {
-                var changeset = _.map(payload.changeset, Change.unserialize);
-                var stale = (generation !== payload.generation);
-                var world = mapview.getWorld();
-
-                world.startBatchUpdate();
-                _.each(changeset, function(change) {change.apply(world, stale);});
-                world.endBatchUpdate();
-            });
 
             socket.on('reconnecting', function() {
                 if (mapview) {
