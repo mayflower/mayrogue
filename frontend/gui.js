@@ -1,4 +1,4 @@
-define(['jquery', 'eventBus', 'bootstrap'], function($, EventBus) {
+define(['jquery', 'eventBus', 'bootstrap', 'toastr'], function($, EventBus, Bootstrap, Toastr) {
     "use strict";
 
     var modal = $('#loginModal');
@@ -26,5 +26,6 @@ define(['jquery', 'eventBus', 'bootstrap'], function($, EventBus) {
         EventBus.fireEvent('login', val);
         modal.modal('hide');
         $('#main').show();
+        Toastr.info('Welcome to Mayrouge');
     });
 });

@@ -42,7 +42,10 @@ var WorldServer = Util.extend(WorldBase, {
 
         me._changeset.push(new Change.Stats({
             id: entity.getId(),
-            hp: entity.getStats().getHp()
+            hp: entity.getStats().getHp(),
+            maxHp: entity.getStats().getMaxHp(),
+            exp: entity.getStats().getExp(),
+            nextLevelExp: entity.getStats().getNextLevelExp()
         }));
     },
 
@@ -54,16 +57,20 @@ var WorldServer = Util.extend(WorldBase, {
         _.each(me._entityManager.entitiesIntersectingWith(rect), function(entity) {
                 var hp = entity.getStats().getHp() - 1;
 
+                entity.getStats().setHp(hp);
+
                 if (hp <= 0) {
                     me._warpEntity(entity);
-                    //@todo remove some exp/all exp on the death entity they are not in the actual level
-                    //@todo gain the attacker some exp
-                    var attackStats = attacker.getStats();
-                    attackStats.increaseExp(10);
-                    hp = entity.getStats().getMaxHp();
+
+                    var attackerStats = attacker.getStats();
+                    //gain the attacker some exp
+                    attackerStats.increaseExp(10);
+
+                    //reset the stats on the attacked (refresh the hp & drop exp)
+                    entity.getStats().resetStats();
                 }
                 
-                entity.getStats().setHp(hp);
+
         });
     },
 

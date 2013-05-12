@@ -1,5 +1,5 @@
-define(['underscore', 'util'],
-    function(_, Util) {
+define(['underscore', 'util', 'toastr'],
+    function(_, Util, Toastr) {
         "use strict";
 
         var StatsView = Util.extend(Util.Base, {
@@ -26,11 +26,9 @@ define(['underscore', 'util'],
 
                 var stats = me._player.getStats();
 
-                var content = stats.getName();
-                me._elt.innerHTML = content;
+                me._renderHeading(stats);
                 me._renderHP(stats);
                 me._renderExp(stats);
-                console.log(stats);
             },
 
             _renderExp: function(stats) {
@@ -39,6 +37,13 @@ define(['underscore', 'util'],
                 var exp = stats.getExp();
                 var maxExp = stats.getNextLevelExp();
                 var percentage = (exp/maxExp) * 100;
+
+
+                if(stats._lvlUp) {
+                    //ugly hack, because the lvlUp state is send more then one time
+                    //Toastr.clean();
+                    Toastr.success('Level up!');
+                }
 
                 expDisplay.style.width = percentage + '%';
                 expDisplay.innerHTML = exp + '/' + maxExp + ' Exp';
@@ -51,6 +56,10 @@ define(['underscore', 'util'],
                 var hp = stats.getHp();
                 var percent = (hp / stats.getMaxHp()) * 100;
 
+                if(hp == 0) {
+                    Toastr.error('The death has reached you');
+                }
+
                 if (percent <= 25) {
                     hpProgressBar.setAttribute("class", "progress progress-danger");
                 } else if (percent <= 50) {
@@ -61,6 +70,11 @@ define(['underscore', 'util'],
 
                 hpDisplay.style.width = percent + '%';
                 hpDisplay.innerHTML = hp + " HP";
+            },
+
+            _renderHeading: function(stats) {
+                var me = this;
+                me._elt.innerHTML = stats.getName() + ' (Lvl: ' + stats._lvl + ')';
             },
 
             setPlayer: function(player) {

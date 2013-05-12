@@ -6,7 +6,7 @@ define(['underscore', 'util', 'change/base', 'change/types'],
         "use strict";
 
         var Stats = Util.extend(Base, {
-            properties: ['hp', 'id'],
+            properties: ['hp', 'id', 'exp', 'nextLevelExp', 'damage', 'maxHp', 'lvl'],
 
             type: Types.STATS,
 
@@ -14,7 +14,7 @@ define(['underscore', 'util', 'change/base', 'change/types'],
                 var me = this;
                 Base.prototype.create.apply(me, arguments);
 
-                me.getConfig(config, ['hp', 'id']);
+                me.getConfig(config, ['hp', 'id', 'exp', 'nextLevelExp', 'damage', 'maxHp', 'lvl']);
             },
 
             apply: function(world) {
@@ -23,6 +23,9 @@ define(['underscore', 'util', 'change/base', 'change/types'],
                 var entity = world.getEntityById(me._id);
                 if (entity) {
                     entity.getStats().setHp(me._hp);
+                    entity.getStats().setExp(me._exp);
+                    entity.getStats().setMaxHp(me._maxHp);
+                    entity.getStats().setNextLevelExp(me._nextLevelExp);
                 }
             },
 
@@ -31,7 +34,12 @@ define(['underscore', 'util', 'change/base', 'change/types'],
 
                 return {
                     hp: me._hp,
-                    id: me._id
+                    id: me._id,
+                    exp: me._exp,
+                    nextLevelExp: me._nextLevelExp,
+                    damage: me._damage,
+                    maxHp: me._maxHp,
+                    lvl: me._lvl
                 };
             }
         });
