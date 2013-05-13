@@ -1,7 +1,7 @@
 // vim:softtabstop=4:shiftwidth=4
 
-define(['underscore', 'util', 'entityManager'],
-    function(_, Util, EntityManager) {
+define(['underscore', 'util', 'entityManagerBase'],
+    function(_, Util, EntityManagerBase) {
 
     "use strict";
 
@@ -24,7 +24,7 @@ define(['underscore', 'util', 'entityManager'],
             me.getConfig(config, ['map', 'entityManager']);
 
             if (!me._entityManager) {
-                me._entityManager = new EntityManager();
+                me._entityManager = new EntityManagerBase();
             }
 
             me._entityManager.attachListeners({

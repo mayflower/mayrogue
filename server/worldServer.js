@@ -51,28 +51,10 @@ var WorldServer = Util.extend(WorldBase, {
         }
     },
 
-    addEntity: function(entity) {
+    pickupChangeset: function(player) {
         var me = this;
 
-        _parent.addEntity.apply(me, arguments);
-
-        if (!me._changeset) return;
-        me._changeset.push(new Change.AddEntity({entity: entity}));
-    },
-
-    removeEntity: function(entity) {
-        var me = this;
-
-        _parent.removeEntity.apply(me, arguments);
-
-        if (!me._changeset) return;
-        me._changeset.push(new Change.RemoveEntity({entity: entity}));
-    },
-
-    pickupChangeset: function() {
-        var me = this;
-
-        return me._entityManager.getChangesetForEntity();
+        return me._entityManager.pickupChangeset(player);
     },
 
     getFreeRandomRect: function(width, height, maxTries) {
