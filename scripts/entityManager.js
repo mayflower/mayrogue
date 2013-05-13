@@ -30,23 +30,33 @@ define(['underscore', 'util'],
             me._entityMap[entity.getId()] = entity;
 
             entity.attachListeners({
-                move: me._createEventProxy('move'),
-                attack: me._createEventProxy('attack'),
-                statsChange: me._createEventProxy('statsChange')
+                move: me._onEntityMove,
+                attack: me._onEntityAttack,
+                statsChange: me._onEntityStatsChange
             }, me);
 
             me.fireEvent('entityAdded', entity);
         },
 
-        _createEventProxy: function(event) {
+        _proxyEvent: function(event, eventArguments) {
             var me = this;
 
-            return function() {
-                var args = Array.prototype.slice.call(arguments, 0);
-                args.unshift(event);
+            var args = Array.prototype.slice.call(eventArguments, 0);
+            args.unshift(event);
 
-                me.fireEvent.apply(me, args);
-            };
+            me.fireEvent.apply(me, args);
+        },
+
+        _onEntityMove: function() {
+            this._proxyEvent('move', arguments);
+        },
+
+        _onEntityAttack: function() {
+            this._proxyEvent('attack', arguments);
+        },
+
+        _onEntityStatsChange: function() {
+            this._proxyEvent('statsChange', arguments);
         },
 
         removeEntity: function(entity) {

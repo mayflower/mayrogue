@@ -13,40 +13,12 @@ var _parent = WorldBase.prototype;
 
 var WorldServer = Util.extend(WorldBase, {
 
-    _changeset: null,
-
     create: function(config) {
         var me = this;
 
         if (!config.entityManager) config.entityManager = new EntityManagerServer();
 
         _parent.create.call(me, config);
-        me._changeset = [];
-    },
-
-    _onEntityMove: function(entity) {
-        var me = this;
-
-        _parent._onEntityMove.apply(me, arguments);
-
-        if (!me._changeset) return;
-        me._changeset.push(new Change.Movement({
-            id: entity.getId(),
-            x: entity.getX(),
-            y: entity.getY(),
-            heading: entity.getHeading()
-        }));
-    },
-
-    _onEntityStatsChange: function(entity) {
-        var me = this;
-
-        _parent._onEntityStatsChange.apply(me, arguments);
-
-        me._changeset.push(new Change.Stats({
-            id: entity.getId(),
-            hp: entity.getStats().getHp()
-        }));
     },
 
     _onEntityAttack: function(attacker)
@@ -100,9 +72,7 @@ var WorldServer = Util.extend(WorldBase, {
     pickupChangeset: function() {
         var me = this;
 
-        var changeset = me._changeset;
-        me._changeset = [];
-        return changeset;
+        return me._entityManager.getChangesetForEntity();
     },
 
     getFreeRandomRect: function(width, height, maxTries) {
