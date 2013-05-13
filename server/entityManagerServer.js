@@ -9,14 +9,16 @@ var _parent = EntityManager.prototype;
 
 var EntityManagerServer = Util.extend(EntityManager, {
 
-    _changeset: null,
+    _movements: null,
+    _statsUpdates: null,
 
     create: function(config) {
         var me = this;
 
         _parent.create.apply(me, arguments);
 
-        me._changeset = [];
+        me._movements = {};
+        me._statsUpdates = {};
     },
 
     _onEntityMove: function(entity, bbOld, bbNew) {
@@ -24,14 +26,8 @@ var EntityManagerServer = Util.extend(EntityManager, {
 
         _parent._onEntityMove.apply(me, arguments);
 
-        if (me._changeset) {
-            me._changeset.push(new Change.Movement({
-                id: entity.getId(),
-                x: entity.getX(),
-                y: entity.getY(),
-                heading: entity.getHeading()
-            }));
-        }
+        var id = entity.getId();
+        if (!me._movements[id]) me._movements[id] = {old: bbOld};
     },
 
     _onEntityStatsChange: function(entity) {
@@ -39,19 +35,35 @@ var EntityManagerServer = Util.extend(EntityManager, {
 
         _parent._onEntityStatsChange.apply(me, arguments);
 
-        if (me._changeset) {
-            me._changeset.push(new Change.Stats({
-                id: entity.getId(),
-                hp: entity.getStats().getHp()
-            }));
-        }
+        var id = entity.getId();
+        me._statsUpdates[id] = ['hp'];
     },
 
     getChangesetForEntity: function() {
         var me = this;
 
-        var changeset = me._changeset;
-        me._changeset = [];
+        var changeset = [];
+
+        _.each(me._movements, function(movement, id) {
+            var entity = me.getEntityById(id);
+            changeset.push(new Change.Movement({
+                id: id,
+                x: entity.getX(),
+                y: entity.getY(),
+                heading: entity.getHeading()
+            }));
+        });
+
+        _.each(me._statsUpdates, function(update, id) {
+            var entity = me.getEntityById(id);
+            changeset.push(new Change.Stats({
+                id: entity.getId(),
+                hp: entity.getStats().getHp()
+            }));
+        });
+
+        me._movements = {};
+        me._statsUpdates = {};
 
         return changeset;
     }
