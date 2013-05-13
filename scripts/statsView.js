@@ -1,5 +1,5 @@
-define(['underscore', 'util', 'jquery'],
-    function(_, Util, $) {
+define(['underscore', 'util', 'jquery', 'toastr'],
+    function(_, Util, $, Toastr) {
         "use strict";
 
         var StatsView = Util.extend(Util.Base, {
@@ -35,9 +35,27 @@ define(['underscore', 'util', 'jquery'],
 
                 var stats = me._player.getStats();
 
-                var content = stats.getName();
-                me._nameField.innerHTML = content;
+                me._renderHeading(stats);
                 me._renderHP(stats);
+                me._renderExp(stats);
+            },
+
+            _renderExp: function(stats) {
+                var expDisplay = document.getElementById('exp_stats');
+
+                var exp = stats.getExp();
+                var maxExp = stats.getNextLevelExp();
+                var percentage = (exp/maxExp) * 100;
+
+
+                if(stats._lvlUp) {
+                    //ugly hack, because the lvlUp state is send more then one time
+                    //Toastr.clean();
+                    Toastr.success('Level up!');
+                }
+
+                expDisplay.style.width = percentage + '%';
+                expDisplay.innerHTML = exp + '/' + maxExp + ' Exp';
             },
 
             _renderHP: function(stats) {
@@ -45,6 +63,10 @@ define(['underscore', 'util', 'jquery'],
 
                 var hp = stats.getHp();
                 var percent = (hp / stats.getMaxHp()) * 100;
+
+                if(hp == 0) {
+                    Toastr.error('The death has reached you');
+                }
 
                 if (percent <= 25) {
                     me._hpBar.setAttribute("class", "progress progress-danger");
@@ -56,6 +78,11 @@ define(['underscore', 'util', 'jquery'],
 
                 me._hpBarProgress.style.width = percent + '%';
                 me._hpBarProgress.innerHTML = hp + " HP";
+            },
+
+            _renderHeading: function(stats) {
+                var me = this;
+                me._nameField.innerHTML = stats.getName() + ' (' + stats._lvl + ')';
             },
 
             setPlayer: function(player) {

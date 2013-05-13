@@ -10,7 +10,8 @@ require.config({
       'fastclick': '../fastclick',
       // Bootstrap
       'bootstrap': '../components/bootstrap-assets/js/bootstrap.min',
-      'jquery': '../components/jquery/jquery.min'
+      'jquery': '../components/jquery/jquery.min',
+      'toastr': '../components/toastr/toastr.min'
    },
    shim: {
       'underscore': {
@@ -24,6 +25,10 @@ require.config({
       },
       'jquery': {
          exports: 'jQuery'
+      },
+      'toastr': {
+          deps: ['bootstrap', 'jquery'],
+          exports: 'Toastr'
       },
       'bootstrap': ['jquery']
    }

@@ -3,6 +3,7 @@
         <title>Mayrogue</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="components/bootstrap-assets/css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="components/toastr/toastr.min.css" rel="stylesheet" media="all">
         <link rel="stylesheet" href="style.css"/>
     </head>
     <body>
@@ -28,6 +29,9 @@
                     <h2 class='name_field'></h2>
                     <div class="progress progress-success hp_bar">
                         <div class="bar hp_bar_progress" style="width:100%"></div>
+                    </div>
+                    <div id="exp_stats_progress" class="progress progress-striped">
+                        <div class="bar" style="width: 0%" id="exp_stats"></div>
                     </div>
                 </div>
                 <div class="span2" id="player_control" style="visibility: hidden">

@@ -30,3 +30,8 @@ body {
 #up, #down {
     margin: 5px 30px 5px 30px;
 }
+
+#exp_stats {
+    color: #000000;
+    text-align: center;
+}
