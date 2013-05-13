@@ -19,6 +19,7 @@ var EntityManagerServer = Util.extend(EntityManager, {
 
         me._movements = {};
         me._statsUpdates = {};
+        me._changeset = [];
     },
 
     _onEntityMove: function(entity, bbOld, bbNew) {
@@ -39,10 +40,30 @@ var EntityManagerServer = Util.extend(EntityManager, {
         me._statsUpdates[id] = ['hp'];
     },
 
+
+    addEntity: function(entity) {
+        var me = this;
+
+        _parent.addEntity.apply(me, arguments);
+
+        if (!me._changeset) return;
+        me._changeset.push(new Change.AddEntity({entity: entity}));
+    },
+
+
+    removeEntity: function(entity) {
+        var me = this;
+
+        _parent.removeEntity.apply(me, arguments);
+
+        if (!me._changeset) return;
+        me._changeset.push(new Change.RemoveEntity({entity: entity}));
+    },
+
     getChangesetForEntity: function() {
         var me = this;
 
-        var changeset = [];
+        var changeset = me._changeset;
 
         _.each(me._movements, function(movement, id) {
             var entity = me.getEntityById(id);
@@ -64,6 +85,7 @@ var EntityManagerServer = Util.extend(EntityManager, {
 
         me._movements = {};
         me._statsUpdates = {};
+        me._changeset = [];
 
         return changeset;
     }
