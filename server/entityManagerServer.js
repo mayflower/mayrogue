@@ -2,25 +2,23 @@
 
 var _ = require('underscore'),
     Util = require('./client/util'),
-    EntityManagerBase = require('./client/entityManagerBase'),
-    Change = require('./client/change'),
-    Geometry = require('./client/geometry');
+    EntityManager = require('./client/entityManager'),
+    Change = require('./client/change');
 
-var _parent = EntityManagerBase.prototype;
+var _parent = EntityManager.prototype;
 
-var EntityManagerServer = Util.extend(EntityManagerBase, {
+var EntityManagerServer = Util.extend(EntityManager, {
 
     _movements: null,
     _statsUpdates: null,
-    _newEntities: null,
-    _removedEntities: null,
 
     create: function(config) {
         var me = this;
 
         _parent.create.apply(me, arguments);
 
-        me.clearChanges();
+        me._movements = {};
+        me._statsUpdates = {};
     },
 
     _onEntityMove: function(entity, bbOld, bbNew) {
@@ -41,76 +39,33 @@ var EntityManagerServer = Util.extend(EntityManagerBase, {
         me._statsUpdates[id] = ['hp'];
     },
 
-    pickupChangeset: function(playerContext) {
+    getChangesetForEntity: function() {
         var me = this;
 
-        var player = playerContext.getEntity(),
-            playerId = player.getId(),
-            changeset = [];
+        var changeset = [];
 
-        var relevanceDomainNew = me._getRelevanceDomain(player);
-
-        var relevanceDomainOld = me._movements[playerId] ?
-            me._getRelevanceDomain(me._movements[playerId].old) : relevanceDomainNew;
-
-        _.each(me.getEntities(), function(entity) {
-            var id = entity.getId();
-
-            var bbNew = entity.getBoundingBox(),
-                bbOld = me._movements[id] ? me._movements[id].old : bbNew;
-
-            var isRelevant = bbNew.intersect(relevanceDomainNew),
-                wasRelevant = bbOld.intersect(relevanceDomainOld);
-
-            if (!wasRelevant && isRelevant && !me._newEntites[id]) {
-                changeset.push(new Change.AddEntity({
-                    entity: entity
-                }));
-            }
-            if (wasRelevant && !isRelevant && !me._newEntities[id]) {
-                changeset.push(new Change.RemoveEntity({
-                    id: entity.getId()
-                }));
-            }
-            if (wasRelevant && isRelevant && !me._newEntities[id]) {
-                if (me._movements[id]) {
-                    changeset.push(new Change.Movement({
-                        id: id,
-                        x: entity.getX(),
-                        y: entity.getY(),
-                        heading: entity.getHeading()
-                    }));
-                }
-                if (me._statsUpdates[id]) {
-                    changeset.push(new Change.Stats({
-                        id: entity.getId(),
-                        hp: entity.getStats().getHp()
-                    }));
-                }
-            }
-            if (me._newEntities[id] && isRelevant) {
-                changeset.push(new Change.AddEntity({
-                    entity: entity
-                }));
-            }
+        _.each(me._movements, function(movement, id) {
+            var entity = me.getEntityById(id);
+            changeset.push(new Change.Movement({
+                id: id,
+                x: entity.getX(),
+                y: entity.getY(),
+                heading: entity.getHeading()
+            }));
         });
 
-        _.each(me._removedEntites, function(entity, id) {
-            changeset.push(new Change.RemoveEntity)
+        _.each(me._statsUpdates, function(update, id) {
+            var entity = me.getEntityById(id);
+            changeset.push(new Change.Stats({
+                id: entity.getId(),
+                hp: entity.getStats().getHp()
+            }));
         });
-
-        me.clearChanges();
-
-        return changeset;
-    },
-
-    clearChanges: function() {
-        var me = this;
 
         me._movements = {};
         me._statsUpdates = {};
-        me._removedEntites = {};
-        me._newEntites = {};
+
+        return changeset;
     }
 
 });

@@ -1,14 +1,10 @@
-define(['underscore', 'util', 'geometry'],
-    function(_, Util, Geometry)
+define(['underscore', 'util'],
+    function(_, Util)
 {
     "use strict";
 
-    var viewportWidth = 20,
-        viewportHeight = 15;
+    var EntityManager = Util.extend(Util.Base, {
 
-    var positive = function(x) {return x > 0 ? x : 0;};
-
-    var EntityManagerBase = Util.extend(Util.Base, {
         properties: [
             {field: '_entities', getter: true}
         ],
@@ -29,8 +25,6 @@ define(['underscore', 'util', 'geometry'],
 
         addEntity: function(entity) {
             var me = this;
-
-            if (me._entityMap[entity.getId()]) return;
 
             me._entities.push(entity);
             me._entityMap[entity.getId()] = entity;
@@ -115,21 +109,8 @@ define(['underscore', 'util', 'geometry'],
 
             Util.Base.prototype.destroy.apply(me, arguments);
             Util.Observable.prototype.destroy.apply(me, arguments);
-        },
-
-        _getDomain: function(origin, factor) {
-            return new Geometry.Rectangle({
-                x: positive(origin.getX() - Math.floor(viewportWidth * factor / 2)),
-                y: positive(origin.getY() - Math.floor(viewportHeight * factor / 2)),
-                width: Math.ceil(viewportWidth * factor),
-                height: Math.ceil(viewportHeight * factor)
-            });
-        },
-
-        _getRelevanceDomain: function(origin) {
-            return this._getDomain(origin, 1.5);
         }
     });
 
-    return EntityManagerBase;
+    return EntityManager;
 });

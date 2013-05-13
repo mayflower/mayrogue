@@ -1,7 +1,7 @@
 // vim:softtabstop=4:shiftwidth=4
 
-define(['underscore', 'util', 'geometry', 'worldBase', 'entityManagerClient'],
-    function(_, Util, Geometry, WorldBase, EntityManagerClient)
+define(['underscore', 'util', 'geometry', 'worldBase'],
+    function(_, Util, Geometry, WorldBase)
 {
     "use strict";
 
@@ -23,14 +23,10 @@ define(['underscore', 'util', 'geometry', 'worldBase', 'entityManagerClient'],
         create: function(config) {
             var me = this;
 
+            _parent.create.apply(me, arguments);
+
             me.getConfig(config,
                 ['player', 'viewportWidth', 'viewportHeight']);
-
-            if (!config.entityManager) config.entityManager = new EntityManagerClient({
-                world: me
-            });
-
-            _parent.create.apply(me, arguments);
 
             me._viewport = new Geometry.Rectangle({
                 x: 0,

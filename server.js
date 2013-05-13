@@ -119,15 +119,16 @@ setInterval(function() {
         player.tick();
     });
 
-    _.each(players, function(player) {
-        var changeset = _.map(world.pickupChangeset(player), Change.serialize);
+    var changeset = _.map(world.pickupChangeset(), Change.serialize);
 
-        if (changeset.length > 0)
+    if (changeset.length > 0) {
+        _.each(players, function(player) {
             player.getConnection().volatile.emit('update', {
                 generation: player.getGeneration(),
                 changeset: changeset
             });
-    });
+        });
+    }
 }, 200);
 
 
