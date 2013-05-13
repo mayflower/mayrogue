@@ -31,10 +31,10 @@ define(['underscore', 'util'],
         intersect: function(rect) {
             var me = this;
 
-            return me.isInside(rect._x, rect._y) ||
-                me.isInside(rect._x + rect._width - 1, rect._y) ||
-                me.isInside(rect._x, rect._y + rect._height - 1) ||
-                me.isInside(rect._x + rect._width - 1, rect._y + rect._height - 1);
+            return !((me._x + me._width - 1 < rect._x) ||
+                     (me._x > rect._x + rect._width - 1)  ||
+                     (me._y + me._height - 1 < rect._y) ||
+                     (me._y > rect._y + rect._height - 1));
         },
 
         clone: function() {
