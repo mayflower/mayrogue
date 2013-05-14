@@ -24,7 +24,7 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
             Util.Base.prototype.create.apply(me, arguments);
             Util.Observable.prototype.create.apply(me, arguments);
 
-            me.getConfig(config, ['map', 'shape', 'id']);
+            me.getConfig(config, ['map', 'shape', 'id', 'heading']);
 
             if (!me._heading) {
                 me._heading = 'east';
@@ -168,7 +168,8 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
                 height: me._boundingBox.getHeight(),
                 shape: me._shape,
                 id: me._id,
-                stats: me._stats.serialize()
+                stats: me._stats.serialize(),
+                heading: me._heading
             };
         }
     });
