@@ -8,17 +8,17 @@ var Util = require('./client/util'),
 var positive = function(x) {return x > 0 ? x : 0;};
 
 var PlayerContext = Util.extend(Util.Base, {
-    properties: ['entity', 'connection', 'generation', 'trackedEntities', 'relevanceDomainScale'],
+    properties: ['entity', 'connection', 'generation', 'trackedEntities', 'trackingDomainScale'],
 
     _generation: 0,
     _tick: 0,
-    _relevanceDomainScale: 1.2,
+    _trackingDomainScale: 1.2,
 
     create: function(config) {
         var me = this;
         Util.Base.prototype.create.apply(me, arguments);
 
-        me.getConfig(config, ['connection', 'entity', 'relevanceDomainScale']);
+        me.getConfig(config, ['connection', 'entity', 'trackingDomainScale']);
 
         me._tick = 0;
         me._trackedEntities = {};
@@ -35,6 +35,13 @@ var PlayerContext = Util.extend(Util.Base, {
         if (me._tick % 10 === 0) me._heal(1);
     },
 
+    /**
+     * TODO: this is a questionable place for this logic, should eventually go into a brain-like decorator (together
+     * with other stuff like poison, mana regeneration etc.)
+     *
+     * @param healed
+     * @private
+     */
     _heal: function(healed) {
         var me = this;
 
@@ -46,14 +53,22 @@ var PlayerContext = Util.extend(Util.Base, {
         stats.setHp(hp);
     },
 
-    getRelevanceDomain: function() {
+    /**
+     * Determine the domain within which entities are tracked. Currently this is determined by scaling the viewport.
+     *
+     * TODO: The viewport size is hardcoded BOTH here and in dispatch.js --- bad practice, should eventually become
+     * an app-wide parameter
+     *
+     * @returns {Geometry.Rectangle}
+     */
+    getTrackingDomain: function() {
         var me = this;
         
         return new Geometry.Rectangle({
-            x: positive(me._entity.getX() - Math.floor(20 * me._relevanceDomainScale / 2)),
-            y: positive(me._entity.getY() - Math.floor(15 * me._relevanceDomainScale / 2)),
-            width: Math.ceil(20 * me._relevanceDomainScale),
-            height: Math.ceil(15 * me._relevanceDomainScale)
+            x: positive(me._entity.getX() - Math.floor(20 * me._trackingDomainScale / 2)),
+            y: positive(me._entity.getY() - Math.floor(15 * me._trackingDomainScale / 2)),
+            width: Math.ceil(20 * me._trackingDomainScale),
+            height: Math.ceil(15 * me._trackingDomainScale)
         });
     }
 });

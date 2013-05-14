@@ -1,3 +1,7 @@
+/**
+ *  Extends EntityManager with the logic to generate state diffs for publishing
+ */
+
 "use strict";
 
 var _ = require('underscore'),
@@ -9,6 +13,7 @@ var _parent = EntityManager.prototype;
 
 var EntityManagerServer = Util.extend(EntityManager, {
 
+    // Associative arrays for keeping track of state changes
     _movements: null,
     _statsUpdates: null,
     _newEntities: null,
@@ -26,6 +31,8 @@ var EntityManagerServer = Util.extend(EntityManager, {
 
         _parent._onEntityMove.apply(me, arguments);
 
+        // Only record the new position if the entity wasn't added in this this timeslice --- in this case, it will
+        // be retransmitted anyway
         var id = entity.getId();
         if (!me._newEntities[id]) me._movements[id] = entity;
     },
@@ -35,6 +42,7 @@ var EntityManagerServer = Util.extend(EntityManager, {
 
         _parent._onEntityStatsChange.apply(me, arguments);
 
+        // See above
         var id = entity.getId();
         if (!me._newEntities[id]) {
             if (!me._statsUpdates[id]) me._statsUpdates[id] = {id: id};
@@ -60,21 +68,39 @@ var EntityManagerServer = Util.extend(EntityManager, {
 
         _parent.removeEntity.apply(me, arguments);
 
+        // Remove the entity from all changeset registries
         var id = entity.getId();
         _.each([me._movements, me._statsUpdates, me._newEntities], function(registry) {
             if (registry[id]) delete registry[id];
         });
     },
 
+    /**
+     * Build the changeset for a particular player. The algorithm works by identifying all entities with the
+     * current tracking domain and comparing those to the same set from the last timeslice.
+     *
+     * 1) Entities whose state changes to "not tracked" are removed
+     * 2) Entities whose state changes to "tracked" are transmitted
+     * 3) Changes for entities which were tracked and are still tracked are transmitted
+     * 4) All other entities are ignored.
+     *
+     * NOTE that the player entity is always in within the tracking domain and thus contained in both sets, so it does not
+     * need any special treatment --- changes to the player entity are always transmitted.
+     *
+     * @param playerContext
+     * @returns {Array}
+     */
     pickupChangeset: function(playerContext) {
         var me = this,
             trackedEntitiesOld = playerContext.getTrackedEntities();
 
-        var relevanceDomain = playerContext.getRelevanceDomain();
+        // Entities within this domain are tracked
+        var trackingDomain = playerContext.getTrackingDomain();
 
+        // Build a list of all entities which are in the tracking domain
         var trackedEntitiesNew = {};
         _.each(me.getEntities(), function(entity) {
-            if (relevanceDomain.intersect(entity.getBoundingBox()))
+            if (trackingDomain.intersect(entity.getBoundingBox()))
                 trackedEntitiesNew[entity.getId()] = entity;
         });
 
@@ -84,6 +110,7 @@ var EntityManagerServer = Util.extend(EntityManager, {
             // We _could_ use the field id here, but then we'd have to typecast!!!
             var id = entity.getId();
 
+            // If we were are still tracking a previously tracked entity, just parrot the changes
             if (trackedEntitiesNew[id]) {
 
                 if (me._movements[id]) {
@@ -100,6 +127,7 @@ var EntityManagerServer = Util.extend(EntityManager, {
                 }
             } else {
 
+                // The entity is not tracked anymore -> remove it
                 changeset.push(new Change.RemoveEntity({
                     id: id
                 }));
@@ -110,6 +138,7 @@ var EntityManagerServer = Util.extend(EntityManager, {
             // We _could_ use the field id here, but then we'd have to typecast!!!
             var id = entity.getId();
 
+            // To-be-tracked entities which were not tracked before are transmitted
             if (!trackedEntitiesOld[id]) {
                 changeset.push(new Change.AddEntity({
                     entity: entity
@@ -117,11 +146,15 @@ var EntityManagerServer = Util.extend(EntityManager, {
             }
         });
 
+        // Cycle the tracked entities for the next step
         playerContext.setTrackedEntities(trackedEntitiesNew);
 
         return changeset;
     },
 
+    /**
+     * Clear all changes
+     */
     clearChanges: function() {
         var me = this;
 
