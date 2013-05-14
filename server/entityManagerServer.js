@@ -80,7 +80,10 @@ var EntityManagerServer = Util.extend(EntityManager, {
 
         var changeset = [];
 
-        _.each(trackedEntitiesOld, function(entity, id) {
+        _.each(trackedEntitiesOld, function(entity) {
+            // We _could_ use the field id here, but then we'd have to typecast!!!
+            var id = entity.getId();
+
             if (trackedEntitiesNew[id]) {
 
                 if (me._movements[id]) {
@@ -103,7 +106,10 @@ var EntityManagerServer = Util.extend(EntityManager, {
             }
         });
 
-        _.each(trackedEntitiesNew, function(entity, id) {
+        _.each(trackedEntitiesNew, function(entity) {
+            // We _could_ use the field id here, but then we'd have to typecast!!!
+            var id = entity.getId();
+
             if (!trackedEntitiesOld[id]) {
                 changeset.push(new Change.AddEntity({
                     entity: entity
