@@ -51,10 +51,14 @@ var WorldServer = Util.extend(WorldBase, {
         }
     },
 
-    pickupChangeset: function() {
+    pickupChangeset: function(player) {
         var me = this;
 
-        return me._entityManager.getChangesetForEntity();
+        return me._entityManager.pickupChangeset(player);
+    },
+
+    clearChanges: function() {
+        this._entityManager.clearChanges();
     },
 
     getFreeRandomRect: function(width, height, maxTries) {

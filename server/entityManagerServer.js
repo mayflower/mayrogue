@@ -11,24 +11,23 @@ var EntityManagerServer = Util.extend(EntityManager, {
 
     _movements: null,
     _statsUpdates: null,
+    _newEntities: null,
 
     create: function(config) {
         var me = this;
 
         _parent.create.apply(me, arguments);
 
-        me._movements = {};
-        me._statsUpdates = {};
-        me._changeset = [];
+        me.clearChanges();
     },
 
-    _onEntityMove: function(entity, bbOld, bbNew) {
+    _onEntityMove: function(entity) {
         var me = this;
 
         _parent._onEntityMove.apply(me, arguments);
 
         var id = entity.getId();
-        if (!me._movements[id]) me._movements[id] = {old: bbOld};
+        if (!me._newEntities[id]) me._movements[id] = entity;
     },
 
     _onEntityStatsChange: function(entity) {
@@ -37,17 +36,22 @@ var EntityManagerServer = Util.extend(EntityManager, {
         _parent._onEntityStatsChange.apply(me, arguments);
 
         var id = entity.getId();
-        me._statsUpdates[id] = ['hp'];
+        if (!me._newEntities[id]) {
+            if (!me._statsUpdates[id]) me._statsUpdates[id] = {id: id};
+            me._statsUpdates[id].hp = entity.getStats().getHp();
+        }
     },
 
 
     addEntity: function(entity) {
-        var me = this;
+        var me = this,
+            id = entity.getId();
+
+        if (me.getEntityById(id)) return;
 
         _parent.addEntity.apply(me, arguments);
 
-        if (!me._changeset) return;
-        me._changeset.push(new Change.AddEntity({entity: entity}));
+        me._newEntities[id] = entity;
     },
 
 
@@ -56,38 +60,68 @@ var EntityManagerServer = Util.extend(EntityManager, {
 
         _parent.removeEntity.apply(me, arguments);
 
-        if (!me._changeset) return;
-        me._changeset.push(new Change.RemoveEntity({entity: entity}));
+        var id = entity.getId();
+        _.each([me._movements, me._statsUpdates, me._newEntities], function(registry) {
+            if (registry[id]) delete registry[id];
+        });
     },
 
-    getChangesetForEntity: function() {
+    pickupChangeset: function(playerContext) {
+        var me = this,
+            trackedEntitiesOld = playerContext.getTrackedEntities();
+
+        var relevanceDomain = playerContext.getRelevanceDomain();
+
+        var trackedEntitiesNew = {};
+        _.each(me.getEntities(), function(entity) {
+            if (relevanceDomain.intersect(entity.getBoundingBox()))
+                trackedEntitiesNew[entity.getId()] = entity;
+        });
+
+        var changeset = [];
+
+        _.each(trackedEntitiesOld, function(entity, id) {
+            if (trackedEntitiesNew[id]) {
+
+                if (me._movements[id]) {
+                    changeset.push(new Change.Movement({
+                        id: id,
+                        x: entity.getX(),
+                        y: entity.getY(),
+                        heading: entity.getHeading()
+                    }));
+                }
+
+                if (me._statsUpdates[id]) {
+                    changeset.push(new Change.Stats(me._statsUpdates[id]));
+                }
+            } else {
+
+                changeset.push(new Change.RemoveEntity({
+                    id: id
+                }));
+            }
+        });
+
+        _.each(trackedEntitiesNew, function(entity, id) {
+            if (!trackedEntitiesOld[id]) {
+                changeset.push(new Change.AddEntity({
+                    entity: entity
+                }));
+            }
+        });
+
+        playerContext.setTrackedEntities(trackedEntitiesNew);
+
+        return changeset;
+    },
+
+    clearChanges: function() {
         var me = this;
-
-        var changeset = me._changeset;
-
-        _.each(me._movements, function(movement, id) {
-            var entity = me.getEntityById(id);
-            changeset.push(new Change.Movement({
-                id: id,
-                x: entity.getX(),
-                y: entity.getY(),
-                heading: entity.getHeading()
-            }));
-        });
-
-        _.each(me._statsUpdates, function(update, id) {
-            var entity = me.getEntityById(id);
-            changeset.push(new Change.Stats({
-                id: entity.getId(),
-                hp: entity.getStats().getHp()
-            }));
-        });
 
         me._movements = {};
         me._statsUpdates = {};
-        me._changeset = [];
-
-        return changeset;
+        me._newEntities = {};
     }
 
 });

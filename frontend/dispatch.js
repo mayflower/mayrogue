@@ -66,6 +66,7 @@ define(['underscore', 'util', 'eventBus', 'tiles',
             });
 
             //enable the controls
+            //noinspection JSUnusedLocalSymbols
             var controls = new Control(client);
         };
 

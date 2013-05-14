@@ -85,9 +85,7 @@ io.sockets.on('connection', function (socket) {
 
         socket.emit('welcome', {
             map: world.getMap().serialize(),
-            entities: _.map(world.getEntities(), function(entity) {
-                return entity.serialize();
-            }),
+            entities: [player.serialize()],
             playerId: player.getId()
         });
     });
@@ -119,16 +117,18 @@ setInterval(function() {
         player.tick();
     });
 
-    var changeset = _.map(world.pickupChangeset(), Change.serialize);
+    _.each(players, function(player) {
+        var changeset = world.pickupChangeset(player);
 
-    if (changeset.length > 0) {
-        _.each(players, function(player) {
+        if (changeset.length > 0) {
             player.getConnection().volatile.emit('update', {
                 generation: player.getGeneration(),
-                changeset: changeset
+                changeset: _.map(changeset, Change.serialize)
             });
-        });
-    }
+        }
+    });
+
+    world.clearChanges();
 }, 200);
 
 

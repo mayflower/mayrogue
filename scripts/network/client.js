@@ -1,5 +1,5 @@
-define(['util', 'change'],
-    function(Util, Change)
+define(['underscore', 'util', 'change'],
+    function(_, Util, Change)
 {
     "use strict";
 
@@ -17,9 +17,6 @@ define(['util', 'change'],
         /**
          * Create an instance of the network client
          *
-         * @param {object} socket an instance of _socket.io
-         * @param {object} world an instance of the current world
-         * @param {object} player an instance of the current _player
          */
         create: function(config) {
             var me = this;

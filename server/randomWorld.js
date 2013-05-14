@@ -45,7 +45,7 @@ var RandomWorld = Util.extend(WorldServer, {
             brain.decorate(entity);
         });
 
-        me.pickupChangeset();
+        me.clearChanges();
     },
 
     addNewRandomEntity: function(config) {
