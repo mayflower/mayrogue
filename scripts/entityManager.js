@@ -59,15 +59,20 @@ define(['underscore', 'util'],
             this._proxyEvent('statsChange', arguments);
         },
 
-        removeEntity: function(entity) {
-            var me = this;
+        removeEntity: function(entity, doNotDestroy) {
+            var me = this,
+                id = entity.getId();
 
             me._entities = _.without(me._entities, entity);
-            delete me._entityMap[entity.getId()];
+            delete me._entityMap[id];
 
-            entity.destroy();
+            if (!doNotDestroy) {
+                entity.destroy();
+            } else {
+                entity.detachAllListeners(me);
+            }
 
-            me.fireEvent('entityRemoved');
+            me.fireEvent('entityRemoved', id);
         },
 
         getEntityById: function(id) {

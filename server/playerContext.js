@@ -22,9 +22,13 @@ var PlayerContext = Util.extend(Util.Base, {
 
         me._tick = 0;
         me._trackedEntities = {};
+
+        me._entity.attachListeners({
+            tick: me._onTick
+        }, me);
     },
 
-    tick: function() {
+    _onTick: function() {
         var me = this;
 
         me._tick++;

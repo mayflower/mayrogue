@@ -34,7 +34,7 @@ define(['underscore', 'util', 'change/base', 'change/types'],
 
             var entity = world.getEntityById(me._id);
             if (entity) {
-                entity.setXY(me._x, me._y);
+                entity.setXY(me._x, me._y, true);
                 entity.setHeading(me._heading);
             }
         },

@@ -49,7 +49,7 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
             me.fireEvent('statsChange', me);
         },
 
-        _changePosition: function(x, y) {
+        _changePosition: function(x, y, force) {
             var me = this;
 
             var boundingBoxNew = new Geometry.Rectangle({
@@ -62,7 +62,7 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
 
             me._setHeadingAfterMovement(boundingBoxOld, boundingBoxNew);
 
-            if (!me._world || me._world.rectAccessible(boundingBoxNew, me))
+            if (force || !me._world || me._world.rectAccessible(boundingBoxNew, me))
             {
                 me._boundingBox = boundingBoxNew;
                 me.fireEvent('move', me, boundingBoxOld, boundingBoxNew);
@@ -97,26 +97,26 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
             return me._boundingBox.getY();
         },
 
-        setX: function(x) {
+        setX: function(x, force) {
             var me = this;
             
-            me._changePosition(x, me._boundingBox.getY());
+            me._changePosition(x, me._boundingBox.getY(), force);
 
             return me;
         },
 
-        setY: function(y) {
+        setY: function(y, force) {
             var me = this;
 
-            me._changePosition(me._boundingBox.getX(), y);
+            me._changePosition(me._boundingBox.getX(), y, force);
 
             return me;
         },
 
-        setXY: function(x, y) {
+        setXY: function(x, y, force) {
             var me = this;
 
-            me._changePosition(x, y);
+            me._changePosition(x, y, force);
 
             return me;
         },

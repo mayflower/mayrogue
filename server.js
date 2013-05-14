@@ -114,10 +114,6 @@ setInterval(function() {
     });
 
     _.each(players, function(player) {
-        player.tick();
-    });
-
-    _.each(players, function(player) {
         var changeset = world.pickupChangeset(player);
 
         if (changeset.length > 0) {
