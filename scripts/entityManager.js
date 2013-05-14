@@ -66,13 +66,13 @@ define(['underscore', 'util'],
             me._entities = _.without(me._entities, entity);
             delete me._entityMap[id];
 
+            me.fireEvent('entityRemoved', entity);
+
             if (!doNotDestroy) {
                 entity.destroy();
             } else {
                 entity.detachAllListeners(me);
             }
-
-            me.fireEvent('entityRemoved', id);
         },
 
         getEntityById: function(id) {

@@ -43,6 +43,8 @@ define(['underscore', 'util', 'entityManager'],
 
             me._entityManager.addEntity(entity);
             entity.setWorld(me);
+
+            me.fireEvent('change');
         },
 
         removeEntity: function(entity) {
@@ -50,6 +52,8 @@ define(['underscore', 'util', 'entityManager'],
 
             entity.setWorld(null);
             me._entityManager.removeEntity(entity);
+
+            me.fireEvent('change');
         },
 
         _onEntityMove: function() {

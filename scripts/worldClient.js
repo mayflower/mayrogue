@@ -43,6 +43,23 @@ define(['underscore', 'util', 'geometry', 'worldBase'],
             me._trackPlayer();
         },
 
+        addEntity: function(entity) {
+            var me = this;
+
+            _parent.addEntity.apply(me, arguments);
+
+            // We might be called during creation without the viewport being set
+            if (me._viewport && me._viewport.intersect(entity.getBoundingBox())) me._onVisibleChange();
+        },
+
+        removeEntity: function(entity) {
+            var me = this;
+
+            if (me._viewport.intersect(entity.getBoundingBox())) me._onVisibleChange();
+
+            _parent.removeEntity.apply(me, arguments);
+        },
+
         _onEntityMove: function(entity, bbOld, bbNew) {
             var me = this;
 
