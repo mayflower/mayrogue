@@ -75,8 +75,8 @@ var WorldServer = Util.extend(WorldBase, {
             rect = new Geometry.Rectangle({
                 width: width,
                 height: height,
-                x: _.random(mapWidth - 1),
-                y: _.random(mapHeight - 1)
+                x: _.random(mapWidth - width),
+                y: _.random(mapHeight - height)
             });
         } while (!(accessible = me.rectAccessible(rect)) && thisTry++ < maxTries);
 
