@@ -3,9 +3,9 @@
 "use strict";
 
 var _ = require('underscore'),
-    Util = require('../client/util'),
+    Util = require('../shared/util'),
     Base = require('./base'),
-    Geometry = require('../client/geometry');
+    Geometry = require('../shared/geometry');
 
 var AggressiveWalker = Util.extend(Base, {
     properties: ['propability'],

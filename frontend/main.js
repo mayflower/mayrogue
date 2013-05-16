@@ -1,7 +1,7 @@
 /* global require: true */
 
 require.config({
-   baseUrl: 'scripts',
+   baseUrl: 'shared',
    paths: {
       'socket.io': '../socket.io/socket.io',
       'underscore': '../underscore',

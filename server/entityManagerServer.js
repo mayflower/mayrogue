@@ -5,9 +5,9 @@
 "use strict";
 
 var _ = require('underscore'),
-    Util = require('./client/util'),
-    EntityManager = require('./client/entityManager'),
-    Change = require('./client/change');
+    Util = require('./shared/util'),
+    EntityManager = require('./shared/entityManager'),
+    Change = require('./shared/change');
 
 var _parent = EntityManager.prototype;
 

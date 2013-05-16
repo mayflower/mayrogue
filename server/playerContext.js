@@ -2,8 +2,8 @@
 
 "use strict";
 
-var Util = require('./client/util'),
-    Geometry = require('./client/geometry');
+var Util = require('./shared/util'),
+    Geometry = require('./shared/geometry');
 
 var positive = function(x) {return x > 0 ? x : 0;};
 

@@ -2,10 +2,10 @@
 
 "use strict";
 
-var Util = require('./client/util'),
-    Change = require('./client/change'),
-    WorldBase  = require('./client/worldBase'),
-    Geometry = require('./client/geometry'),
+var Util = require('./shared/util'),
+    Change = require('./shared/change'),
+    WorldBase  = require('./shared/worldBase'),
+    Geometry = require('./shared/geometry'),
     EntityManagerServer = require('./entityManagerServer'),
     _ = require('underscore');
 

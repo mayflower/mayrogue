@@ -3,7 +3,7 @@
 "use strict";
 
 var _ = require('underscore'),
-    Util = require('../client/util'),
+    Util = require('../shared/util'),
     Base = require('./base');
 
 var RandomWalker = Util.extend(Base, {

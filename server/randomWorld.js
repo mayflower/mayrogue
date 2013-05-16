@@ -3,13 +3,13 @@
 "use strict";
 
 var _ = require('underscore'),
-    Util = require('./client/util'),
+    Util = require('./shared/util'),
     WorldServer = require('./worldServer'),
     RandomMap = require('./randomMap'),
     Brain = require('./brain'),
-    Entity = require('./client/entity'),
-    Stats = require('./client/stats'),
-    Tiles = require('./client/tiles');
+    Entity = require('./shared/entity'),
+    Stats = require('./shared/stats'),
+    Tiles = require('./shared/tiles');
 
 var RandomWorld = Util.extend(WorldServer, {
     _nextId: 0,

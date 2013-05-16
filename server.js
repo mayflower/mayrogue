@@ -4,7 +4,7 @@
 
 var requirejs = require('requirejs');
 requirejs.config({
-    baseUrl: 'scripts'
+    baseUrl: 'shared'
 });
 
 var express = require('express'),
@@ -13,13 +13,13 @@ var express = require('express'),
     io = require('socket.io').listen(server),
     _ = require('underscore'),
     RandomWorld = require('./server/randomWorld'),
-    Change = require('./server/client/change'),
-    Tiles = require('./server/client/tiles'),
+    Change = require('./server/shared/change'),
+    Tiles = require('./server/shared/tiles'),
     PlayerContext = require('./server/playerContext'),
-    Stats = require('./server/client/stats');
+    Stats = require('./server/shared/stats');
 
 app.use(express.static(__dirname + '/frontend/'));
-app.use('/scripts/', express.static(__dirname + '/scripts/'));
+app.use('/shared/', express.static(__dirname + '/shared/'));
 app.use('/components/', express.static(__dirname + '/components/'));
 
 // setup environments
