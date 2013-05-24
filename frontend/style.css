@@ -9,6 +9,10 @@ body {
     margin: 0 34px;
 }
 
+#inputUseWebGL {
+    float: left;
+}
+
 #stats {
     padding: 5px;
     padding-top: 0;
