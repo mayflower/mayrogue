@@ -6,7 +6,7 @@
 
 define(['underscore', 'util', 'eventBus', 'tiles',
     '/tilesets/oryx.js', 'worldClient', 'entity', 'map',
-    'mapView', 'change', 'statsView', 'socket.io', 'fastclick' /*@todo move it to the touch controller */, 'controls/controls', 'network/client','domReady'
+    'mapViewGL', 'change', 'statsView', 'socket.io', 'fastclick' /*@todo move it to the touch controller */, 'controls/controls', 'network/client','domReady'
 ],
     function(_, Util, EventBus, Tiles, Tileset, World, Entity, Map,
         MapView, Change, StatsView, Io, FastClick, Control, Client)

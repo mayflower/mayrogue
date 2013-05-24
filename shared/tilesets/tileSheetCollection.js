@@ -90,7 +90,19 @@ define(['underscore', 'util', 'tilesets/base'],
 
             if (me._members.length > 0) return me._members[0].getTileHeight;
             return null;
+        },
+
+        getTileSheet: function(tileId) {
+            var me = this;
+            var i;
+            for (i = 0; i < me._members.length; i++) {
+                if (me._members[i].isMapping(tileId)) {
+                    return me._members[i];
+                }
+            }
+            return null;
         }
+
     });
 
     return TileSheetCollection;
