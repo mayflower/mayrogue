@@ -181,7 +181,7 @@ define(
                     currentTileSet = newTileSet;
 
                     if (currentTileSet !== null) {
-                        var texCoords = currentTileSet.getTextureCoords(tileId);
+                        var texCoords = currentTileSet.getTextureCoords(tileId, entity);
 
                         var coords = {
                             x: entity.getX() - x0,

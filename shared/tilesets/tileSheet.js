@@ -95,16 +95,24 @@ define(['underscore', 'util', 'tilesets/base'],
             return true;
         },
 
-        getTextureCoords: function(tileId) {
+        getTextureCoords: function(tileId, entity) {
             var me = this;
             var def = me._mapping[tileId];
+
             if (def.length !== 1) {
                 //console.log(def.length);
                 //console.log("multi-tiles "+def.length+" per tile is not yet supported");
             }
+
+            var realDef = def[0];
+
+            if (def[0].heading && entity !== undefined) {
+                realDef = def[0][entity.getHeading()];
+            }
+
             return {
-                x: def[0].ix * me._tileWidth / me._image.width,
-                y: def[0].iy * me._tileWidth / me._image.height,
+                x: realDef.ix * me._tileWidth / me._image.width,
+                y: realDef.iy * me._tileWidth / me._image.height,
                 w: me._tileWidth / me._image.width,
                 h: me._tileHeight / me._image.height
             };
