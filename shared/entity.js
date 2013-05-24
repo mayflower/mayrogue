@@ -11,6 +11,7 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
             'shape',
             'world',
             'heading',
+            'role',
             {field: '_id', getter: true},
             {field: '_boundingBox', getter: true},
             {field: '_stats', getter: true}
@@ -18,13 +19,14 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
         mixins: [Util.Observable],
 
         _shape: 0,
+        _role: 0,
 
         create: function(config) {
             var me = this;
             Util.Base.prototype.create.apply(me, arguments);
             Util.Observable.prototype.create.apply(me, arguments);
 
-            me.getConfig(config, ['map', 'shape', 'id', 'heading']);
+            me.getConfig(config, ['map', 'shape', 'id', 'heading', 'role']);
 
             if (!me._heading) {
                 me._heading = 'east';
@@ -177,6 +179,11 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
     Entity.unserialize = function(blob) {
         blob.stats = Stats.unserialize(blob.stats);
         return new Entity(blob);
+    };
+
+    Entity.Role = {
+        'NPC': 0,
+        'PLAYER': 1
     };
 
     return Entity;

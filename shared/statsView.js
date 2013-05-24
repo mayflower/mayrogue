@@ -8,8 +8,11 @@ define(['underscore', 'util', 'jquery'],
             ],
 
             _nameField: null,
+            _levelField: null,
             _hpBar: null,
             _hpBarProgress: null,
+            _expBar: null,
+            _expBarProgress: null,
 
             create: function(config) {
                 var me = this;
@@ -19,8 +22,13 @@ define(['underscore', 'util', 'jquery'],
                 me.getConfig(config, ['elt']);
 
                 me._nameField = $(me._elt).find('.name_field').get(0);
+                me._levelField = $(me._elt).find('.level_field').get(0);
+
                 me._hpBar = $(me._elt).find('.hp_bar').get(0);
                 me._hpBarProgress = $(me._elt).find('.hp_bar_progress').get(0);
+
+                me._expBar = $(me._elt).find('.exp_bar').get(0);
+                me._expBarProgress = $(me._elt).find('.exp_bar_progress').get(0);
 
                 if (config.player) {
                     me.setPlayer(config.player);
@@ -32,12 +40,13 @@ define(['underscore', 'util', 'jquery'],
                 var me = this;
 
                 if (!me._player) return;
-
                 var stats = me._player.getStats();
 
-                var content = stats.getName();
-                me._nameField.innerHTML = content;
+                me._nameField.innerHTML = stats.getName();
+                me._levelField.innerHTML = 'Level: ' + stats.getLevel();
+
                 me._renderHP(stats);
+                me._renderEXP(stats);
             },
 
             _renderHP: function(stats) {
@@ -56,6 +65,16 @@ define(['underscore', 'util', 'jquery'],
 
                 me._hpBarProgress.style.width = percent + '%';
                 me._hpBarProgress.innerHTML = hp + " HP";
+            },
+
+            _renderEXP: function(stats) {
+                var me = this;
+
+                var exp = stats.getExp() || 0;
+                var percent = (exp / stats.getNeededExp()) * 100;
+
+                me._expBarProgress.style.width = percent + '%';
+                me._expBarProgress.innerHTML = exp + " EXP";
             },
 
             setPlayer: function(player) {

@@ -34,7 +34,9 @@ define(['underscore', 'util', 'eventBus', 'tiles',
 
         var mapview = null,
             statsView = null,
-            client = null;
+            client = null,
+            controls = null;
+
         var initWorld = function(success, map, entities, player) {
 
             if (!success) return;
@@ -47,11 +49,17 @@ define(['underscore', 'util', 'eventBus', 'tiles',
                 viewportHeight: 15
             });
 
-            client = new Client({
-                socket: socket,
-                world: world,
-                player:player
-            });
+
+            if (client) {
+                client.setWorld(world);
+                client.setPlayer(player);
+            } else {
+                client = new Client({
+                    socket: socket,
+                    world: world,
+                    player: player
+                });
+            }
             var canvas = document.getElementById('stage');
 
             mapview = new MapView({
@@ -60,14 +68,21 @@ define(['underscore', 'util', 'eventBus', 'tiles',
                 canvas: canvas
             });
 
-            statsView = new StatsView({
-                player: player,
-                elt: document.getElementById('stats')
-            });
+            if (statsView) {
+                statsView.setPlayer(player);
+            } else {
+                statsView = new StatsView({
+                    player: player,
+                    elt: document.getElementById('stats')
+                });
+            }
 
             //enable the controls
-            //noinspection JSUnusedLocalSymbols
-            var controls = new Control(client);
+            if (controls) {
+                controls.setClient(client);
+            } else {
+                controls = new Control(client);
+            }
         };
 
         welcomePackage.and(Tileset.ready).then(function(success) {

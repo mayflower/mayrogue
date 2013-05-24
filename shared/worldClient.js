@@ -45,6 +45,7 @@ define(['underscore', 'util', 'geometry', 'worldBase'],
 
         addEntity: function(entity) {
             var me = this;
+            if (!entity) return;
 
             _parent.addEntity.apply(me, arguments);
 
@@ -54,6 +55,7 @@ define(['underscore', 'util', 'geometry', 'worldBase'],
 
         removeEntity: function(entity) {
             var me = this;
+            if (!entity) return;
 
             if (me._viewport.intersect(entity.getBoundingBox())) me._onVisibleChange();
 

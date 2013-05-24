@@ -6,7 +6,7 @@ define(['underscore', 'util', 'change/base', 'change/types'],
         "use strict";
 
         var Stats = Util.extend(Base, {
-            properties: ['hp', 'id'],
+            properties: ['hp', 'exp', 'level', 'id'],
 
             type: Types.STATS,
 
@@ -14,7 +14,7 @@ define(['underscore', 'util', 'change/base', 'change/types'],
                 var me = this;
                 Base.prototype.create.apply(me, arguments);
 
-                me.getConfig(config, ['hp', 'id']);
+                me.getConfig(config, ['hp', 'exp', 'level', 'id']);
             },
 
             apply: function(world) {
@@ -23,6 +23,8 @@ define(['underscore', 'util', 'change/base', 'change/types'],
                 var entity = world.getEntityById(me._id);
                 if (entity) {
                     entity.getStats().setHp(me._hp);
+                    entity.getStats().setExp(me._exp);
+                    entity.getStats().setLevel(me._level);
                 }
             },
 
@@ -31,6 +33,8 @@ define(['underscore', 'util', 'change/base', 'change/types'],
 
                 return {
                     hp: me._hp,
+                    exp: me._exp,
+                    level: me._level,
                     id: me._id
                 };
             }
