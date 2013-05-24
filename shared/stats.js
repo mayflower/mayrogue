@@ -4,15 +4,17 @@ define(['underscore', 'util'],
     "use strict";
 
     var Stats = Util.extend(Util.Base, {
-        properties: ['hp', 'maxHp', 'name', 'exp', 'damage'],
+        properties: ['hp', 'maxHp', 'name', 'damage', 'exp', 'level'],
 
         mixins: [Util.Observable],
 
         _hp: 0,
         _maxHp: 0,
         _name: '',
-        _exp: 0,
         _dmg: 0,
+
+        _exp: 0,
+        _level: 1,
 
         create: function(config) {
             var me = this;
@@ -79,6 +81,11 @@ define(['underscore', 'util'],
                 exp: me._exp,
                 damage: me._damage
             };
+        },
+
+        getNeededExp: function() {
+            var me = this;
+            return Math.floor(4 * Math.pow((me._level || 1) + 1, 3) / 5);
         }
     });
 

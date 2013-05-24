@@ -7,6 +7,7 @@ var Util = require('./shared/util'),
     WorldBase  = require('./shared/worldBase'),
     Geometry = require('./shared/geometry'),
     EntityManagerServer = require('./entityManagerServer'),
+    Entity = require('./shared/entity'),
     _ = require('underscore');
 
 var _parent = WorldBase.prototype;
@@ -32,10 +33,39 @@ var WorldServer = Util.extend(WorldBase, {
                 if (hp <= 0) {
                     me._warpEntity(entity);
                     hp = entity.getStats().getMaxHp();
+
+                    if (attacker.getRole() === Entity.Role.PLAYER) {
+                        var receivedExp = me._getReceivedExp(attacker, entity),
+                            exp = attacker.getStats().getExp() + receivedExp,
+                            neededExp = attacker.getStats().getNeededExp();
+
+                        console.log('old EXP: ' + attacker.getStats().getExp());
+                        console.log('new EXP: ' + exp);
+                        console.log('rec EXP: ' + receivedExp);
+                        console.log('need EXP: ' + neededExp);
+                        if (exp >= neededExp) {
+                            attacker.getStats().setLevel(attacker.getStats().getLevel() + 1);
+                        }
+                        attacker.getStats().setExp(exp);
+                    }
                 }
                 
                 entity.getStats().setHp(hp);
         });
+    },
+
+    _getReceivedExp: function(attacker, entity) {
+        var multiplier = entity.getRole() === Entity.Role.PLAYER ? 1.5 : 1,
+            basicExp = entity.getRole() === Entity.Role.PLAYER ? 10 : 5,
+            entityLevel = entity.getStats().getLevel() || 1,
+            attackerLevel = attacker.getStats().getLevel() || 1;
+
+        return Math.ceil(
+            multiplier * basicExp * entityLevel
+            / 5 *
+            Math.pow(2 * entityLevel + 10, 2.5) /
+            Math.pow(entityLevel + attackerLevel + 10, 2.5) + 1
+        );
     },
 
     _warpEntity: function(entity, maxTries) {

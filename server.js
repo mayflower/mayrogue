@@ -16,7 +16,8 @@ var express = require('express'),
     Change = require('./server/shared/change'),
     Tiles = require('./server/shared/tiles'),
     PlayerContext = require('./server/playerContext'),
-    Stats = require('./server/shared/stats');
+    Stats = require('./server/shared/stats'),
+    Entity = require('./server/shared/entity');
 
 app.use(express.static(__dirname + '/frontend/'));
 app.use('/shared/', express.static(__dirname + '/shared/'));
@@ -25,6 +26,7 @@ app.use('/components/', express.static(__dirname + '/components/'));
 // setup environments
 var configuration = {
     'development': function() {
+        this.production();
         app.use(express.logger('dev'));
     },
     'production': function() {
@@ -57,13 +59,15 @@ var initPlayer = function(socket, username) {
         2: Tiles.MAGE
     };
 
+    debugger;
     var player = world.addNewRandomEntity({
         shape: shapes[_.random(2)],
         stats: new Stats({
             hp: 20,
             maxHp: 20,
             name: username
-        })
+        }),
+        role: Entity.Role.PLAYER
     });
 
     var playerContext = new PlayerContext({

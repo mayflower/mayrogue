@@ -47,6 +47,8 @@ var EntityManagerServer = Util.extend(EntityManager, {
         if (!me._newEntities[id]) {
             if (!me._statsUpdates[id]) me._statsUpdates[id] = {id: id};
             me._statsUpdates[id].hp = entity.getStats().getHp();
+            me._statsUpdates[id].exp = entity.getStats().getExp();
+            me._statsUpdates[id].level = entity.getStats().getLevel();
         }
     },
 
