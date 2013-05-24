@@ -26,7 +26,6 @@ app.use('/components/', express.static(__dirname + '/components/'));
 // setup environments
 var configuration = {
     'development': function() {
-        this.production();
         app.use(express.logger('dev'));
     },
     'production': function() {
