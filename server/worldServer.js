@@ -39,10 +39,6 @@ var WorldServer = Util.extend(WorldBase, {
                             exp = attacker.getStats().getExp() + receivedExp,
                             neededExp = attacker.getStats().getNeededExp();
 
-                        console.log('old EXP: ' + attacker.getStats().getExp());
-                        console.log('new EXP: ' + exp);
-                        console.log('rec EXP: ' + receivedExp);
-                        console.log('need EXP: ' + neededExp);
                         if (exp >= neededExp) {
                             attacker.getStats().setLevel(attacker.getStats().getLevel() + 1);
                         }
