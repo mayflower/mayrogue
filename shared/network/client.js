@@ -61,10 +61,11 @@ define(['underscore', 'util', 'change'],
          * @private
          */
         _addSocketUpdateHandle: function() {
-            var me = this, world = me._world;
+            var me = this;
             me._socket.on('update', function(payload) {
-                var changeset = _.map(payload.changeset, Change.unserialize);
-                var stale = (me._generation !== payload.generation);
+                var changeset = _.map(payload.changeset, Change.unserialize),
+                    stale = (me._generation !== payload.generation),
+                    world = me.getWorld();
 
                 world.startBatchUpdate();
                 _.each(changeset, function(change) {change.apply(world, stale);});

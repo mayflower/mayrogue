@@ -26,7 +26,7 @@ define(['util', 'controls/keyboard', 'controls/touch'],
         properties: [
             'controlHandler',
             'client',
-            'player'
+            {field: '_player', getter: true}
         ],
 
         /**
@@ -37,8 +37,7 @@ define(['util', 'controls/keyboard', 'controls/touch'],
          */
         create: function(client) {
             var me = this;
-            me._client = client;
-            me._player = me._client.getPlayer();
+            me.setClient(client);
 
             if(me._isTouch()) {
                 me._controlHandler = new Touch();
@@ -58,26 +57,32 @@ define(['util', 'controls/keyboard', 'controls/touch'],
             var me = this;
             me._controlHandler.attachListeners({
                 playerMoveLeft: function() {
-                    me._player.setX(me._player.getX() - 1);
-                    me._client.broadcastMovement(-1, 0);
+                    me.getPlayer().setX(me.getPlayer().getX() - 1);
+                    me.getClient().broadcastMovement(-1, 0);
                 },
                 playerMoveRight: function() {
-                    me._player.setX(me._player.getX() + 1);
-                    me._client.broadcastMovement(1, 0);
+                    me.getPlayer().setX(me.getPlayer().getX() + 1);
+                    me.getClient().broadcastMovement(1, 0);
                 },
                 playerMoveUp: function() {
-                    me._player.setY(me._player.getY() - 1);
-                    me._client.broadcastMovement(0, -1);
+                    me.getPlayer().setY(me.getPlayer().getY() - 1);
+                    me.getClient().broadcastMovement(0, -1);
                 },
                 playerMoveDown: function() {
-                    me._player.setY(me._player.getY() + 1);
-                    me._client.broadcastMovement(0, 1);
+                    me.getPlayer().setY(me.getPlayer().getY() + 1);
+                    me.getClient().broadcastMovement(0, 1);
                 },
                 playerAttack: function() {
-                    me._player.attack(1,1);
-                    me._client.broadcastAttack(1,1);
+                    me.getPlayer().attack(1,1);
+                    me.getClient().broadcastAttack(1,1);
                 }
             }, me._controlHandler);
+        },
+
+        setClient: function(client) {
+            var me = this;
+            me._client = client;
+            me._player = me._client.getPlayer();
         },
 
         /**
