@@ -95,6 +95,34 @@ define(['underscore', 'util', 'tilesets/base'],
             return true;
         },
 
+        getTextureCoords: function(tileId, entity) {
+            var me = this;
+            var def = me._mapping[tileId];
+
+            if (def.length !== 1) {
+                //console.log(def.length);
+                //console.log("multi-tiles "+def.length+" per tile is not yet supported");
+            }
+
+            var realDef = def[0];
+
+            if (def[0].heading && entity !== undefined) {
+                realDef = def[0][entity.getHeading()];
+            }
+
+            return {
+                x: realDef.ix * me._tileWidth / me._image.width,
+                y: realDef.iy * me._tileWidth / me._image.height,
+                w: me._tileWidth / me._image.width,
+                h: me._tileHeight / me._image.height
+            };
+        },
+
+        isMapping: function(tileId) {
+            var me = this;
+            return me._mapping[tileId] !== undefined;
+        },
+
         drawEntityTo: function(context, x, y, entity) {
             var me = this;
 
