@@ -39,7 +39,13 @@ define(['underscore', 'util', 'tiles', 'tilesets/tileSheet'],
             me._drawEntityStats(context, x, y, entity);
 
             return true;
+        },
+
+        isMapping: function(tileId) {
+            var me = this;
+            return me._mapping[tileId] !== undefined;
         }
+
     });
 
     return TileSheetLarge;
