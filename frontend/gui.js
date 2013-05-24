@@ -1,30 +1,36 @@
 define(['jquery', 'eventBus', 'bootstrap'], function($, EventBus) {
     "use strict";
 
-    var modal = $('#loginModal');
-    var input = $('#inputUsername');
-    var button = $('#btnLogin');
+    var modal = $('#loginModal'),
+        input = $('#inputUsername'),
+        button = $('#btnLogin'),
+        username = null;
 
     modal.on('shown', function() {
         input.val('');
         if (input.has('error')) input.removeClass('error');
         input.focus();
     });
-    modal.modal('show');
+
+    modal.on('hidden', function() {
+        EventBus.fireEvent('login', username);
+        $('#main').show();
+    });
 
     input.on('keypress', function(event) {
         if (13 !== event.which) return;
 
         event.preventDefault();
-        button.click();
+        button.focus().delay(25).click();
     });
 
     button.on('click', function() {
         var val = input.val().trim();
         if (!val) return;
 
-        EventBus.fireEvent('login', val);
+        username = val;
         modal.modal('hide');
-        $('#main').show();
     });
+
+    modal.modal('show');
 });
