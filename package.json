@@ -4,7 +4,8 @@
   "description": "a Rogue-like MMORPG",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "./node_modules/.bin/bower install"
   },
   "repository": {
     "type": "git",
@@ -15,16 +16,12 @@
   ],
   "author": "Mayflower",
   "license": "MIT",
-  "gitHead": "c77c652c49dce2e9bd12faf80a3b4275011a8ae9",
   "dependencies": {
     "express": "~3.1.0",
     "socket.io": "~0.9.13",
     "requirejs": "~2.1.5",
     "underscore": "~1.4.4",
-    "bower": "0.6.x"
-  },
-  "scripts": {
-    "postinstall": "./node_modules/bower/bin/bower install"
+    "bower": "~0.9.2"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
