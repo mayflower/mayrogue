@@ -5,6 +5,10 @@ define(['underscore', 'util'],
 
     var Base = Util.extend(Util.Base, {
 
+        validate: function() {
+            return false;
+        }
+
     });
 
     return Base;

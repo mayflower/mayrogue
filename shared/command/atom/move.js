@@ -6,8 +6,23 @@ define(['underscore', 'util', 'command/atom/types', 'command/atom/base'],
     var Move = Util.extend(Base, {
         type: Types.MOVE,
 
+        properties: ['deltaX', 'deltaY'],
+
+        create: function(config) {
+            var me = this;
+
+            me.getConfig(config, ['deltaX', 'deltaY']);
+        },
+
         serialize: function() {
-            return {};
+            return {
+                deltaX: me._deltaX,
+                deltaY: me._deltaY
+            };
+        },
+
+        validate: function() {
+            return ((Math.abs(me._deltaX) + Math.abs(me._deltaY)) <= 1);
         }
     });
 
