@@ -7,11 +7,12 @@
 define(['underscore', 'util', 'eventBus', 'tiles',
     '/tilesets/oryx.js', 'worldClient', 'entity', 'map',
     'change', 'statsView', 'controls/controls', 'network/client',
+    'command',
     'mapView', 'mapViewGL',
     'socket.io', 'domReady'
 ],
     function(_, Util, EventBus, Tiles, Tileset, World, Entity, Map,
-        Change, StatsView,  Control, Client, mapViewVanilla, mapViewGL,
+        Change, StatsView,  Control, Client, Command, MapViewVanilla, MapViewGL,
         Io)
 {
     "use strict";
@@ -66,7 +67,7 @@ define(['underscore', 'util', 'eventBus', 'tiles',
             var canvas = document.getElementById('stage');
 
             /** TODO: This has to go into a factory. */
-            var MapView = useWebGL ? mapViewGL : mapViewVanilla;
+            var MapView = useWebGL ? MapViewGL : MapViewVanilla;
             mapview = new MapView({
                 world: world,
                 tiles: Tileset,
