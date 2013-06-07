@@ -6,10 +6,13 @@
 
 define(['underscore', 'util', 'eventBus', 'tiles',
     '/tilesets/oryx.js', 'worldClient', 'entity', 'map',
-    'change', 'statsView', 'socket.io', 'fastclick' /*@todo move it to the touch controller */, 'controls/controls', 'network/client','domReady'
+    'change', 'statsView', 'controls/controls', 'network/client',
+    'mapView', 'mapViewGL',
+    'socket.io', 'domReady'
 ],
     function(_, Util, EventBus, Tiles, Tileset, World, Entity, Map,
-        Change, StatsView, Io, FastClick, Control, Client)
+        Change, StatsView,  Control, Client, mapViewVanilla, mapViewGL,
+        Io)
 {
     "use strict";
 
@@ -62,13 +65,12 @@ define(['underscore', 'util', 'eventBus', 'tiles',
             }
             var canvas = document.getElementById('stage');
 
-            var mapViewFile = useWebGL ? "mapViewGL" : "mapView";
-            require ([mapViewFile], function(MapView) {
-                mapview = new MapView({
-                    world: world,
-                    tiles: Tileset,
-                    canvas: canvas
-                });
+            /** TODO: This has to go into a factory. */
+            var MapView = useWebGL ? mapViewGL : mapViewVanilla;
+            mapview = new MapView({
+                world: world,
+                tiles: Tileset,
+                canvas: canvas
             });
 
             if (statsView) {
