@@ -1,4 +1,4 @@
-define(['underscore', 'util', 'command/atom/types', 'command/atom/base'],
+define(['underscore', 'util', 'action/types', 'action/base'],
     function(_, Util, Types, Base)
 {
     'use strict';
@@ -15,6 +15,8 @@ define(['underscore', 'util', 'command/atom/types', 'command/atom/base'],
         },
 
         serialize: function() {
+            var me = this;
+
             return {
                 deltaX: me._deltaX,
                 deltaY: me._deltaY
@@ -22,6 +24,8 @@ define(['underscore', 'util', 'command/atom/types', 'command/atom/base'],
         },
 
         validate: function() {
+            var me = this;
+
             return ((Math.abs(me._deltaX) + Math.abs(me._deltaY)) <= 1);
         }
     });

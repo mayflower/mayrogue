@@ -1,4 +1,4 @@
-define(['underscore', 'util', 'command/atom/types', 'command/atom/base'],
+define(['underscore', 'util', 'action/types', 'action/base'],
     function(_, Util, Types, Base)
 {
     'use strict';

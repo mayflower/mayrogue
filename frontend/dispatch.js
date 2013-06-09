@@ -7,12 +7,11 @@
 define(['underscore', 'util', 'eventBus', 'tiles',
     '/tilesets/oryx.js', 'worldClient', 'entity', 'map',
     'change', 'statsView', 'controls/controls', 'network/client',
-    'command',
-    'mapView', 'mapViewGL',
+    'action', 'mapView', 'mapViewGL',
     'socket.io', 'domReady'
 ],
     function(_, Util, EventBus, Tiles, Tileset, World, Entity, Map,
-        Change, StatsView,  Control, Client, Command, MapViewVanilla, MapViewGL,
+        Change, StatsView,  Control, Client, Action, MapViewVanilla, MapViewGL,
         Io)
 {
     "use strict";

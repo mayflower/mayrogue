@@ -1,16 +1,16 @@
-define(['underscore', 'util', 'command/atom/types', 'command/atom/attack', 'command/atom/move'],
+define(['underscore', 'util', 'action/types', 'action/attack', 'action/move'],
     function(_, Util, Types, Attack, Move)
 {
     'use strict';
 
-    var Atom = {
+    var Action = {
         Attack: Attack,
         Move: Move,
 
-        serialize: function(atom) {
+        serialize: function(action) {
             return {
-                type: atom.type,
-                data: atom.serialize()
+                type: action.type,
+                data: action.serialize()
             };
         },
 
@@ -26,7 +26,7 @@ define(['underscore', 'util', 'command/atom/types', 'command/atom/attack', 'comm
         }
     };
 
-    _.extend(Atom, Types);
+    _.extend(Action, Types);
 
-    return Atom;
+    return Action;
 });
