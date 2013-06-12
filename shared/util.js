@@ -200,8 +200,15 @@ define(['underscore'],
             var me = this;
 
             _.each(properties, function(property) {
-                if (config[property] !== undefined)
-                    me['_' + property] = config[property];
+                if (config[property] !== undefined) {
+                    var setter = me['set' + Util.ucFirst(property)];
+
+                    if (_.isFunction(setter)) {
+                        setter.call(me, config[property]);
+                    } else {
+                        me['_' + property] = config[property];
+                    }
+                }
             });
 
             return me;

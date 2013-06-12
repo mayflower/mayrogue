@@ -35,9 +35,14 @@ define(['underscore', 'util', 'eventBus', 'tiles',
             welcomePackage.resolve(map, entities, player);
         });
 
+        var client = new Client({
+            socket: socket
+        });
+        var statsView = new StatsView({
+            elt: document.getElementById('stats')
+        });
+
         var mapview = null,
-            statsView = null,
-            client = null,
             controls = null;
 
         var initWorld = function(success, map, entities, player) {
@@ -52,17 +57,8 @@ define(['underscore', 'util', 'eventBus', 'tiles',
                 viewportHeight: 15
             });
 
+            client.setWorld(world);
 
-            if (client) {
-                client.setWorld(world);
-                client.setPlayer(player);
-            } else {
-                client = new Client({
-                    socket: socket,
-                    world: world,
-                    player: player
-                });
-            }
             var canvas = document.getElementById('stage');
 
             /** TODO: This has to go into a factory. */
@@ -73,14 +69,7 @@ define(['underscore', 'util', 'eventBus', 'tiles',
                 canvas: canvas
             });
 
-            if (statsView) {
-                statsView.setPlayer(player);
-            } else {
-                statsView = new StatsView({
-                    player: player,
-                    elt: document.getElementById('stats')
-                });
-            }
+            statsView.setPlayer(player);
 
             //enable the controls
             if (controls) {

@@ -10,9 +10,10 @@ define(['underscore', 'util', 'change'],
         properties: [
             'socket',
             'world',
-            'player',
-            'generation'
+            'generation',
+            'actionSource'
         ],
+        _generation: null,
 
         /**
          * Create an instance of the network client
@@ -24,52 +25,61 @@ define(['underscore', 'util', 'change'],
             Util.Base.prototype.create.apply(me, arguments);
             Util.Observable.prototype.create.apply(me, arguments);
 
-            me.getConfig(config, ['socket', 'world', 'player']);
-            me._generation = 0;
-
-            me._addSocketUpdateHandle();
+            me.getConfig(config, ['socket', 'world', 'actionSource']);
         },
 
         /**
-         * Send a _player move request to the server
+         * Set socket and transfer listeners.
          *
-         * @param {int} dx
-         * @param {int} dy
+         * @param socket
          */
-        broadcastMovement: function(dx, dy) {
-            var me = this;
-            me._socket.emit('movement', {
-                generation: ++me._generation,
-                delta: {x: dx, y: dy}
-            });
+        setSocket: function(socket) {
+            var me = this,
+                listeners = {
+                    update: me._onIncomingUpdate
+                };
+
+            if (me._socket) {
+                me._socket.detachListeners(listeners, me);
+            }
+            me._socket = socket;
+            if (me._socket) {
+                me._socket.attachListeners(listeners, me);
+            }
         },
 
-        /**
-         * Send an attack request to the server
-         */
-        broadcastAttack: function() {
-            var me = this;
-            me._socket.emit('attack', {
-                generation: ++me._generation,
-                attacker: me._player.getId()
-            });
+        _onIncomingUpdate: function(payload) {
+            var me = this,
+                changeset = _.map(payload.changeset, Change.unserialize),
+                stale = (me._generation !== payload.generation),
+                world = me.getWorld();
+
+            world.startBatchUpdate();
+            _.each(changeset, function(change) {change.apply(world, stale);});
+            world.endBatchUpdate();
         },
 
-        /**
-         * Add handle to react on _socket update response
-         *
-         * @private
-         */
-        _addSocketUpdateHandle: function() {
-            var me = this;
-            me._socket.on('update', function(payload) {
-                var changeset = _.map(payload.changeset, Change.unserialize),
-                    stale = (me._generation !== payload.generation),
-                    world = me.getWorld();
+        setActionSource: function(source) {
+            var me = this,
+                listeners = {
+                    action: me._onAction
+                };
 
-                world.startBatchUpdate();
-                _.each(changeset, function(change) {change.apply(world, stale);});
-                world.endBatchUpdate();
+            if (me._actionSource) {
+                me._actionSource.detachListeners(listeners, me);
+            }
+            me._actionSource = source;
+            if (me._actionSource) {
+                me._actionSource.attachListeners(listeners, me);
+            }
+        },
+
+        _onAction: function(action) {
+            var me = this;
+
+            me._socket.emit('action', {
+                generation: ++me._generation,
+                action: action.serialize()
             });
         },
 

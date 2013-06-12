@@ -19,7 +19,7 @@ define(['underscore', 'util', 'jquery'],
 
                 Util.Base.prototype.create.apply(me, arguments);
 
-                me.getConfig(config, ['elt']);
+                me.getConfig(config, ['elt', 'player']);
 
                 me._nameField = $(me._elt).find('.name_field').get(0);
                 me._levelField = $(me._elt).find('.level_field').get(0);
@@ -31,7 +31,6 @@ define(['underscore', 'util', 'jquery'],
                 me._expBarProgress = $(me._elt).find('.exp_bar_progress').get(0);
 
                 if (config.player) {
-                    me.setPlayer(config.player);
                     me._render();
                 }
             },
@@ -86,9 +85,10 @@ define(['underscore', 'util', 'jquery'],
                 if (me._player) {
                     me._player.detachListeners(listenersConfig, me);
                 }
-
                 me._player = player;
-                player.attachListeners(listenersConfig, me);
+                if (me._player) {
+                    me._player.attachListeners(listenersConfig, me);
+                }
             }
         });
 
