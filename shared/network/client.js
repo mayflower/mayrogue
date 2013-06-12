@@ -1,5 +1,5 @@
-define(['underscore', 'util', 'change'],
-    function(_, Util, Change)
+define(['underscore', 'util', 'change', 'socket.io'],
+    function(_, Util, Change, Io)
 {
     "use strict";
 
@@ -8,10 +8,10 @@ define(['underscore', 'util', 'change'],
         mixins: [Util.Observable],
 
         properties: [
-            'socket',
             'world',
             'generation',
-            'actionSource'
+            'actionSource',
+            {field: '_socket', getter: true}
         ],
         _generation: null,
 
@@ -25,27 +25,17 @@ define(['underscore', 'util', 'change'],
             Util.Base.prototype.create.apply(me, arguments);
             Util.Observable.prototype.create.apply(me, arguments);
 
-            me.getConfig(config, ['socket', 'world', 'actionSource']);
+            me.getConfig(config, ['world', 'actionSource']);
+
+            me._socket = Io.connect();
+            me._socket.on('welcome', me._onWelcome);
+            me._socket.on('update', me._onIncomingUpdate);
         },
 
-        /**
-         * Set socket and transfer listeners.
-         *
-         * @param socket
-         */
-        setSocket: function(socket) {
-            var me = this,
-                listeners = {
-                    update: me._onIncomingUpdate
-                };
+        _onWelcome: function(payload) {
+            var me = this;
 
-            if (me._socket) {
-                me._socket.detachListeners(listeners, me);
-            }
-            me._socket = socket;
-            if (me._socket) {
-                me._socket.attachListeners(listeners, me);
-            }
+            me.fireEvent('welcome', payload);
         },
 
         _onIncomingUpdate: function(payload) {
@@ -53,6 +43,8 @@ define(['underscore', 'util', 'change'],
                 changeset = _.map(payload.changeset, Change.unserialize),
                 stale = (me._generation !== payload.generation),
                 world = me.getWorld();
+
+            if (!world) return;
 
             world.startBatchUpdate();
             _.each(changeset, function(change) {change.apply(world, stale);});
@@ -91,17 +83,6 @@ define(['underscore', 'util', 'change'],
         login: function(username) {
             var me = this;
             me._socket.emit('login', {'username': username});
-            me._socket.on('reconnect', me.login(username));
-        },
-
-        /**
-         * Reconnect the user with the given name
-         *
-         * @param {string} username
-         */
-        reconnect: function(username) {
-            var me = this;
-            me.login(username);
         }
     });
 

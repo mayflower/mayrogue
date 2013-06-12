@@ -36,7 +36,7 @@ define(['underscore', 'util', 'action'],
             if (!me._world) return;
 
             switch (action.type) {
-                case Action.ATTACK:
+                case Action.MOVE:
                     action.execute(me._world.getPlayer(), me._world);
                     break;
             }

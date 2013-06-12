@@ -7,31 +7,35 @@ define(['underscore', 'util', 'fastclick'],
 
         mixins: [Util.Observable],
         properties: [
-            'el'
+            'controlElement',
+            'canvasElement'
         ],
 
         /**
          * constructor
          */
-        create: function() {
+        create: function(config) {
             var me = this;
             Util.Base.prototype.create.apply(me, arguments);
             Util.Observable.prototype.create.apply(me, arguments);
 
-            me._el = document.getElementById('player_control');
-            new FastClick(me._el);
+            me.getConfig(config, ['controlElement', 'canvasElement']);
+
+            //noinspection JSHint
+            new FastClick(me._controlElement);
+
             me._createMovementControls();
             me._createAttackControl();
         },
 
         _createAttackControl: function() {
             var me = this;
-            var canvas = document.getElementById('stage');
 
-            new FastClick(canvas);
-            canvas.onclick = function() {
+            //noinspection JSHint
+            new FastClick(me._canvasElement);
+            me._canvasElement.onclick = function() {
                 me.fireEvent("playerAttack");
-            }
+            };
         },
 
         /**
@@ -76,11 +80,11 @@ define(['underscore', 'util', 'fastclick'],
                 control.style.visibility = 'visible';
                 control.onclick = ctrl.func;
 
-                me._el.appendChild(control);
+                me._controlElement.appendChild(control);
             });
 
             //show the new buttons
-            me._el.style.visibility = "visibility";
+            me._controlElement.style.visibility = "visibility";
         }
     });
 

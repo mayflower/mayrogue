@@ -1,71 +1,12 @@
-// vim:softtabstop=4:shiftwidth=4
-
-define(['underscore', 'util'],
-    function(_, Util)
+define(['mapView/vanilla', 'mapView/webGL'],
+    function(Vanilla, WebGL)
 {
-    "use strict";
+    'use strict';
 
-    var MapView = Util.extend(Util.Base, {
-        properties: [
-            {field: '_world', getter: true},
-            {field: '_tiles', getter: true},
-            {field: '_canvas', getter: true}
-        ],
+    var mapView = {
+        Vanilla: Vanilla,
+        WebGL: WebGL
+    };
 
-        _context: null,
-
-        create: function(config) {
-            var me = this;
-            Util.Base.prototype.create.apply(me, arguments);
-
-            me.getConfig(config,
-                ['world', 'tiles', 'canvas']);
-
-            me._world.attachListeners({visibleChange: me.redraw}, me);
-
-            me._canvas.width = me._tiles.width * me._world.getViewport().getWidth();
-            me._canvas.height = me._tiles.height * me._world.getViewport().getHeight();
-
-            me._context = me._canvas.getContext('2d');
-            me._context.fillStyle = config.textColor || '#FFFFFF';
-
-            me.redraw();
-        },
-
-        destroy: function() {
-            var me = this;
-
-            me._world.detachListeners({visibleChange: me.redraw}, me);
-        },
-
-        redraw: function() {
-            var me = this;
-            var x, y;
-            var mapData = me._world.getMapData();
-            var viewport = me._world.getViewport();
-            var x0 = viewport.getX(), y0 = viewport.getY();
-
-            for (x = x0; x < x0 + viewport.getWidth(); x++)
-                for (y = y0; y < y0 + viewport.getHeight(); y++)
-
-                    me._tiles.drawWorldTo(
-                        me._context,
-                        me._tiles.width * (x - x0),
-                        me._tiles.height * (y - y0),
-                        mapData[x][y]
-                    );
-
-            _.each(me._world.getEntities(), function(entity) {
-
-                me._tiles.drawEntityTo(
-                    me._context,
-                    me._tiles.width * (entity.getX() - x0),
-                    me._tiles.height * (entity.getY() - y0),
-                    entity
-                );
-            });
-        }
-    });
-
-    return MapView;
+    return mapView;
 });

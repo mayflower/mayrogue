@@ -2,20 +2,22 @@
 
 define(
     [
-        'underscore',
+        'frontend/underscore',
         'util',
+        'mapView/base',
         'graphics/webGLHelper',
         'graphics/gl-matrix',
         'text!graphics/shaders/simpleTileShader.fsh',
         'text!graphics/shaders/simpleTileShader.vsh'
     ],
-    function(_, Util, WebGLHelper, GLMatrix, fragmentShaderSource, vertexShaderSource)
+    function(_, Util, Base, WebGLHelper, GLMatrix, fragmentShaderSource, vertexShaderSource)
     {
         "use strict";
 
-        var MapView = Util.extend(Util.Base, {
+        var _parent = Base.prototype;
+
+        var WebGL = Util.extend(Base, {
             properties: [
-                {field: '_world', getter: true},
                 {field: '_tiles', getter: true},
                 {field: '_canvas', getter: true}
             ],
@@ -24,12 +26,9 @@ define(
 
             create: function(config) {
                 var me = this;
-                Util.Base.prototype.create.apply(me, arguments);
 
                 me.getConfig(config,
-                    ['world', 'tiles', 'canvas']);
-
-                me._world.attachListeners({visibleChange: me.redraw}, me);
+                    ['tiles', 'canvas']);
 
                 me._canvas.width = me._tiles.width * me._world.getViewport().getWidth();
                 me._canvas.height = me._tiles.height * me._world.getViewport().getHeight();
@@ -63,13 +62,7 @@ define(
                 console.log(me._shaderProgram);
                 me._vertexBuffer = me._context.createBuffer();
 
-                me.redraw();
-            },
-
-            destroy: function() {
-                var me = this;
-
-                me._world.detachListeners({visibleChange: me.redraw}, me);
+                _parent.create.apply(me, arguments);
             },
 
             createVertexData: function(coords, texCoords) {
