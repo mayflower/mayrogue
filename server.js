@@ -100,18 +100,6 @@ io.sockets.on('connection', function (socket) {
         playerContext.setGeneration(data.generation);
     });
 
-    socket.on('movement', function(data) {
-        var delta = data.delta;
-        player.setXY(player.getX() + delta.x, player.getY() + delta.y);
-        playerContext.setGeneration(data.generation);
-    });
-
-    socket.on('attack', function(data) {
-        var attacker = world.getEntityById(data.attacker);
-        playerContext.setGeneration(data.generation);
-        attacker.attack();
-    });
-
     socket.on('disconnect', function() {
         world.removeEntity(player);
         players = _.without(players, playerContext);
