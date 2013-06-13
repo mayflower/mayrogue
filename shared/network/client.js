@@ -1,5 +1,5 @@
-define(['underscore', 'util', 'change', 'socket.io'],
-    function(_, Util, Change, Io)
+define(['underscore', 'util', 'change', 'action', 'socket.io'],
+    function(_, Util, Change, Action, Io)
 {
     "use strict";
 
@@ -28,8 +28,15 @@ define(['underscore', 'util', 'change', 'socket.io'],
             me.getConfig(config, ['world', 'actionSource']);
 
             me._socket = Io.connect();
-            me._socket.on('welcome', me._onWelcome);
-            me._socket.on('update', me._onIncomingUpdate);
+            me._socket.on('welcome', _.bind(me._onWelcome, me));
+            me._socket.on('update', _.bind(me._onIncomingUpdate, me));
+            me._socket.on('reconnect', _.bind(me._onReconnect, me));
+        },
+
+        _onReconnect: function() {
+            var me = this;
+
+            me.fireEvent('reconnect');
         },
 
         _onWelcome: function(payload) {
@@ -71,7 +78,7 @@ define(['underscore', 'util', 'change', 'socket.io'],
 
             me._socket.emit('action', {
                 generation: ++me._generation,
-                action: action.serialize()
+                action: Action.serialize(action)
             });
         },
 

@@ -3,7 +3,7 @@ define(['underscore', 'util', 'action'],
 {
     'use strict';
 
-    Util.extend(Util.Base, {
+    var ActionEmitter = Util.extend(Util.Base, {
         properties: ['control'],
 
         mixins: [Util.Observable],
@@ -74,4 +74,6 @@ define(['underscore', 'util', 'action'],
             Util.Base.prototype.destroy.apply(me, arguments);
         }
     });
+
+    return ActionEmitter;
 });

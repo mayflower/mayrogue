@@ -21,14 +21,21 @@ define(['underscore', 'util', 'mapView/base'],
             me.getConfig(config,
                 ['tiles', 'canvas']);
 
-            me._canvas.width = me._tiles.width * me._world.getViewport().getWidth();
-            me._canvas.height = me._tiles.height * me._world.getViewport().getHeight();
-
             me._context = me._canvas.getContext('2d');
             me._context.fillStyle = config.textColor || '#FFFFFF';
 
             // The parent constructor might trigger a redraw, so we have to call it after setup
             _parent.create.apply(me, arguments);
+        },
+
+        setWorld: function(world) {
+            var me = this;
+            _parent.setWorld.apply(me, arguments);
+
+            if (world) {
+                me._canvas.width = me._tiles.width * me._world.getViewport().getWidth();
+                me._canvas.height = me._tiles.height * me._world.getViewport().getHeight();
+            }
         },
 
         redraw: function() {

@@ -41,4 +41,6 @@ define(['underscore', 'util'],
             _parent.destroy.apply(me, arguments);
         }
     });
+
+    return Base;
 });

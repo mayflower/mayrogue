@@ -12,7 +12,7 @@ define(['underscore', 'util'],
 
         _createEventProxy: function(event) {
             return function() {
-                var args = Array.prototype.slice.apply(arguments, 0);
+                var args = Array.prototype.slice.call(arguments, 0);
 
                 args.unshift(event);
                 this.fireEvent.apply(this, args);
@@ -32,9 +32,13 @@ define(['underscore', 'util'],
             var me = this;
 
             me._registry.push(control);
+
+            var listeners = {};
             _.each(me._controlEvents, function(event) {
-                control.attachListeners({event: me._createEventProxy(event)}, me);
+                listeners[event] = me._createEventProxy(event);
             });
+
+            control.attachListeners(listeners, me);
         },
 
         removeControl: function(control) {

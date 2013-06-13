@@ -33,9 +33,9 @@ define(['underscore', 'util', 'eventBus', 'tiles',
         });
 
         var control = new Control.Meta();
-        control.add(new Control.Keyboard());
+        control.addControl(new Control.Keyboard());
         if (touchAvailable()) {
-            control.add(new Control.Touch(
+            control.addControl(new Control.Touch(
                 {
                     controlElement: document.getElementById('playerControl'),
                     canvasElement: document.getElementById('stage')
@@ -88,18 +88,18 @@ define(['underscore', 'util', 'eventBus', 'tiles',
             });
 
             Tileset.ready.then(function(success) {
-                if (success) initWorld(map. entities, player);
+                if (success) initWorld(map, entities, player);
             });
         };
 
         client.attachListeners({
             welcome: onWelcome,
             reconnect: function() {
-                client.login('username');
+                client.login(username);
             }
         }, window);
 
-        client.login('username');
+        client.login(username);
     };
 
     EventBus.attachListeners({'login': startDispatcher});

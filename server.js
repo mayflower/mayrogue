@@ -17,7 +17,8 @@ var express = require('express'),
     Tiles = require('./server/shared/tiles'),
     PlayerContext = require('./server/playerContext'),
     Stats = require('./server/shared/stats'),
-    Entity = require('./server/shared/entity');
+    Entity = require('./server/shared/entity'),
+    Action = require('./server/shared/action');
 
 app.use(express.static(__dirname + '/frontend/'));
 app.use('/shared/', express.static(__dirname + '/shared/'));
@@ -91,6 +92,12 @@ io.sockets.on('connection', function (socket) {
             entities: [player.serialize()],
             playerId: player.getId()
         });
+    });
+
+    socket.on('action', function(data) {
+        var action = Action.unserialize(data.action);
+        action.execute(player, world);
+        playerContext.setGeneration(data.generation);
     });
 
     socket.on('movement', function(data) {

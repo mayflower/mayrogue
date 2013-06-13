@@ -89,6 +89,10 @@ define(['underscore', 'util', 'jquery'],
                 if (me._player) {
                     me._player.attachListeners(listenersConfig, me);
                 }
+
+                if (me._nameField) {
+                    me._render();
+                }
             }
         });
 

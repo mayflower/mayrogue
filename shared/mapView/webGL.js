@@ -2,7 +2,7 @@
 
 define(
     [
-        'frontend/underscore',
+        'underscore',
         'util',
         'mapView/base',
         'graphics/webGLHelper',
@@ -29,10 +29,6 @@ define(
 
                 me.getConfig(config,
                     ['tiles', 'canvas']);
-
-                me._canvas.width = me._tiles.width * me._world.getViewport().getWidth();
-                me._canvas.height = me._tiles.height * me._world.getViewport().getHeight();
-
 
                 me._context = WebGLHelper.initWebGL(me._canvas);
                 //me._context.fillStyle = config.textColor || '#FFFFFF';
@@ -63,6 +59,16 @@ define(
                 me._vertexBuffer = me._context.createBuffer();
 
                 _parent.create.apply(me, arguments);
+            },
+
+            setWorld: function(world) {
+                var me = this;
+                _parent.setWorld.apply(me, arguments);
+
+                if (world) {
+                    me._canvas.width = me._tiles.width * me._world.getViewport().getWidth();
+                    me._canvas.height = me._tiles.height * me._world.getViewport().getHeight();
+                }
             },
 
             createVertexData: function(coords, texCoords) {
@@ -249,5 +255,5 @@ define(
             }
         });
 
-    return MapView;
+    return WebGL;
 });
