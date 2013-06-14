@@ -79,6 +79,7 @@ var initPlayer = function(socket, username) {
     return playerContext;
 };
 
+
 io.sockets.on('connection', function (socket) {
     var playerContext = null,
         player = null;
@@ -95,6 +96,8 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('action', function(data) {
+        if (!)
+
         var action = Action.unserialize(data.action);
         action.execute(player, world);
         playerContext.setGeneration(data.generation);

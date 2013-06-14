@@ -37,7 +37,7 @@ define(['underscore', 'util', 'eventBus', 'tiles',
         if (touchAvailable()) {
             control.addControl(new Control.Touch(
                 {
-                    controlElement: document.getElementById('playerControl'),
+                    controlElement: document.getElementById('player_control'),
                     canvasElement: document.getElementById('stage')
                 }
             ));

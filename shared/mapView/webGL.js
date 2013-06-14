@@ -30,6 +30,17 @@ define(
                 me.getConfig(config,
                     ['tiles', 'canvas']);
 
+                _parent.create.apply(me, arguments);
+            },
+
+            _setupWebGL: function() {
+                var me = this;
+
+                //create default projection matrix
+                me._projectionMatrix = GLMatrix.mat4.create();
+
+                //set default projection matrix to ortho view with viewport bounds = canvas bounds
+                GLMatrix.mat4.ortho(this._projectionMatrix, 0, me._canvas.width, me._canvas.height, 0, 0.0001, 10000);
                 me._context = WebGLHelper.initWebGL(me._canvas);
                 //me._context.fillStyle = config.textColor || '#FFFFFF';
                 me._context.clearColor(0.5, 0.5, 0.5, 1.0);
@@ -37,12 +48,6 @@ define(
                 me._context.disable(me._context.DEPTH_TEST);
                 me._context.blendFunc(me._context.SRC_ALPHA, me._context.ONE_MINUS_SRC_ALPHA);
                 me._context.enable(me._context.BLEND);
-
-                //create default projection matrix
-                this._projectionMatrix = GLMatrix.mat4.create();
-
-                //set default projection matrix to ortho view with viewport bounds = canvas bounds
-                GLMatrix.mat4.ortho(this._projectionMatrix, 0, me._canvas.width, me._canvas.height, 0, 0.0001, 10000);
 
                 //create shaders
                 var vertexShader = WebGLHelper.compileShader(me._context, vertexShaderSource, me._context.VERTEX_SHADER);
@@ -57,18 +62,19 @@ define(
 
                 console.log(me._shaderProgram);
                 me._vertexBuffer = me._context.createBuffer();
-
-                _parent.create.apply(me, arguments);
             },
 
             setWorld: function(world) {
                 var me = this;
-                _parent.setWorld.apply(me, arguments);
 
                 if (world) {
-                    me._canvas.width = me._tiles.width * me._world.getViewport().getWidth();
-                    me._canvas.height = me._tiles.height * me._world.getViewport().getHeight();
+                    me._canvas.width = me._tiles.width * world.getViewport().getWidth();
+                    me._canvas.height = me._tiles.height * world.getViewport().getHeight();
+                    me._setupWebGL();
                 }
+
+                // Will trigger a redraw -> need to call after GL have been set up
+                _parent.setWorld.apply(me, arguments);
             },
 
             createVertexData: function(coords, texCoords) {
@@ -124,6 +130,9 @@ define(
 
             redraw: function () {
                 var me = this;
+
+                if (!me._world) return;
+
                 me._context.clear(me._context.COLOR_BUFFER_BIT);
 
                 //prepare gl
