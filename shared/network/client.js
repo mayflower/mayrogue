@@ -11,9 +11,11 @@ define(['underscore', 'util', 'change', 'action', 'socket.io'],
             'world',
             'generation',
             'actionSource',
-            {field: '_socket', getter: true}
+            {field: '_socket', getter: true},
+            {field: '_loggedIn', getter: true}
         ],
         _generation: null,
+        _loggedIn: false,
 
         /**
          * Create an instance of the network client
@@ -36,12 +38,13 @@ define(['underscore', 'util', 'change', 'action', 'socket.io'],
         _onReconnect: function() {
             var me = this;
 
-            me.fireEvent('reconnect');
+            me._loggedIn = false;
         },
 
         _onWelcome: function(payload) {
             var me = this;
 
+            me._loggedIn = true;
             me.fireEvent('welcome', payload);
         },
 
@@ -76,6 +79,8 @@ define(['underscore', 'util', 'change', 'action', 'socket.io'],
         _onAction: function(action) {
             var me = this;
 
+            if (!me._loggedIn) return;
+
             me._socket.emit('action', {
                 generation: ++me._generation,
                 action: Action.serialize(action)
@@ -89,6 +94,7 @@ define(['underscore', 'util', 'change', 'action', 'socket.io'],
          */
         login: function(username) {
             var me = this;
+
             me._socket.emit('login', {'username': username});
         }
     });

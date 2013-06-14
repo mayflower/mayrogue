@@ -96,7 +96,7 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('action', function(data) {
-        if (!)
+        if (!playerContext) return;
 
         var action = Action.unserialize(data.action);
         action.execute(player, world);
