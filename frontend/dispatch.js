@@ -15,11 +15,11 @@ define(['underscore', 'util', 'eventBus', 'tiles',
 {
     "use strict";
 
-    var touchAvailable = function() {
-        return (('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0));
-    };
+    var startDispatcher = function(username, useWebGL, forceTouch) {
 
-    var startDispatcher = function(username, useWebGL) {
+        var touchAvailable = function() {
+            return (forceTouch || ('ontouchstart' in window) || (navigator.msMaxTouchPoints > 0));
+        };
 
         var statsView = new StatsView({
             elt: document.getElementById('stats')

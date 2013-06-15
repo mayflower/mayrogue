@@ -4,9 +4,11 @@ define(['jquery', 'eventBus', 'bootstrap'], function($, EventBus) {
     var modal = $('#loginModal'),
         input = $('#inputUsername'),
         inputUseWebGL = $('#inputUseWebGL'),
+        inputForceTouch = $('#inputForceTouch'),
         button = $('#btnLogin'),
         username = null,
-        useWebGL = null;
+        useWebGL = null,
+        forceTouch = null;
 
     modal.on('shown', function() {
         input.val('');
@@ -15,7 +17,7 @@ define(['jquery', 'eventBus', 'bootstrap'], function($, EventBus) {
     });
 
     modal.on('hidden', function() {
-        EventBus.fireEvent('login', username, useWebGL);
+        EventBus.fireEvent('login', username, useWebGL, forceTouch);
         $('#main').show();
     });
 
@@ -32,6 +34,7 @@ define(['jquery', 'eventBus', 'bootstrap'], function($, EventBus) {
 
         username = val;
         useWebGL = inputUseWebGL.is(':checked');
+        forceTouch = inputForceTouch.is(':checked');
         modal.modal('hide');
     });
 

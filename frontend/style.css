@@ -13,6 +13,10 @@ body {
     float: left;
 }
 
+#inputForceTouch {
+    float: left;
+}
+
 #stats {
     padding: 5px;
     padding-top: 0;
