@@ -15,6 +15,10 @@ define(['underscore', 'util', 'action/types', 'action/base'],
             entity.attack();
         },
 
+        validate: function() {
+            return true;
+        },
+
         serialize: function() {
             return {};
         }

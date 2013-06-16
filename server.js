@@ -99,12 +99,16 @@ io.sockets.on('connection', function (socket) {
         if (!playerContext) return;
 
         var action = Action.unserialize(data.action);
-        action.execute(player, world);
+        if (action.validate()) {
+            action.execute(player, world);
+        }
         playerContext.setGeneration(data.generation);
     });
 
     socket.on('disconnect', function() {
-        world.removeEntity(player);
+        if (player) {
+            world.removeEntity(player);
+        }
         players = _.without(players, playerContext);
     });
 });

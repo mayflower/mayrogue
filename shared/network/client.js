@@ -39,6 +39,7 @@ define(['underscore', 'util', 'change', 'action', 'socket.io'],
             var me = this;
 
             me._loggedIn = false;
+            me.fireEvent('reconnect');
         },
 
         _onWelcome: function(payload) {
