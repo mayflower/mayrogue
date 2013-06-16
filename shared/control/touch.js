@@ -71,21 +71,26 @@ define(['underscore', 'util', 'fastclick', 'control/types'],
             var me = this;
 
             _.each(me._controlElements, function(controlElement) {
-
-                controlElement.elt.addEventListener('mousedown', function() {
+                var touchStartHandler = function() {
                     if (!me._engagedControl) {
                         me._engagedControl = controlElement.type;
                         me.fireEvent('engage', controlElement.type);
                     }
-                });
+                };
+
+                controlElement.elt.addEventListener('mousedown', touchStartHandler);
+                controlElement.elt.addEventListener('touchstart', touchStartHandler);
             });
 
-            document.addEventListener('mouseup', function() {
+            var touchEndHandler = function() {
                 if (me._engagedControl) {
                     me.fireEvent('disengage', me._engagedControl);
                     me._engagedControl = null;
                 }
-            });
+            };
+
+            document.addEventListener('mouseup', touchEndHandler);
+            document.addEventListener('touchend', touchEndHandler);
         }
     });
 
