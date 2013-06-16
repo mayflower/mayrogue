@@ -28,7 +28,7 @@ body {
 }
 
 #player_control > .btn {
-    width: 60px !important;
+    width: 60px;
 }
 
 #control_up, #control_down {
