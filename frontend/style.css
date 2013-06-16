@@ -9,11 +9,7 @@ body {
     margin: 0 34px;
 }
 
-#inputUseWebGL {
-    float: left;
-}
-
-#inputForceTouch {
+#inputUseWebGL, #inputForceTouch {
     float: left;
 }
 
@@ -35,6 +31,6 @@ body {
     width: 60px !important;
 }
 
-#up, #down {
+#control_up, #control_down {
     margin: 5px 30px 5px 30px;
 }

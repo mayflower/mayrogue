@@ -4,6 +4,7 @@ define([],
     'use strict';
 
     var Types = {
+        NONE:           0,
         ATTACK:         1,
         MOVE_LEFT:      2,
         MOVE_RIGHT:     3,

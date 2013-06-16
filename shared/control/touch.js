@@ -1,5 +1,5 @@
-define(['underscore', 'util', 'fastclick'],
-    function(_, Util, FastClick)
+define(['underscore', 'util', 'fastclick', 'control/types'],
+    function(_, Util, FastClick, ControlTypes)
 {
     "use strict";
 
@@ -10,6 +10,9 @@ define(['underscore', 'util', 'fastclick'],
             'controlElement',
             'canvasElement'
         ],
+
+        _controlElements: null,
+        _engagedControl: null,
 
         /**
          * constructor
@@ -23,68 +26,66 @@ define(['underscore', 'util', 'fastclick'],
 
             //noinspection JSHint
             new FastClick(me._controlElement);
-
-            me._createMovementControls();
-            me._createAttackControl();
-        },
-
-        _createAttackControl: function() {
-            var me = this;
-
             //noinspection JSHint
             new FastClick(me._canvasElement);
-            me._canvasElement.onclick = function() {
-                me.fireEvent("playerAttack");
-            };
+
+            me._createControlElements();
+            me._attachHandlers();
+
+            me._controlElement.style.visibility = "visible";
         },
 
-        /**
-         * Create the controls for movement
-         *
-         */
-        _createMovementControls: function() {
-            var me = this;
+        _createControlElements: function() {
+            var me = this,
+                movementButtonMap = {
+                    up: ControlTypes.MOVE_UP,
+                    left: ControlTypes.MOVE_LEFT,
+                    right: ControlTypes.MOVE_RIGHT,
+                    down: ControlTypes.MOVE_DOWN
+                };
 
-            _.each({
-                up: {
-                    type: 'move',
-                    func: function() {
-                        me.fireEvent("playerMoveUp");
-                    }
-                },
-                left: {
-                    type: 'move',
-                    func: function() {
-                        me.fireEvent("playerMoveLeft");
-                    }
-                },
-                right: {
-                    type: 'move',
-                    func: function() {
-                        me.fireEvent("playerMoveRight");
-                    }
-                },
-                down: {
-                    type: 'move',
-                    func: function() {
-                        me.fireEvent("playerMoveDown");
-                    }
-                }
-            }, function(ctrl, id) {
+            me._controlElements = _.map(movementButtonMap, function(controlType, tag) {
                 var control = document.createElement("input");
-                control.id = id;
 
-                control.className += ' btn ' + ctrl.type;
+                control.id = 'control_' + tag;
                 control.type = "button";
-                control.value = id;
+                control.value = tag;
+                control.className += ' btn';
                 control.style.visibility = 'visible';
-                control.onclick = ctrl.func;
 
                 me._controlElement.appendChild(control);
+
+                return {
+                    elt: control,
+                    type: controlType
+                };
             });
 
-            //show the new buttons
-            me._controlElement.style.visibility = "visibility";
+            me._controlElements.push({
+                elt: me._canvasElement,
+                type: ControlTypes.ATTACK
+            });
+        },
+
+        _attachHandlers: function() {
+            var me = this;
+
+            _.each(me._controlElements, function(controlElement) {
+
+                controlElement.elt.addEventListener('mousedown', function() {
+                    if (!me._engagedControl) {
+                        me._engagedControl = controlElement.type;
+                        me.fireEvent('engage', controlElement.type);
+                    }
+                });
+            });
+
+            document.addEventListener('mouseup', function() {
+                if (me._engagedControl) {
+                    me.fireEvent('disengage', me._engagedControl);
+                    me._engagedControl = null;
+                }
+            });
         }
     });
 
