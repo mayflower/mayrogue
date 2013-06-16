@@ -5,8 +5,7 @@ define(['underscore', 'util'],
 
     var Meta = Util.extend(Util.Base, {
         _registry: null,
-        _controlEvents: ['playerMoveLeft', 'playerMoveRight', 'playerMoveUp', 'playerMoveDown',
-            'playerAttack'],
+        _controlEvents: ['engage', 'disengage'],
 
         mixins: [Util.Observable],
 

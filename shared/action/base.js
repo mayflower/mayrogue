@@ -5,8 +5,13 @@ define(['underscore', 'util'],
 
     var Base = Util.extend(Util.Base, {
 
+        properties: [
+            {field: '_deadTime', getter: true}
+        ],
+
+        _deadTime: 150,
+
         validate: function() {
-            // Issuer is for bookkeeping only and neither validated nor transmitted across the wire
             return false;
         }
 

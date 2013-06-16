@@ -1,5 +1,5 @@
-define(['underscore', 'util', 'action'],
-    function(_, Util, Action)
+define(['underscore', 'util', 'action', 'control/types'],
+    function(_, Util, Action, ControlTypes)
 {
     'use strict';
 
@@ -8,6 +8,10 @@ define(['underscore', 'util', 'action'],
 
         mixins: [Util.Observable],
 
+        _controlQueue: null,
+        _timeoutHandle: null,
+        _defaultDeadTime: 100,
+
         create: function(config) {
             var me = this;
 
@@ -15,6 +19,7 @@ define(['underscore', 'util', 'action'],
             Util.Observable.prototype.create.apply(me, arguments);
 
             me.getConfig(config, ['control']);
+            me._controlQueue = [];
         },
 
         setControl: function(control) {
@@ -37,32 +42,64 @@ define(['underscore', 'util', 'action'],
             if (!me._control) return;
 
             me._control.attachListeners({
-                playerMoveLeft: me._onPlayerMoveLeft,
-                playerMoveRight: me._onPlayerMoveRight,
-                playerMoveUp: me._onPlayerMoveUp,
-                playerMoveDown: me._onPlayerMoveDown,
-                playerAttack: me._onPlayerAttack
+                engage: me._onControlEngage,
+                disengage: me._onControlDisengage
             }, me);
         },
 
-        _onPlayerMoveLeft: function() {
-            this.fireEvent('action', new Action.Move({deltaX: -1}));
+        _onControlEngage: function(controlType) {
+            var me = this;
+
+            if (me._controlQueue.indexOf(controlType) < 0) {
+                me._controlQueue.push(controlType);
+            }
+            if (!me._timeoutHandle) {
+                me._dispatcher();
+            }
         },
 
-        _onPlayerMoveRight: function() {
-            this.fireEvent('action', new Action.Move({deltaX: 1}));
+        _onControlDisengage: function(controlType) {
+            var me = this;
+
+            me._controlQueue = _.without(me._controlQueue, controlType);
         },
 
-        _onPlayerMoveUp: function() {
-            this.fireEvent('action', new Action.Move({deltaY: -1}));
+        _buildAction: function(controlType) {
+            switch(controlType) {
+                case ControlTypes.ATTACK:
+                    return new Action.Attack();
+
+                case ControlTypes.MOVE_UP:
+                    return new Action.Move({deltaY: -1});
+
+                case ControlTypes.MOVE_DOWN:
+                    return new Action.Move({deltaY: 1});
+
+                case ControlTypes.MOVE_LEFT:
+                    return new Action.Move({deltaX: -1});
+
+                case ControlTypes.MOVE_RIGHT:
+                    return new Action.Move({deltaX: 1});
+            }
+
+            return null;
         },
 
-        _onPlayerMoveDown: function() {
-            this.fireEvent('action', new Action.Move({deltaY: 1}));
-        },
+        _dispatcher: function() {
+            var me = this;
 
-        _onPlayerAttack: function() {
-            this.fireEvent('action', new Action.Attack());
+            if (me._controlQueue.length > 0) {
+                var action = me._buildAction(me._controlQueue[0]),
+                    deadTime = action ? action.getDeadTime() : me._defaultDeadTime;
+
+                if (action) {
+                    me.fireEvent('action', action);
+                }
+
+                me._timeoutHandle = setTimeout(_.bind(me._dispatcher, me), deadTime);
+            } else {
+                me._timeoutHandle = null;
+            }
         },
 
         destroy: function() {
@@ -72,6 +109,10 @@ define(['underscore', 'util', 'action'],
 
             Util.Observable.prototype.destroy.apply(me, arguments);
             Util.Base.prototype.destroy.apply(me, arguments);
+        },
+
+        busy: function() {
+            return (!!this._timeoutHandle);
         }
     });
 
