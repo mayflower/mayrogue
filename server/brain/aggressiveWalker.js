@@ -52,12 +52,23 @@ var AggressiveWalker = Util.extend(Base, {
     },
 
     findWayToEnemy: function(entity, enemy, world) {
-        var goTo = {
-            x: entity.getX(),
-            y: entity.getY()
-        };
+        var wayPoints = world.findWay(
+            { x: entity.getX(), y: entity.getY() },
+            { x: enemy.getX(), y: enemy.getY() }
+        );
 
-        if (entity.getX() < enemy.getX() && world.fieldAccessible(goTo.x + 1, goTo.y, entity)) {
+        if (wayPoints && wayPoints.length) {
+            var goTo = {
+                x: wayPoints[0].position.x,
+                y: wayPoints[0].position.y
+            };
+
+            if (world.fieldAccessible(goTo.x, goTo.y)) {
+                return goTo;
+            }
+        }
+
+        /*if (entity.getX() < enemy.getX() && world.fieldAccessible(goTo.x + 1, goTo.y, entity)) {
             goTo.x = goTo.x + 1;
             return goTo;
         } else if (entity.getX() > enemy.getX() && world.fieldAccessible(goTo.x - 1, goTo.y, entity)) {
@@ -69,7 +80,7 @@ var AggressiveWalker = Util.extend(Base, {
         } else if (entity.getY() > enemy.getY() && world.fieldAccessible(goTo.x, goTo.y - 1, entity)) {
             goTo.y = goTo.y - 1;
             return goTo;
-        }
+        }*/
         return null;
     },
 
@@ -128,7 +139,7 @@ var AggressiveWalker = Util.extend(Base, {
 
     lurkAround: function() {
         var me = this;
-
+return;
         if (Math.random() > me._propability) return;
 
         var dx = 0, dy = 0;

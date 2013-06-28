@@ -38,6 +38,39 @@ var WorldServer = Util.extend(WorldBase, {
                 }
             }
         }
+
+        // register for move events to move inaccessible parts
+        config.entityManager.attachListeners({ move: me._onEntityMove }, me);
+    },
+
+    findWay: function(start, finish) {
+        var me = this;
+
+
+        return me._grid.find(start.x, start.y, finish.x, finish.y);
+    },
+
+    _onEntityMove: function(oldBoundingBox, newBoundingBox) {
+        var me = this;
+
+        // ._x ._y ._width ._height
+        me._setGridBoundingBoxValue(oldBoundingBox, 0);
+        me._setGridBoundingBoxValue(newBoundingBox, -1);
+    },
+
+    _setGridBoundingBoxValue: function(boundingBox, value)
+    {
+        var me = this,
+            x = boundingBox.getX(),
+            y = boundingBox.getY(),
+            x2 = x + boundingBox.width,
+            y2 = y - boundingBox.height;
+
+        for (var i = x; i < x2; i++) {
+            for (var j = y; j < y2; j++) {
+                me._grid.setValue(i, j, value);
+            }
+        }
     },
 
     _onEntityAttack: function(attacker)
