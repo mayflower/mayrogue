@@ -14,12 +14,30 @@ var _parent = WorldBase.prototype;
 
 var WorldServer = Util.extend(WorldBase, {
 
+    _grid: null,
+
     create: function(config) {
         var me = this;
 
         if (!config.entityManager) config.entityManager = new EntityManagerServer();
 
         _parent.create.call(me, config);
+
+        var width = me.getMap().getWidth(),
+            height = me.getMap().getHeight();
+
+        me._grid = new gamlib.AStarArray(width, height);
+
+        for (var x = 0; x < width; x++) {
+            for (var y = 0; y < height; y++) {
+
+                // set fields as inaccessible for gamlib
+
+                if (!me.getMap().fieldAccessible(x, y)) {
+                    me._grid.setValue(x, y, -1);
+                }
+            }
+        }
     },
 
     _onEntityAttack: function(attacker)

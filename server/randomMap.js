@@ -7,7 +7,7 @@ var _ = require('underscore'),
     Tiles = require('./shared/tiles'),
     // For some sick, pervert reason, JSHint complains about "redefining Map"
     // (sic), so we use _Map instead
-    _Map = require('./mapServer');
+    _Map = require('./shared/map');
 
 var _parent = _Map.prototype;
 
