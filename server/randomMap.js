@@ -7,7 +7,9 @@ var _ = require('underscore'),
     Tiles = require('./shared/tiles'),
     // For some sick, pervert reason, JSHint complains about "redefining Map"
     // (sic), so we use _Map instead
-    _Map = require('./shared/map');
+    _Map = require('./mapServer');
+
+var _parent = _Map.prototype;
 
 var randomMap = Util.extend(_Map, {
     _weights: {
@@ -44,6 +46,8 @@ var randomMap = Util.extend(_Map, {
         for (var i = 0; i < 2; i++) {
             me._smooth();
         }
+
+        _parent.create.call(me, config);
     },
 
      /**

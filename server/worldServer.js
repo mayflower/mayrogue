@@ -7,7 +7,8 @@ var Util = require('./shared/util'),
     Geometry = require('./shared/geometry'),
     EntityManagerServer = require('./entityManagerServer'),
     Entity = require('./shared/entity'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    gamlib = require('./vendor/gamlib-ai');
 
 var _parent = WorldBase.prototype;
 
