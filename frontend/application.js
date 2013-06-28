@@ -1,4 +1,4 @@
-define(['jquery', 'eventBus', 'bootstrap'], function($, EventBus) {
+define(['jquery', '/dispatch.js', 'bootstrap'], function($, dispatch) {
     "use strict";
 
     var modal = $('#loginModal'),
@@ -17,7 +17,7 @@ define(['jquery', 'eventBus', 'bootstrap'], function($, EventBus) {
     });
 
     modal.on('hidden', function() {
-        EventBus.fireEvent('login', username, useWebGL, forceTouch);
+        dispatch(username, useWebGL, forceTouch);
         $('#main').show();
     });
 

@@ -4,13 +4,13 @@
  * Client main.
  */
 
-define(['underscore', 'util', 'eventBus', 'tiles',
+define(['underscore', 'util', 'tiles',
     '/tilesets/oryx.js', 'worldClient', 'entity', 'map',
     'change', 'statsView', 'control', 'network/client',
     'mapView', 'actionEmitter', 'actionExecutor',
     'domReady'
 ],
-    function(_, Util, EventBus, Tiles, Tileset, World, Entity, Map,
+    function(_, Util, Tiles, Tileset, World, Entity, Map,
         Change, StatsView,  Control, Client, MapView, ActionEmitter, ActionExecutor)
 {
     "use strict";
@@ -102,5 +102,5 @@ define(['underscore', 'util', 'eventBus', 'tiles',
         client.login(username);
     };
 
-    EventBus.attachListeners({'login': startDispatcher});
+    return startDispatcher;
 });
