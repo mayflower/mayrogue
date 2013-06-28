@@ -11,7 +11,7 @@ exports = module.exports = (grunt) ->
                 "frontend/dispatch.js",
                 "frontend/config.js",
                 "frontend/tilesets/*.js",
-                "scripts/**/*.js",
+                "shared/**/*.js",
                 "server.js",
                 "server/**/*.js"
             ]

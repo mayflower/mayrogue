@@ -13,7 +13,7 @@ define(['underscore', 'util'],
 
         _entityMap: null,
 
-        create: function(config) {
+        create: function() {
             var me = this;
 
             Util.Base.prototype.create.apply(me, arguments);

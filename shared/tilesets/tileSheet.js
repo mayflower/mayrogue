@@ -156,8 +156,7 @@ define(['underscore', 'util', 'tilesets/base'],
 
         _drawEntityStats: function(context, x, y, entity) {
             //noinspection JSUnusedLocalSymbols
-            var me = this,
-                stats = entity.getStats();
+            var stats = entity.getStats();
 
             var name = stats.getName(),
                 text = '';

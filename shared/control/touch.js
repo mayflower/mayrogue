@@ -3,6 +3,9 @@ define(['underscore', 'util', 'fastclick', 'control/types'],
 {
     "use strict";
 
+    // We use this to pacify jshint
+    var fastclick;
+
     var touchControls = Util.extend(Util.Base, {
 
         mixins: [Util.Observable],
@@ -24,10 +27,10 @@ define(['underscore', 'util', 'fastclick', 'control/types'],
 
             me.getConfig(config, ['controlElement', 'canvasElement']);
 
-            //noinspection JSHint
-            new FastClick(me._controlElement);
-            //noinspection JSHint
-            new FastClick(me._canvasElement);
+
+            //noinspection JSUnusedAssignment
+            fastclick = new FastClick(me._controlElement);
+            fastclick = new FastClick(me._canvasElement);
 
             me._createControlElements();
             me._attachHandlers();
