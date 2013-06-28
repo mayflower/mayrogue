@@ -3,6 +3,7 @@ define(['underscore', 'util', 'action', 'control/types'],
 {
     'use strict';
 
+    //noinspection JSUnusedGlobalSymbols
     var ActionEmitter = Util.extend(Util.Base, {
         properties: ['control'],
 
@@ -51,7 +52,7 @@ define(['underscore', 'util', 'action', 'control/types'],
             var me = this;
 
             if (me._controlQueue.indexOf(controlType) < 0) {
-                me._controlQueue.push(controlType);
+                me._controlQueue.unshift(controlType);
             }
             if (!me._timeoutHandle) {
                 me._dispatcher();
