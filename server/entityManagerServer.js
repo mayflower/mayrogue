@@ -18,7 +18,7 @@ var EntityManagerServer = Util.extend(EntityManager, {
     _statsUpdates: null,
     _newEntities: null,
 
-    create: function(config) {
+    create: function() {
         var me = this;
 
         _parent.create.apply(me, arguments);

@@ -59,7 +59,6 @@ var initPlayer = function(socket, username) {
         2: Tiles.MAGE
     };
 
-    debugger;
     var player = world.addNewRandomEntity({
         shape: shapes[_.random(2)],
         stats: new Stats({

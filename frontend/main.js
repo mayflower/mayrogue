@@ -27,7 +27,8 @@ require.config({
       },
       'bootstrap': ['jquery']
    },
-    urlArgs: "bust=" +  (new Date()).getTime(),     //this is extremely useful for debugging... but remove this on productive!
+    //this is extremely useful for debugging... but remove this on productive!
+    urlArgs: "bust=" +  (new Date()).getTime()
 });
 
 require(['/dispatch.js', '/gui.js']);

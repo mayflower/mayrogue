@@ -5,19 +5,7 @@ exports = module.exports = (grunt) ->
         pkg: grunt.file.readJSON "package.json"
         jshint:
             options:
-                bitwise: true
-                immed: true
-                latedef: true
-                noarg: true
-                nonew: true
-                undef: true
-                unused: true
-                strict: true
-                browser: true
-                globalstrict: true
-                node: true
-                globals:
-                    define: false
+                jshintrc: ".jshintrc"
             all: [
                 "frontend/main.js",
                 "frontend/dispatch.js",

@@ -3,7 +3,6 @@
 "use strict";
 
 var Util = require('./shared/util'),
-    Change = require('./shared/change'),
     WorldBase  = require('./shared/worldBase'),
     Geometry = require('./shared/geometry'),
     EntityManagerServer = require('./entityManagerServer'),
@@ -57,8 +56,7 @@ var WorldServer = Util.extend(WorldBase, {
             attackerLevel = attacker.getStats().getLevel() || 1;
 
         return Math.ceil(
-            multiplier * basicExp * entityLevel
-            / 5 *
+            multiplier * basicExp * entityLevel / 5 *
             Math.pow(2 * entityLevel + 10, 2.5) /
             Math.pow(entityLevel + attackerLevel + 10, 2.5) + 1
         );

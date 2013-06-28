@@ -1,0 +1,14 @@
+{
+    "bitwise": true,
+    "immed": true,
+    "latedef": true,
+    "noarg": true,
+    "nonew": true,
+    "undef": true,
+    "unused": true,
+    "strict": true,
+    "browser": true,
+    "globalstrict": true,
+    "node": true,
+    "predef": ["define"]
+}
