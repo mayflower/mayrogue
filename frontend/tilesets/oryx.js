@@ -6,7 +6,7 @@ define(['underscore', 'util', 'tiles', 'tilesets'],
     "use strict";
 
     var tilesheetTerrain = new Tilesets.TileSheet({
-        url: './res/terrain.gif',
+        url: '/frontend/res/terrain.gif',
         tileWidth: 32,
         tileHeight: 32,
 
@@ -24,7 +24,7 @@ define(['underscore', 'util', 'tiles', 'tilesets'],
     });
 
     var tilesheetActors = new Tilesets.TileSheet({
-        url: './res/actors.gif',
+        url: '/frontend/res/actors.gif',
         tileWidth: 32,
         tileHeight: 32,
         mapping: Tiles.compile({
@@ -39,7 +39,7 @@ define(['underscore', 'util', 'tiles', 'tilesets'],
     });
 
     var tilesheetLargeActors = new Tilesets.TileSheetLarge({
-        url: './res/actors.gif',
+        url: '/frontend/res/actors.gif',
         tileWidth: 32,
         tileHeight: 32,
         mapping: Tiles.compile({

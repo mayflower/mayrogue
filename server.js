@@ -20,9 +20,7 @@ var express = require('express'),
     Entity = require('./server/shared/entity'),
     Action = require('./server/shared/action');
 
-app.use(express.static(__dirname + '/frontend/'));
-app.use('/shared/', express.static(__dirname + '/shared/'));
-app.use('/components/', express.static(__dirname + '/components/'));
+var useBuild = false;
 
 // setup environments
 var configuration = {
@@ -31,6 +29,7 @@ var configuration = {
     },
     'production': function() {
         io.set('log level', 1); // set log level to error and warn
+        useBuild = true;
     },
     'heroku': function() {
         this.production(); // apply production settings
@@ -44,6 +43,26 @@ var configuration = {
 _.each(configuration, function(func, env, obj) {
     app.configure(env, _.bind(func, obj));
 });
+
+// Serve frontend/index.html on / and on /index.html
+app.get('/', function(req, res) {
+    res.sendfile(__dirname + '/frontend/index.html');
+});
+app.get('/index.html', function(req, res) {
+    res.sendfile(__dirname + '/frontend/index.html');
+});
+
+// If we use the build, override /frontend/application.js with the built module
+if (useBuild) {
+    app.get('/frontend/application.js', function(req, res) {
+        res.sendfile(__dirname + '/frontend/application.build.js');
+    });
+}
+
+// Statically serve all other required directories
+app.use('/frontend/', express.static( __dirname + '/frontend/'));
+app.use('/shared/', express.static(__dirname + '/shared/'));
+app.use('/components/', express.static(__dirname + '/components/'));
 
 var world = new RandomWorld({
     width: 35,

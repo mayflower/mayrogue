@@ -15,7 +15,18 @@ exports = module.exports = (grunt) ->
                 "server.js",
                 "server/**/*.js"
             ]
-
-    grunt.registerTask "default", ["jshint"]
+        requirejs:
+            compile:
+                options:
+                    baseUrl: './shared'
+                    out: 'frontend/application.build.js',
+                    mainConfigFile: 'frontend/main.js',
+                    name: 'application',
+                    paths:
+                        'socket.io': 'empty:'
 
     grunt.loadNpmTasks "grunt-contrib-jshint"
+    grunt.loadNpmTasks "grunt-contrib-requirejs"
+
+    grunt.registerTask "default", ["jshint"]
+    grunt.registerTask 'build', ['requirejs']

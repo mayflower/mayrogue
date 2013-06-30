@@ -1,4 +1,4 @@
-define(['jquery', '/dispatch.js', 'bootstrap'], function($, dispatch) {
+define(['jquery', 'dispatch', 'bootstrap'], function($, dispatch) {
     "use strict";
 
     var modal = $('#loginModal'),

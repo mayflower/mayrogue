@@ -5,7 +5,7 @@
  */
 
 define(['underscore', 'util', 'tiles',
-    '/tilesets/oryx.js', 'worldClient', 'entity', 'map',
+    'tilesets/oryx', 'worldClient', 'entity', 'map',
     'change', 'statsView', 'control', 'network/client',
     'mapView', 'actionEmitter', 'actionExecutor',
     'domReady'

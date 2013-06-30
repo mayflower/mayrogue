@@ -19,7 +19,6 @@ define(['underscore', 'util', 'action/types', 'action/attack', 'action/move'],
                 case (Types.ATTACK):
                     return Attack.unserialize(blob.data);
                 case (Types.MOVE):
-                    console.log('unserialize');
                     return Move.unserialize(blob.data);
                 default:
                     return null;
