@@ -59,8 +59,8 @@ var AggressiveWalker = Util.extend(Base, {
 
         if (wayPoints && wayPoints.length) {
             var goTo = {
-                x: wayPoints[0].position.x,
-                y: wayPoints[0].position.y
+                x: wayPoints[1].position.x,
+                y: wayPoints[1].position.y
             };
 
             if (world.fieldAccessible(goTo.x, goTo.y)) {
@@ -129,17 +129,17 @@ var AggressiveWalker = Util.extend(Base, {
         if (!enemies.length) {
             return false;
         }
-        _.each(enemies, function(enemy) {
-            if (enemy == me._currentEnemy) {
-                return enemy;
-            }
-        });
+
+        if (_.contains(enemies, me._currentEnemy)) {
+            return me._currentEnemy;
+        }
+
         return enemies[0];
     },
 
     lurkAround: function() {
         var me = this;
-return;
+
         if (Math.random() > me._propability) return;
 
         var dx = 0, dy = 0;

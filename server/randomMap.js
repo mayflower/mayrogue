@@ -19,8 +19,8 @@ var randomMap = Util.extend(_Map, {
         forest3: 1,
         flower_white: 1,
         flower_red: 1,
-        stone: 60,
-        stone2: 0,
+        stone: 0,
+        stone2: 60,
         dirt: 5,
         grass: 70
     },
@@ -91,7 +91,7 @@ var randomMap = Util.extend(_Map, {
         var tile;
         do {
             tile = me._randomTile();
-        } while (tile == Tiles.STONE || tile == Tiles.STONE2)
+        } while (tile == Tiles.STONE || tile == Tiles.STONE2);
         return tile;
     },
 
@@ -118,7 +118,7 @@ var randomMap = Util.extend(_Map, {
                     me._countFloorTilesWithinOneStep(x, y) >= 5 ||
                     me._countFloorTilesWithinTwoSteps(x, y) <= 2) {
                     // change to stone
-                    mo._data[x][y] = Tiles.STONE2;
+                    mo._data[x][y] = Tiles.STONE;
                 } else {
                     mo._data[x][y] = me._randomFloor();
                 }
@@ -139,7 +139,8 @@ var randomMap = Util.extend(_Map, {
     _isBorder: function(x, y) {
          var me = this;
 
-         if (x === 0 || y === 0 || x >= me._width - 1 || y >= me._height - 1) {
+         //noinspection RedundantIfStatementJS
+        if (x === 0 || y === 0 || x >= me._width - 1 || y >= me._height - 1) {
                return true;
          } else {
                return false;
@@ -236,6 +237,7 @@ var randomMap = Util.extend(_Map, {
 
     _insideMap: function(x, y) {
         var me = this;
+        //noinspection RedundantIfStatementJS
         if (x < 0 || x >= me._width || y < 0 || y >= me._height) {
             return false;
         }
