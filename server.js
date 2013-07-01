@@ -30,6 +30,7 @@ var configuration = {
     'production': function() {
         io.set('log level', 1); // set log level to error and warn
         useBuild = true;
+        app.use(express.compress());
     },
     'heroku': function() {
         this.production(); // apply production settings

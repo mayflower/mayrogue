@@ -57,7 +57,7 @@ var AggressiveWalker = Util.extend(Base, {
             { x: enemy.getX(), y: enemy.getY() }
         );
 
-        if (wayPoints && wayPoints.length) {
+        if (wayPoints && (wayPoints.length >= 2)) {
             var goTo = {
                 x: wayPoints[1].position.x,
                 y: wayPoints[1].position.y
