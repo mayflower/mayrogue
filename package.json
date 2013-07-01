@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "./node_modules/.bin/bower install && grunt build"
+    "postinstall": "./node_modules/.bin/bower install && ./node_modules/.bin/grunt build"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,8 @@
     "underscore": "~1.4.4",
     "bower": "~0.9.2",
     "grunt-contrib-requirejs": "~0.4.1",
-    "grunt": "~0.4.1"
+    "grunt": "~0.4.1",
+    "grunt-cli": "~0.1.9"
   },
   "devDependencies": {
     "grunt-contrib-jshint": "~0.3.0"
