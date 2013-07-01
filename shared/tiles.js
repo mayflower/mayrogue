@@ -4,7 +4,7 @@ define(['underscore'],
    function(_)
 {
    "use strict";
-   
+
    var Tiles = {
       FOREST: 0,
       FOREST1: 1,
@@ -13,6 +13,7 @@ define(['underscore'],
       GRASS: 4,
       DIRT: 5,
       STONE: 6,
+      STONE2: 9,
       FLOWER_WHITE: 7,
       FLOWER_RED: 8,
 
@@ -26,7 +27,7 @@ define(['underscore'],
       MAGE: 407,
 
       MIN_GROUND: 0,
-      MAX_GROUND: 8,
+      MAX_GROUND: 9,
 
       MIN_ENTITIES: 400,
       MAX_ENTITIES: 407
@@ -34,7 +35,10 @@ define(['underscore'],
 
    var tileProperties = {
       stone: {
-         walkable: false
+          walkable: false
+      },
+      stone2: {
+          walkable: false
       },
       cthulhu_guy: {
          large: true,
@@ -60,7 +64,7 @@ define(['underscore'],
    Tiles.compile = function(collection) {
       var me = this;
 
-      var compiled = {}; 
+      var compiled = {};
       _.each(collection, function(value, key) {
         key = key.toUpperCase();
          if (me[key] !== undefined) compiled[me[key]] = value;

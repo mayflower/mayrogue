@@ -19,7 +19,8 @@ define(['underscore', 'util', 'tiles', 'tilesets'],
             flower_white: [Tiles.GRASS, {ix: 14, iy: 6 }],
             flower_red: [Tiles.GRASS, {ix: 15, iy: 6 }],
             dirt: {ix: 11, iy: 1},
-            stone: {ix: 3, iy: 0}
+            stone: {ix: 3, iy: 0},
+            stone2: {ix: 5, iy: 0}
         })
     });
 
