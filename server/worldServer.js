@@ -137,32 +137,53 @@ var WorldServer = Util.extend(WorldBase, {
         this._entityManager.clearChanges();
     },
 
+    /**
+     * Find a free random rect. After maxTries (default 50) of finding a true random position, we systematically
+     * walk through the map (starting from a new random position) until we find a free tile. If the is no free tile,
+     * we return null.
+     *
+     * @param width
+     * @param height
+     * @param maxTries
+     * @returns {Geometry.Rectangle}
+     */
     getFreeRandomRect: function(width, height, maxTries) {
         var me = this,
-            rect = null,
             thisTry = 0,
-            accessible = false;
+            accessible = false,
+            rect = new Geometry.Rectangle({
+                width: width,
+                height: height
+            });
 
         var mapWidth = me._map.getWidth(), mapHeight = me._map.getHeight();
 
-        if (!maxTries) maxTries = 100;
+        if (!maxTries) maxTries = 50;
 
         do {
-            rect = new Geometry.Rectangle({
-                width: width,
-                height: height,
-                x: _.random(mapWidth - width),
-                y: _.random(mapHeight - height)
-            });
+            rect.setX(_.random(mapWidth - width)).setY(_.random(mapHeight - height));
         } while (!(accessible = me.rectAccessible(rect)) && thisTry++ < maxTries);
 
         if (accessible) {
             return rect;
-        } else {
-            return null;
         }
-    }
 
+        var x = _.random(mapWidth - width),
+            y = _.random(mapHeight- height),
+            i = 0;
+        do {
+            rect.setX(x).setY(y);
+            if (++x >= mapWidth) {
+                x = 0;
+                if (++y >= mapHeight) {
+                    y = 0;
+                }
+            }
+            i++;
+        } while (!(accessible = me.rectAccessible(rect))  && i < mapWidth * mapHeight);
+
+        return accessible ? rect : null;
+    }
 });
 
 module.exports = WorldServer;
