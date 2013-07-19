@@ -1121,7 +1121,7 @@ gamlib.AStarArray = gamlib.AStarMap.extend({
             if ( (xs instanceof gamlib.AStarNode) && (ys instanceof gamlib.AStarNode) ) {
                 return this._super(xs, ys);
             }
-            if ( (xs < this.width) && (ys < this.height) && (xe < this.width) && (ye < this.width) ) {
+            if ( (xs < this.width) && (ys < this.height) && (xe < this.width) && (ye < this.height) ) {
                 var sn = this.nodes[ys*this.width+xs];
                 var en = this.nodes[ye*this.width+xe];
                 return this._super(sn, en);

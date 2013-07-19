@@ -7,11 +7,13 @@ var _ = require('underscore'),
     Tiles = require('./shared/tiles'),
     // For some sick, pervert reason, JSHint complains about "redefining Map"
     // (sic), so we use _Map instead
-    _Map = require('./shared/map');
+    _Map = require('./shared/map'),
+    DomainMap = require('./domainMap'),
+    gamlib = require('./vendor/gamlib-ai');
 
 var _parent = _Map.prototype;
 
-var randomMap = Util.extend(_Map, {
+var RandomMap = Util.extend(_Map, {
     _weights: {
         forest: 1,
         forest1: 1,
@@ -49,6 +51,52 @@ var randomMap = Util.extend(_Map, {
         }
 
         _parent.create.call(me, config);
+
+        me._connectDomains();
+    },
+
+    /**
+     * Find disconnected domains and reconnect them. The algorithm works by first identifying all domains
+     * and then using the A* pathfinder to connect them, removing obstacles along the way. We assign a high penality
+     * to unaccessible fields, so the pathfinder will keep the rock drilling to a minimum
+     *
+     * @private
+     */
+    _connectDomains: function() {
+        var me = this,
+            domainMap = new DomainMap({map: me}),
+            domains = domainMap.getDomains();
+
+        if (domains.length <= 1) {
+            return;
+        }
+
+        var baseDomain = domains[0],
+            baseField = domainMap.findFieldInDomain(baseDomain);
+
+        var aStarGrid = new gamlib.AStarArray(me._width, me._height);
+        for (var x = 0; x < me._width; x++) {
+            for (var y = 0; y < me.height; y++) {
+                aStarGrid.setValue(x, y, me.fieldAccessible(x, y) ? 0 : 100);
+            }
+        }
+
+        _.each(domainMap.getDomains(), function(domain) {
+            if (domain == baseDomain) {
+                return;
+            }
+            var field = domainMap.findFieldInDomain(domain),
+                path = aStarGrid.find(baseField.x, baseField.y, field.x, field.y);
+
+            _.each(path, function(node) {
+                var pos = node.position;
+
+                if (!me.fieldAccessible(pos.x, pos.y)) {
+                    me._data[pos.x][pos.y] = me._randomFloor();
+                    aStarGrid.setValue(pos.x, pos.y, 0);
+                }
+            });
+        });
     },
 
     /**
@@ -244,7 +292,6 @@ var randomMap = Util.extend(_Map, {
         return true;
     }
 
-
 });
 
-module.exports = randomMap;
+module.exports = RandomMap;
