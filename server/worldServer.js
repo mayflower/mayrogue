@@ -38,14 +38,10 @@ var WorldServer = Util.extend(WorldBase, {
                 }
             }
         }
-
-        // register for move events to move inaccessible parts
-        config.entityManager.attachListeners({ move: me._onEntityMove }, me);
     },
 
     findWay: function(start, finish) {
         var me = this;
-
 
         return me._grid.find(start.x, start.y, finish.x, finish.y);
     },
@@ -56,6 +52,17 @@ var WorldServer = Util.extend(WorldBase, {
         // ._x ._y ._width ._height
         me._setGridBoundingBoxValue(oldBoundingBox, 0);
         me._setGridBoundingBoxValue(newBoundingBox, -1);
+
+        _parent._onEntityMove.apply(me, arguments);
+    },
+
+    _onEntityAction: function(action, entity) {
+        var me = this;
+
+        // TODO: Wrong place: should be moved to dedicated executor
+        if (action.validate()) {
+            action.execute(entity, me);
+        }
     },
 
     _setGridBoundingBoxValue: function(boundingBox, value)
@@ -73,7 +80,12 @@ var WorldServer = Util.extend(WorldBase, {
         }
     },
 
-    _onEntityAttack: function(attacker)
+    /**
+     * TODO: should be moved to dedicated combat managment class
+     *
+     * @param attacker
+     */
+    executeAttack: function(attacker)
     {
         var me = this;
         var rect = attacker.getAttackTarget();
@@ -101,6 +113,14 @@ var WorldServer = Util.extend(WorldBase, {
         });
     },
 
+    /**
+     * TODO: should be moved to dedicated combat managment class
+     *
+     * @param attacker
+     * @param entity
+     * @returns {number}
+     * @private
+     */
     _getReceivedExp: function(attacker, entity) {
         var multiplier = entity.getRole() === Entity.Role.PLAYER ? 1.5 : 1,
             basicExp = entity.getRole() === Entity.Role.PLAYER ? 10 : 5,

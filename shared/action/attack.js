@@ -6,11 +6,8 @@ define(['underscore', 'util', 'action/types', 'action/base'],
     var Attack = Util.extend(Base, {
         type: Types.ATTACK,
 
-        execute: function(entity, world) {
-            if (!_.isObject(entity)) entity = world.getEntityById(entity);
-            if (!entity) return;
-
-            entity.attack();
+        execute: function() {
+            // The actual implementation uses server side code and is located on the server side.
         },
 
         validate: function() {

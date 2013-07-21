@@ -15,11 +15,13 @@ define(['underscore', 'util', 'action/types', 'action/attack', 'action/move'],
         },
 
         unserialize: function(blob) {
+            var me = this;
+
             switch (blob.type) {
                 case (Types.ATTACK):
-                    return Attack.unserialize(blob.data);
+                    return me.Attack.unserialize(blob.data);
                 case (Types.MOVE):
-                    return Move.unserialize(blob.data);
+                    return me.Move.unserialize(blob.data);
                 default:
                     return null;
             }

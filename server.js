@@ -18,7 +18,7 @@ var express = require('express'),
     PlayerContext = require('./server/playerContext'),
     Stats = require('./server/shared/stats'),
     Entity = require('./server/shared/entity'),
-    Action = require('./server/shared/action');
+    Action = require('./server/action');
 
 var useBuild = false;
 
@@ -118,9 +118,8 @@ io.sockets.on('connection', function (socket) {
         if (!playerContext) return;
 
         var action = Action.unserialize(data.action);
-        if (action.validate()) {
-            action.execute(player, world);
-        }
+        playerContext.getEntity().fireEvent('action', action);
+
         playerContext.setGeneration(data.generation);
     });
 

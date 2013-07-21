@@ -123,12 +123,6 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
             return me;
         },
 
-        attack: function() {
-            var me = this;
-
-            me.fireEvent('attack', me);
-        },
-
         getAttackTarget: function()
         {
             var attackRect = new Geometry.Rectangle({

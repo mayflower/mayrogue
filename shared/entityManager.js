@@ -31,8 +31,8 @@ define(['underscore', 'util'],
 
             entity.attachListeners({
                 move: me._onEntityMove,
-                attack: me._onEntityAttack,
-                statsChange: me._onEntityStatsChange
+                statsChange: me._onEntityStatsChange,
+                action: me._onEntityAction
             }, me);
 
             me.fireEvent('entityAdded', entity);
@@ -51,12 +51,12 @@ define(['underscore', 'util'],
             this._proxyEvent('move', arguments);
         },
 
-        _onEntityAttack: function() {
-            this._proxyEvent('attack', arguments);
-        },
-
         _onEntityStatsChange: function() {
             this._proxyEvent('statsChange', arguments);
+        },
+
+        _onEntityAction: function() {
+            this._proxyEvent('action', arguments);
         },
 
         removeEntity: function(entity, doNotDestroy) {

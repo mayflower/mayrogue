@@ -32,6 +32,15 @@ var Base = Util.extend(Util.Base, {
         }, me);
 
         me._entity._brain = null;
+    },
+
+    _decide: function(strategy) {
+        var me = this;
+
+        var action = strategy.decide(me._entity);
+        if (action) {
+            me._entity.fireEvent('action', action);
+        }
     }
 });
 

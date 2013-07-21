@@ -36,7 +36,7 @@ var RandomWorld = Util.extend(WorldServer, {
             });
 
             var brain = null;
-            if (Math.floor((Math.random()*10)) <= 3) {
+            if (Math.floor((Math.random()*10)) <= -1) {
                 brain = new Brain.AggressiveWalker();
             } else {
                 brain = new Brain.RandomWalker();

@@ -67,20 +67,6 @@ var AggressiveWalker = Util.extend(Base, {
                 return goTo;
             }
         }
-
-        /*if (entity.getX() < enemy.getX() && world.fieldAccessible(goTo.x + 1, goTo.y, entity)) {
-            goTo.x = goTo.x + 1;
-            return goTo;
-        } else if (entity.getX() > enemy.getX() && world.fieldAccessible(goTo.x - 1, goTo.y, entity)) {
-            goTo.x = goTo.x - 1;
-            return goTo;
-        } else if (entity.getY() < enemy.getY() && world.fieldAccessible(goTo.x, goTo.y + 1, entity)) {
-            goTo.y = goTo.y + 1;
-            return goTo;
-        } else if (entity.getY() > enemy.getY() && world.fieldAccessible(goTo.x, goTo.y - 1, entity)) {
-            goTo.y = goTo.y - 1;
-            return goTo;
-        }*/
         return null;
     },
 

@@ -442,11 +442,12 @@ define(['underscore'],
 
         /**
          * Trigger an event. First argument is the event name, all other
-         * arguments are directly passed to the handler.
+         * arguments are directly passed to the handler. The sender is available as last argument.
          */
         fireEvent: function() {
             var me = this;
             var args = _.values(arguments);
+            args.push(me);
             var evt = args.shift();
 
             if (!me._listeners[evt]) return;

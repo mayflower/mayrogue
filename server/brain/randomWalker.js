@@ -2,45 +2,32 @@
 
 "use strict";
 
-var _ = require('underscore'),
-    Util = require('../shared/util'),
-    Base = require('./base');
+var _ =         require('underscore'),
+    Util =      require('../shared/util'),
+    Base =      require('./base'),
+    Strategy =  require('./strategy');
 
 var RandomWalker = Util.extend(Base, {
-    properties: ['propability'],
+    properties: ['walkPropability'],
 
-    _propability: 0.3,
+    _walkPropability: 0.3,
+    _strategy: null,
 
     create: function() {
         var me = this;
         Base.prototype.create.apply(me, arguments);
 
-        me.getConfig(['propability']);
+        me.getConfig(['walkPropability']);
+        me._strategy = new Strategy.RandomWalk({
+            walkPropability: me._walkPropability
+        });
     },
 
     _onTick: function() {
         var me = this;
         Base.prototype._onTick.apply(me, arguments);
 
-        if (Math.random() > me._propability) return;
-
-        var dx = 0, dy = 0;
-        switch (_.random(3)) {
-            case(0):
-                dx = 1;
-                break;
-            case(1):
-                dx = -1;
-                break;
-            case(2):
-                dy = 1;
-                break;
-            case(3):
-                dy = -1;
-                break;
-        }
-
-        me._entity.setXY(me._entity.getX() + dx, me._entity.getY() + dy);
+        me._decide(me._strategy);
     }
 });
 

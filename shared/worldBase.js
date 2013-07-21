@@ -29,8 +29,8 @@ define(['underscore', 'util', 'entityManager'],
 
             me._entityManager.attachListeners({
                 move: me._onEntityMove,
-                attack: me._onEntityAttack,
-                statsChange: me._onEntityStatsChange
+                statsChange: me._onEntityStatsChange,
+                action: me._onEntityAction
             }, me);
 
             if (config.entities) _.each(config.entities, function(entity) {
@@ -68,9 +68,7 @@ define(['underscore', 'util', 'entityManager'],
             me.fireEvent('change');
         },
 
-        _onEntityAttack: function()
-        {
-        },
+        _onEntityAction: function() {},
 
         getMapData: function() {
             var me = this;
