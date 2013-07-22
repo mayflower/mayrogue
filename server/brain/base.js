@@ -4,12 +4,36 @@
 
 var Util = require('../shared/util');
 
+var _parent = Util.Base.prototype;
+
 var Base = Util.extend(Util.Base, {
-    properties: [
+    properties: ['healingRate',
         {field: '_entity', getter: true}
     ],
 
-    _onTick: function() {},
+    _strategies: null,
+    _strategy: null,
+    _healingRate: 15,
+
+    _counter: 0,
+
+    _onTick: function() {
+        var me = this;
+
+        if (me._healingRate > 0 && (me._counter % me._healingRate === 0)) {
+            me._entity.getStats().heal(1);
+        }
+
+        me._counter++;
+    },
+
+    create: function() {
+        var me = this;
+
+        _parent.create.apply(me, arguments);
+
+        me._strategies = {};
+    },
 
     decorate: function(entity) {
         var me = this;
@@ -41,6 +65,25 @@ var Base = Util.extend(Util.Base, {
         if (action) {
             me._entity.fireEvent('action', action);
         }
+    },
+
+    _getStrategy: function() {
+        var me = this;
+
+        return me._strategy && me._strategies.hasOwnProperty(me._strategy) ? me._strategies[me._strategy] : null;
+    },
+
+    _setStrategy: function(strategy) {
+        var me = this;
+
+        me._strategy = strategy;
+        return me._getStrategy(strategy);
+    },
+
+    _addStrategy: function(strategy) {
+        var me = this;
+
+        me._strategies[strategy.type] = strategy;
     }
 });
 

@@ -32,25 +32,7 @@ var PlayerContext = Util.extend(Util.Base, {
         var me = this;
 
         me._tick++;
-        if (me._tick % 10 === 0) me._heal(1);
-    },
-
-    /**
-     * TODO: this is a questionable place for this logic, should eventually go into a brain-like decorator (together
-     * with other stuff like poison, mana regeneration etc.)
-     *
-     * @param healed
-     * @private
-     */
-    _heal: function(healed) {
-        var me = this;
-
-        var stats = me._entity.getStats(),
-            hp = stats.getHp();
-        hp += healed;
-        if (hp > stats.getMaxHp()) hp = stats.getMaxHp();
-
-        stats.setHp(hp);
+        if (me._tick % 10 === 0) me._entity.getStats().heal(1);
     },
 
     /**

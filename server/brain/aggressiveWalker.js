@@ -2,151 +2,113 @@
 
 "use strict";
 
-var _ = require('underscore'),
-    Util = require('../shared/util'),
-    Base = require('./base'),
-    Geometry = require('../shared/geometry');
+
+var _ =         require('underscore'),
+    Util =      require('../shared/util'),
+    Base =      require('./base'),
+    Strategy =  require('./strategy'),
+    Geometry =  require('../shared/geometry');
+
+var _parent = Base.prototype;
 
 var AggressiveWalker = Util.extend(Base, {
-    properties: ['propability'],
+    properties: ['walkPropability', 'trackDistance', 'sightDistance'],
 
-    _propability: 0.3,
-    _currentEnemy: null,
+    _walkPropability: 0.3,
+    _trackDistance: 6,
+    _sightDistance: 5,
+
+    _strategy: Strategy.RANDOM_WALK,
 
     create: function() {
         var me = this;
-        Base.prototype.create.apply(me, arguments);
+        _parent.create.apply(me, arguments);
 
-        me.getConfig(['propability']);
+        me.getConfig(['walkPropability', 'trackDistance', 'sightDistance']);
+    },
+
+    decorate: function() {
+        var me = this;
+
+        _parent.decorate.apply(me, arguments);
+
+        me._addStrategy(new Strategy.RandomWalk({
+            entity: me.getEntity(),
+            walkPropability: me._walkPropability
+        }));
+
+        me._addStrategy(new Strategy.Hunt({
+            entity: me.getEntity(),
+            attackPropability: 0.9,
+            trackPropability: 0.9
+        }));
+
+        me.getEntity().attachListeners({
+            attacked: me._onAttack
+        }, me);
+    },
+
+    _onAttack: function (attacker) {
+        var me = this;
+
+        me._setStrategy(Strategy.HUNT).setTarget(attacker);
+    },
+
+    _findPossibleEnemies: function() {
+        var me = this,
+            entity = me.getEntity(),
+            sightRect = new Geometry.Rectangle({
+                width:  2 * me._sightDistance,
+                height: 2 * me._sightDistance,
+                x: entity.getX() - me._sightDistance,
+                y: entity.getY() - me._sightDistance
+            });
+
+        return _.without(entity.getWorld().entitiesIntersectingWith(sightRect), entity);
+    },
+
+    _tryToHunt: function() {
+        var me = this,
+            possibleEnemies = me._findPossibleEnemies(),
+            strategy = me._getStrategy(),
+            currentTarget;
+
+        if (strategy.type == Strategy.HUNT && (currentTarget = strategy.getTarget())) {
+            possibleEnemies = _.without(possibleEnemies, currentTarget);
+        }
+
+        if (possibleEnemies.length > 0) {
+            me._setStrategy(Strategy.HUNT).setTarget(possibleEnemies[_.random(possibleEnemies.length - 1)]);
+            return true;
+        } else {
+            return false;
+        }
     },
 
     _onTick: function() {
-        var me = this;
+        var me = this,
+            oldStrategy = me._getStrategy(),
+            path;
 
         Base.prototype._onTick.apply(me, arguments);
 
-        var entity = me._entity;
-        var world = entity.getWorld();
+        if (oldStrategy.type == Strategy.RANDOM_WALK) {
+            oldStrategy = null;
 
-        var rect = new Geometry.Rectangle({
-            width: 10,
-            height: 10,
-            x: entity.getX() - 5,
-            y: entity.getY() - 5
-        });
-        var possibleEnemies = _.without(world.entitiesIntersectingWith(rect), entity);
+        } else if (oldStrategy.type == Strategy.HUNT) {
 
-        var enemy = me.chooseEnemy(possibleEnemies);
-
-        if (!enemy) {
-            me.lurkAround();
-            return;
-        }
-
-        me.currentEnemy = enemy;
-
-        var goTo = me.findWayToEnemy(entity, enemy, world);
-        if (goTo) me._entity.setXY(goTo.x, goTo.y);
-
-        me.attack(entity, enemy);
-    },
-
-    findWayToEnemy: function(entity, enemy, world) {
-        var wayPoints = world.findWay(
-            { x: entity.getX(), y: entity.getY() },
-            { x: enemy.getX(), y: enemy.getY() }
-        );
-
-        if (wayPoints && (wayPoints.length >= 2)) {
-            var goTo = {
-                x: wayPoints[1].position.x,
-                y: wayPoints[1].position.y
-            };
-
-            if (world.fieldAccessible(goTo.x, goTo.y)) {
-                return goTo;
+            path = oldStrategy.getPath();
+            if (path.length > me._trackDistance || path.length === 0) {
+                oldStrategy = null;
             }
         }
-        return null;
-    },
 
-    attack: function(entity, enemy) {
-
-        var myBox = entity.getBoundingBox();
-        var enemyBox = enemy.getBoundingBox();
-        var attack = false;
-
-        var eastBox = myBox.clone();
-        eastBox.setX(myBox.getX() + 1);
-        if (eastBox.intersect(enemyBox)) {
-            entity._heading = 'east';
-            attack = true;
+        if (!oldStrategy && !me._tryToHunt()) {
+            me._setStrategy(Strategy.RANDOM_WALK);
         }
 
-        var westBox = myBox.clone();
-        westBox.setX(myBox.getX() - 1);
-        if (westBox.intersect(enemyBox)) {
-            entity._heading = 'west';
-            attack = true;
-        }
-
-        var northBox = myBox.clone();
-        northBox.setY(myBox.getY() - 1);
-        if (northBox.intersect(enemyBox)) {
-            entity._heading = 'north';
-            attack = true;
-        }
-
-        var southBox = myBox.clone();
-        southBox.setY(myBox.getY() + 1);
-        if (southBox.intersect(enemyBox)) {
-            entity._heading = 'south';
-            attack = true;
-        }
-
-        if (attack) {
-            entity.attack();
-        }
-
-    },
-
-    chooseEnemy: function(enemies) {
-        var me = this;
-        if (!enemies.length) {
-            return false;
-        }
-
-        if (_.contains(enemies, me._currentEnemy)) {
-            return me._currentEnemy;
-        }
-
-        return enemies[0];
-    },
-
-    lurkAround: function() {
-        var me = this;
-
-        if (Math.random() > me._propability) return;
-
-        var dx = 0, dy = 0;
-        switch (_.random(3)) {
-            case(0):
-                dx = 1;
-                break;
-            case(1):
-                dx = -1;
-                break;
-            case(2):
-                dy = 1;
-                break;
-            case(3):
-                dy = -1;
-                break;
-        }
-
-        me._entity.setXY(me._entity.getX() + dx, me._entity.getY() + dy);
+        me._decide(me._getStrategy());
     }
-
 });
 
 module.exports = AggressiveWalker;

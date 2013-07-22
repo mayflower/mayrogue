@@ -86,6 +86,20 @@ define(['underscore', 'util'],
         getNeededExp: function() {
             var me = this;
             return Math.floor(4 * Math.pow((me._level || 1) + 1, 3) / 5);
+        },
+
+        /**
+         * @param healed
+         * @private
+         */
+        heal: function (healed) {
+            var me = this,
+                hp = me._hp;
+
+            hp += healed;
+            if (hp > me._maxHp) hp = me._maxHp;
+
+            me.setHp(hp);
         }
     });
 

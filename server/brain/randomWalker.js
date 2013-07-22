@@ -34,31 +34,19 @@ var RandomWalker = Util.extend(Base, {
             attacked: me._onAttack
         }, me);
 
-        me._strategies = {};
-        me._strategies[Strategy.RANDOM_WALK] = new Strategy.RandomWalk({
+        me._addStrategy(new Strategy.RandomWalk({
             entity: me.getEntity(),
             walkPropability: me._walkPropability
-        });
-        me._strategies[Strategy.HUNT] = new Strategy.Hunt({
+        }));
+
+        me._addStrategy(new Strategy.Hunt({
             entity: me.getEntity()
-        });
-    },
-
-    _getStrategy: function() {
-        return this._strategies[this._strategy];
-    },
-
-    _setStrategy: function(strategy) {
-        var me = this;
-
-        me._strategy = strategy;
-        return me._getStrategy(strategy);
+        }));
     },
 
     _onAttack: function(attacker) {
         var me = this;
 
-        console.log('attacked!');
         me._setStrategy(Strategy.HUNT).setTarget(attacker);
     },
 
@@ -68,7 +56,7 @@ var RandomWalker = Util.extend(Base, {
 
         Base.prototype._onTick.apply(me, arguments);
 
-        if (me._strategy == Strategy.HUNT) {
+        if (strategy.type == Strategy.HUNT) {
             if (strategy.getPath().length > me._trackDistance) {
                 strategy = me._setStrategy(Strategy.RANDOM_WALK);
             }

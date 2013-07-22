@@ -3,14 +3,17 @@
 var _ =         require('underscore'),
     Util =      require('../../shared/util'),
     Base =      require('./base'),
-    Action =    require('../../action');
+    Action =    require('../../action'),
+    Types =     require('./types');
 
 var _parent = Base.prototype;
 
 var RandomWalk = Util.extend(Base, {
     properties: ['walkPropability'],
 
-    walkPropability: 0.3,
+    type: Types.RANDOM_WALK,
+
+    _walkPropability: 0.3,
 
     create: function(config) {
         var me = this;

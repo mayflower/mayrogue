@@ -3,7 +3,8 @@
 var _ =         require('underscore'),
     Util =      require('../../shared/util'),
     Base =      require('./base'),
-    Action =    require('../../action');
+    Action =    require('../../action'),
+    Types =     require('./types');
 
 
 var randomChoice = function(probability) {
@@ -20,6 +21,8 @@ var Hunt = Util.extend(Base, {
     properties: ['target', 'attackProbability', 'trackProbability',
         {field: '_path', getter: true}
     ],
+
+    type: Types.HUNT,
 
     _path: null,
     _target: null,
