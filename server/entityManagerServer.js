@@ -26,7 +26,7 @@ var EntityManagerServer = Util.extend(EntityManager, {
         me.clearChanges();
     },
 
-    _onEntityMove: function(entity) {
+    _onEntityMove: function(bbOld, bbNew, entity) {
         var me = this;
 
         _parent._onEntityMove.apply(me, arguments);

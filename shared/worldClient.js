@@ -62,7 +62,7 @@ define(['underscore', 'util', 'geometry', 'worldBase'],
             _parent.removeEntity.apply(me, arguments);
         },
 
-        _onEntityMove: function(entity, bbOld, bbNew) {
+        _onEntityMove: function(bbOld, bbNew, entity) {
             var me = this;
 
             _parent._onEntityMove.apply(me, arguments);

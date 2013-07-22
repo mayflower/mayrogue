@@ -45,6 +45,15 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
             }, me);
         },
 
+        setHeading: function(heading) {
+            var me = this;
+
+            if (me._heading !== heading) {
+                me._heading = heading;
+                me.fireEvent('headingChange');
+            }
+        },
+
         _onStatsChange: function() {
             var me = this;
 
@@ -67,9 +76,9 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
             if (force || !me._world || me._world.rectAccessible(boundingBoxNew, me))
             {
                 me._boundingBox = boundingBoxNew;
-                me.fireEvent('move', me, boundingBoxOld, boundingBoxNew);
+                me.fireEvent('move', boundingBoxOld, boundingBoxNew);
             } else {
-                me.fireEvent('move', me, boundingBoxOld, boundingBoxOld);
+                me.fireEvent('move', boundingBoxOld, boundingBoxOld);
             }
         },
 
@@ -77,13 +86,13 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
         {
             var me = this;
             if (boundingBoxOld.getX() > boundingBoxNew.getX()) {
-                me._heading = "west";
+                me.setHeading("west");
             } else if (boundingBoxOld.getX() < boundingBoxNew.getX()) {
-                me._heading = "east";
+                me.setHeading("east");
             } else if (boundingBoxOld.getY() > boundingBoxNew.getY()) {
-                me._heading = "north";
+                me.setHeading("north");
             } else if (boundingBoxOld.getY() < boundingBoxNew.getY()) {
-                me._heading = "south";
+                me.setHeading("south");
             }
         },
 
@@ -121,6 +130,10 @@ define(['underscore', 'util', 'geometry', 'tiles', 'stats'],
             me._changePosition(x, y, force);
 
             return me;
+        },
+
+        attacked: function(attacker) {
+            this.fireEvent('attacked', attacker);
         },
 
         getAttackTarget: function()

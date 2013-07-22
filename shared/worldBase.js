@@ -98,10 +98,10 @@ define(['underscore', 'util', 'entityManager'],
             return me._entityManager.fieldAccessible(x, y, entity);
         },
 
-        entitiesIntersectingWith: function(entity) {
+        entitiesIntersectingWith: function(rect) {
             var me = this;
 
-            return me._entityManager.entitiesIntersectingWith(entity);
+            return me._entityManager.entitiesIntersectingWith(rect);
         },
 
         getEntityById: function(id) {

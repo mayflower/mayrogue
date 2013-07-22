@@ -40,10 +40,11 @@ var WorldServer = Util.extend(WorldBase, {
         }
     },
 
-    findWay: function(start, finish) {
+    findWay: function(x0, y0, x1, y1) {
         var me = this;
 
-        return me._grid.find(start.x, start.y, finish.x, finish.y);
+        var way = me._grid.find(x0, y0, x1, y1);
+        return way ? _.pluck(way, 'position') : null;
     },
 
     _onEntityMove: function(oldBoundingBox, newBoundingBox) {
@@ -92,6 +93,8 @@ var WorldServer = Util.extend(WorldBase, {
 
         _.each(me._entityManager.entitiesIntersectingWith(rect), function(entity) {
                 var hp = entity.getStats().getHp() - 1;
+
+                entity.attacked(attacker);
 
                 if (hp <= 0) {
                     me._warpEntity(entity);

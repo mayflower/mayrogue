@@ -37,7 +37,7 @@ var Base = Util.extend(Util.Base, {
     _decide: function(strategy) {
         var me = this;
 
-        var action = strategy.decide(me._entity);
+        var action = strategy.decide();
         if (action) {
             me._entity.fireEvent('action', action);
         }
