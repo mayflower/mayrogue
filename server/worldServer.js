@@ -72,7 +72,7 @@ var WorldServer = Util.extend(WorldBase, {
             x = boundingBox.getX(),
             y = boundingBox.getY(),
             x2 = x + boundingBox.width,
-            y2 = y - boundingBox.height;
+            y2 = y + boundingBox.height;
 
         for (var i = x; i < x2; i++) {
             for (var j = y; j < y2; j++) {
